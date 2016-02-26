@@ -43,6 +43,7 @@ with qw/MarpaX::Java::ClassFile::BNF
 
 __DATA__
 __[ bnf ]__
+:default ::= action => [values]
 event 'constantPoolCount$' = completed constantPoolCount
 ClassFile ::=
              magic

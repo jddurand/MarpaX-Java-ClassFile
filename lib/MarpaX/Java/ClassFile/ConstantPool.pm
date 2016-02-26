@@ -27,6 +27,30 @@ sub _length {
   $self->lexeme_read($r, 'MANAGED', $self->pos, $length, substr($self->input, $self->pos, $length)) if ($length)
 }
 
+sub _constantClassInfo {
+  my ($self, $nameIndex) = @_; bless {name_index => $nameIndex}, 'CONSTANT_Class_info'
+}
+
+sub _constantFieldrefInfo {
+  my ($self, $classIndex, $nameAndTypeIndex) = @_; bless {class_index => $classIndex, name_and_type_index => $nameAndTypeIndex}, 'CONSTANT_Fieldref_info'
+}
+
+sub _constantMethodrefInfo {
+  my ($self, $classIndex, $nameAndTypeIndex) = @_; bless {class_index => $classIndex, name_and_type_index => $nameAndTypeIndex}, 'CONSTANT_Methodref_info'
+}
+
+sub _constantInterfaceMethodrefInfo {
+  my ($self, $classIndex, $nameAndTypeIndex) = @_; bless {class_index => $classIndex, name_and_type_index => $nameAndTypeIndex}, 'CONSTANT_InterfaceMethodref_info'
+}
+
+sub _constantUtf8Info_01 {
+  my ($self, $length, $utf8) = @_; bless {length => $length, string => $utf8}, 'CONSTANT_Utf8_info'
+}
+
+sub _constantUtf8Info_02 {
+  my ($self, $length, $utf8) = @_; bless {length => $length, string => undef}, 'CONSTANT_Utf8_info'
+}
+
 with qw/MarpaX::Java::ClassFile::BNF
         MarpaX::Java::ClassFile::Common/;
 
@@ -34,6 +58,8 @@ with qw/MarpaX::Java::ClassFile::BNF
 
 __DATA__
 __[ bnf ]__
+:default ::= action => ::first
+
 event 'length$' = completed length
 cpInfo ::=
     constantClassInfo
@@ -50,37 +76,36 @@ cpInfo ::=
   | constantMethodHandleInfo
   | constantMethodTypeInfo
   | constantInvokeDynamicInfo
-
 #
 # Note: a single byte is endianness independant, this is why it is ok
 # to write it in the \x{} form here
 #
-constantClassInfo              ::= ([\x{07}]) nameIndex
-constantFieldrefInfo           ::= ([\x{09}]) classIndex               nameAndTypeIndex
-constantMethodrefInfo          ::= ([\x{0a}]) classIndex               nameAndTypeIndex
-constantInterfaceMethodrefInfo ::= ([\x{0b}]) classIndex               nameAndTypeIndex
+constantClassInfo              ::= ([\x{07}]) nameIndex                                 action => _constantClassInfo
+constantFieldrefInfo           ::= ([\x{09}]) classIndex               nameAndTypeIndex action => _constantFieldrefInfo
+constantMethodrefInfo          ::= ([\x{0a}]) classIndex               nameAndTypeIndex action => _constantMethodrefInfo
+constantInterfaceMethodrefInfo ::= ([\x{0b}]) classIndex               nameAndTypeIndex action => _constantInterfaceMethodrefInfo
 constantStringInfo             ::= ([\x{08}]) stringIndex
 constantIntegerInfo            ::= ([\x{03}]) bytes
 constantFloatInfo              ::= ([\x{04}]) bytes
 constantLongInfo               ::= ([\x{05}]) highBytes                lowBytes
 constantDoubleInfo             ::= ([\x{06}]) highBytes                lowBytes
 constantNameAndTypeInfo        ::= ([\x{0c}]) nameIndex                descriptorIndex
-constantUtf8Info               ::= ([\x{01}]) length                   utf8 action => asHashRef
-                                 | ([\x{01}]) length
+constantUtf8Info               ::= ([\x{01}]) length                   utf8             action => _constantUtf8Info_01
+                                 | ([\x{01}]) length                                    action => _constantUtf8Info_02
 constantMethodHandleInfo       ::= ([\x{0f}]) referenceKind            referenceIndex
 constantMethodTypeInfo         ::= ([\x{10}]) descriptorIndex
 constantInvokeDynamicInfo      ::= ([\x{12}]) bootstrapMethodAttrIndex nameAndTypeIndex
 
-bootstrapMethodAttrIndex   ::= u2      action => first
-lowBytes                   ::= u4      action => first
-highBytes                  ::= u4      action => first
-descriptorIndex            ::= u2      action => first
-nameAndTypeIndex           ::= u2      action => first
-nameIndex                  ::= u2      action => first
-length                     ::= u2      action => first
-referenceKind              ::= u1      action => first
-referenceIndex             ::= u2      action => first
-classIndex                 ::= u2      action => first
-stringIndex                ::= u2      action => first
-bytes                      ::= u4      action => first
-utf8                       ::= managed action => first
+bootstrapMethodAttrIndex   ::= u2
+lowBytes                   ::= u4
+highBytes                  ::= u4
+descriptorIndex            ::= u2
+nameAndTypeIndex           ::= u2
+nameIndex                  ::= u2
+length                     ::= u2
+referenceKind              ::= u1
+referenceIndex             ::= u2
+classIndex                 ::= u2
+stringIndex                ::= u2
+bytes                      ::= u4
+utf8                       ::= managed action => utf8

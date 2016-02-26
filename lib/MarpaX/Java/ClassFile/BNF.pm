@@ -19,7 +19,9 @@ sub bnf {
 
 __DATA__
 __[ bnf_top ]__
-:default ::= action => [values] bless => ::lhs
+#
+# latm is a sane default that can be common to all grammars
+#
 lexeme default = latm => 1
 
 __[ bnf_bottom ]__

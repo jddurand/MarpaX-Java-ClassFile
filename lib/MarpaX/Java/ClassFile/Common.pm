@@ -5,7 +5,6 @@ package MarpaX::Java::ClassFile::Common;
 use Moo::Role;
 
 use Carp qw/croak/;
-use MarpaX::Java::ClassFile::Actions;
 use MarpaX::Java::ClassFile::MarpaTrace;
 use Data::Section -setup;
 use Scalar::Util qw/blessed/;
@@ -106,7 +105,6 @@ sub _parse {
   my $r = Marpa::R2::Scanless::R->new({trace_file_handle => $MARPA_TRACE_FILE_HANDLE,
                                        grammar => $self->grammar,
                                        exhaustion => 'event',
-                                       semantics_package => 'MarpaX::Java::ClassFile::Actions',
                                        trace_terminals => 1,
                                        # trace_actions => 1
                                       });
@@ -228,7 +226,7 @@ sub lexeme_read {
 sub literalU1 {
   my ($self, $r, $symbol) = @_;
 
-  my $u1 = $self->MarpaX::Java::ClassFile::Actions::u1($self->_literal($r, $symbol));
+  my $u1 = $self->u1($self->_literal($r, $symbol));
   $self->tracef('Got %s=%s', $symbol, $u1);
   $u1
 }
@@ -236,7 +234,7 @@ sub literalU1 {
 sub literalU2 {
   my ($self, $r, $symbol) = @_;
 
-  my $u2 = $self->MarpaX::Java::ClassFile::Actions::u2($self->_literal($r, $symbol));
+  my $u2 = $self->u2($self->_literal($r, $symbol));
   $self->tracef('Got %s=%s', $symbol, $u2);
   $u2
 }
@@ -244,12 +242,13 @@ sub literalU2 {
 sub literalU3 {
   my ($self, $r, $symbol) = @_;
 
-  my $u4 = $self->MarpaX::Java::ClassFile::Actions::u4($self->_literal($r, $symbol));
+  my $u4 = $self->u4($self->_literal($r, $symbol));
   $self->tracef('Got %s=%s', $symbol, $u4);
   $u4
 }
 
 with 'MooX::Role::Logger';
+with 'MarpaX::Java::ClassFile::Actions';
 
 requires 'callbacks';
 requires 'grammar';
