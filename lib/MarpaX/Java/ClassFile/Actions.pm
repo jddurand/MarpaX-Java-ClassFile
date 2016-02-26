@@ -8,19 +8,21 @@ use Bit::Vector;
 use Scalar::Util qw/blessed/;
 
 sub u1 {
+  #
+  # C  An unsigned char (octet) value.
+  #
   unpack('C', $_[1])
 }
 
 sub u2 {
+  #
+  # An unsigned short (16-bit) in "network" (big-endian) order.
+  #
   unpack('n', $_[1])
 }
 
 sub integer {
-  my $unsigned = unpack('N', $_[1]);
-  #
-  # Bit::Vector always assumes unsigned in input and says signed in output
-  #
-  Bit::Vector->new_Dec(32, 0+$unsigned)->to_Dec
+  $_[0]->u4($_[1], 1);
 }
 
 my @bitsForCmp = (
@@ -117,14 +119,15 @@ sub long {
 }
 
 sub u4 { # Bit::Vector for quadratic unpack
+  my $signed = $_[2] ? 1 : 0;
   #
   # 33 = 8 * 4 + 1, where +1 to make sure new_Dec never returns a signed value
   #
   my @bytes = split('', $_[1]);
-  my $vector = Bit::Vector->new_Dec(33, 0+unpack('C', $bytes[0]));
+  my $vector = Bit::Vector->new_Dec($signed ? 32 : 33, unpack('C', $bytes[0]));
   foreach (1..3) {
     $vector->Move_Left(8);
-    $vector->Or($vector, Bit::Vector->new_Dec(33, 0+unpack('C', $bytes[$_])))
+    $vector->Or($vector, Bit::Vector->new_Dec(33, unpack('C', $bytes[$_])))
   }
   $vector->to_Dec()
 }
