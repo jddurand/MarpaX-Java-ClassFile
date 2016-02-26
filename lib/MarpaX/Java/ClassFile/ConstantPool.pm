@@ -43,6 +43,22 @@ sub _constantInterfaceMethodrefInfo {
   my ($self, $classIndex, $nameAndTypeIndex) = @_; bless {class_index => $classIndex, name_and_type_index => $nameAndTypeIndex}, 'CONSTANT_InterfaceMethodref_info'
 }
 
+sub _constantStringInfo {
+  my ($self, $stringIndex) = @_;  bless {string_index => $stringIndex}, 'CONSTANT_String_info'
+}
+
+sub _constantIntegerInfo {
+  my ($self, $integer) = @_;  bless {value => $integer}, 'CONSTANT_Integer_info'
+}
+
+sub _constantFloatInfo {
+  my ($self, $float) = @_;  bless {value => $float}, 'CONSTANT_Float_info'
+}
+
+sub _constantLongInfo {
+  my ($self, $long) = @_;  bless {value => $long}, 'CONSTANT_Long_info'
+}
+
 sub _constantUtf8Info_01 {
   my ($self, $length, $utf8) = @_; bless {length => $length, string => $utf8}, 'CONSTANT_Utf8_info'
 }
@@ -84,21 +100,21 @@ constantClassInfo              ::= ([\x{07}]) nameIndex                         
 constantFieldrefInfo           ::= ([\x{09}]) classIndex               nameAndTypeIndex action => _constantFieldrefInfo
 constantMethodrefInfo          ::= ([\x{0a}]) classIndex               nameAndTypeIndex action => _constantMethodrefInfo
 constantInterfaceMethodrefInfo ::= ([\x{0b}]) classIndex               nameAndTypeIndex action => _constantInterfaceMethodrefInfo
-constantStringInfo             ::= ([\x{08}]) stringIndex
-constantIntegerInfo            ::= ([\x{03}]) bytes
-constantFloatInfo              ::= ([\x{04}]) bytes
-constantLongInfo               ::= ([\x{05}]) highBytes                lowBytes
-constantDoubleInfo             ::= ([\x{06}]) highBytes                lowBytes
+constantStringInfo             ::= ([\x{08}]) stringIndex                               action => _constantStringInfo
+constantIntegerInfo            ::= ([\x{03}]) integerBytes                              action => _constantIntegerInfo
+constantFloatInfo              ::= ([\x{04}]) floatBytes                                action => _constantFloatInfo
+constantLongInfo               ::= ([\x{05}]) longBytes                                 action => _constantLongInfo
+constantDoubleInfo             ::= ([\x{06}]) doubleBytes
 constantNameAndTypeInfo        ::= ([\x{0c}]) nameIndex                descriptorIndex
-constantUtf8Info               ::= ([\x{01}]) length                   utf8             action => _constantUtf8Info_01
+constantUtf8Info               ::= ([\x{01}]) length                   utf8Bytes        action => _constantUtf8Info_01
                                  | ([\x{01}]) length                                    action => _constantUtf8Info_02
 constantMethodHandleInfo       ::= ([\x{0f}]) referenceKind            referenceIndex
 constantMethodTypeInfo         ::= ([\x{10}]) descriptorIndex
 constantInvokeDynamicInfo      ::= ([\x{12}]) bootstrapMethodAttrIndex nameAndTypeIndex
 
 bootstrapMethodAttrIndex   ::= u2
-lowBytes                   ::= u4
-highBytes                  ::= u4
+longBytes                  ::= u4 u4   action => long
+doubleBytes                ::= u4 u4   # action => double
 descriptorIndex            ::= u2
 nameAndTypeIndex           ::= u2
 nameIndex                  ::= u2
@@ -107,5 +123,6 @@ referenceKind              ::= u1
 referenceIndex             ::= u2
 classIndex                 ::= u2
 stringIndex                ::= u2
-bytes                      ::= u4
-utf8                       ::= managed action => utf8
+integerBytes               ::= u4      action => integer
+floatBytes                 ::= u4      action => float
+utf8Bytes                  ::= managed action => utf8
