@@ -16,7 +16,11 @@ sub u2 {
 }
 
 sub integer {
-  Bit::Vector->new_Bin(32, $_[1])->to_Dec
+  my $unsigned = unpack('N', $_[1]);
+  #
+  # Bit::Vector always assumes unsigned in input and says signed in output
+  #
+  Bit::Vector->new_Dec(32, $unsigned)->to_Dec
 }
 
 my @bitsForCmp = (
@@ -29,7 +33,8 @@ my @bitsForCmp = (
                  );
 
 sub float {
-  my $vector = Bit::Vector->new_Bin( 32, $_[1] );
+  my $unsigned = unpack('N', $_[1]);
+  my $vector = Bit::Vector->new_Dec( 32, $unsigned);
 
   my $value;
   if ( $vector->equal( $bitsForCmp[0] ) ) {
@@ -94,11 +99,18 @@ sub float {
 sub long {
     my ($self, $high_bytes, $low_bytes ) = @_;
 
+    print STDERR "HIGH_BYTES: " . ($high_bytes // '<undef>') . "\n";
+    print STDERR "LOW_BYTES:  " . ($low_bytes // '<undef>') . "\n";
+
     my $high = unpack( 'N', $high_bytes );
     my $low  = unpack( 'N', $low_bytes );
-    my $vector = Bit::Vector->new_Bin( 64, $high );
+
+    print STDERR "HIGH: " . ($high // '<undef>') . "\n";
+    print STDERR "LOW:  " . ($low // '<undef>') . "\n";
+
+    my $vector = Bit::Vector->new_Dec( 64, $high );
     $vector->Move_Left(32);
-    my $vectorLow = Bit::Vector->new_Bin( 64, $low );
+    my $vectorLow = Bit::Vector->new_Dec( 64, $low );
     $vector->Or( $vector, $vectorLow );
 
     $vector->to_Dec()
