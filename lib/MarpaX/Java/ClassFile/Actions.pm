@@ -21,48 +21,80 @@ sub u2 {
   unpack('n', $_[1])
 }
 
-sub integer {
-  $_[0]->u4($_[1], 1);
+sub _u4 { # Bit::Vector for quadratic unpack
+  use Devel::Peek;
+  use Data::Dumper;
+  print STDERR "LENGTH: " . length($_[1]) . "\n" . Dumper($_[1]);
+  if (length($_[1]) != 4) {
+    print STDERR "Context: " . $MarpaX::Java::ClassFile::Common::R->show_progress . "\n";
+  }
+  my $signed = $_[2] ? 1 : 0;
+  #
+  # 33 = 8 * 4 + 1, where +1 to make sure new_Dec never returns a signed value
+  # 32 = 8 * 4 + 1,          to make sure new_Dec never can return a signed value
+  #
+  my @bytes = split('', $_[1]);
+  my $size = $signed ? 32 : 33;
+  Dump($bytes[0]);
+  my $vector = Bit::Vector->new_Dec($size, unpack('C', $bytes[0]));
+  foreach (1..3) {
+    $vector->Move_Left(8);
+    Dump($bytes[$_]);
+    $vector->Or($vector, Bit::Vector->new_Dec($size, unpack('C', $bytes[$_])))
+  }
+  $vector->to_Dec()
 }
 
-my @bitsForCmp = (
-                  Bit::Vector->new_Hex( 32, "7f800000" ),
-                  Bit::Vector->new_Hex( 32, "ff800000" ),
-                  Bit::Vector->new_Hex( 32, "7f800001" ),
-                  Bit::Vector->new_Hex( 32, "7fffffff" ),
-                  Bit::Vector->new_Hex( 32, "ff800001" ),
-                  Bit::Vector->new_Hex( 32, "ffffffff" )
-                 );
+sub integer {
+  $_[0]->_u4($_[1], 1);
+}
+
+sub u4 {
+  $_[0]->_u4($_[1], 0);
+}
+
+my @bitsForFloatCmp = (
+                       Bit::Vector->new_Hex( 32, "7f800000" ),
+                       Bit::Vector->new_Hex( 32, "ff800000" ),
+                       Bit::Vector->new_Hex( 32, "7f800001" ),
+                       Bit::Vector->new_Hex( 32, "7fffffff" ),
+                       Bit::Vector->new_Hex( 32, "ff800001" ),
+                       Bit::Vector->new_Hex( 32, "ffffffff" )
+                      );
 
 sub float {
-  my $unsigned = unpack('N', $_[1]);
-  my $vector = Bit::Vector->new_Dec( 32, 0+$unsigned);
+  my @bytes = split('', $_[1]);
+  my $vector = Bit::Vector->new_Dec(32, unpack('C', $bytes[0]));
+  foreach (1..3) {
+    $vector->Move_Left(8);
+    $vector->Or($vector, Bit::Vector->new_Dec(33, unpack('C', $bytes[$_])))
+  }
 
   my $value;
-  if ( $vector->equal( $bitsForCmp[0] ) ) {
+  if ( $vector->equal( $bitsForFloatCmp[0] ) ) {
     #
     # Positive infinity
     #
     $value = '+inf';
   }
-  elsif ( $vector->equal( $bitsForCmp[1] ) ) {
+  elsif ( $vector->equal( $bitsForFloatCmp[1] ) ) {
     #
     # Negative infinity
     #
     $value = '-inf';
   }
   elsif (
-         (      ( $vector->Lexicompare( $bitsForCmp[2] ) >= 0 )
-                && ( $vector->Lexicompare( $bitsForCmp[3] ) <= 0 )
+         (      ( $vector->Lexicompare( $bitsForFloatCmp[2] ) >= 0 )
+                && ( $vector->Lexicompare( $bitsForFloatCmp[3] ) <= 0 )
          )
-         || (   ( $vector->Lexicompare( $bitsForCmp[4] ) >= 0 )
-                && ( $vector->Lexicompare( $bitsForCmp[5] ) <= 0 ) )
+         || (   ( $vector->Lexicompare( $bitsForFloatCmp[4] ) >= 0 )
+                && ( $vector->Lexicompare( $bitsForFloatCmp[5] ) <= 0 ) )
         )
     {
       #
       # NaN
       #
-      $value = 'nan';
+      $value = 'NaN';
     }
   else {
     my $s = $vector->Clone();
@@ -88,10 +120,10 @@ sub float {
     $m = $m->to_Dec();
     $e = $e->to_Dec();
     if ( !$s->is_empty() ) {
-      $value = "-1 * $m * (2 ** ($e - 150))";
+      $value = -1 * $m * (2 ** ($e - 150));
     }
     else {
-      $value = "$m * (2 ** ($e - 150))";
+      $value = $m * (2 ** ($e - 150));
     }
   }
 
@@ -101,14 +133,8 @@ sub float {
 sub long {
     my ($self, $high_bytes, $low_bytes ) = @_;
 
-    print STDERR "HIGH_BYTES: " . ($high_bytes // '<undef>') . "\n";
-    print STDERR "LOW_BYTES:  " . ($low_bytes // '<undef>') . "\n";
-
-    my $high = unpack( 'N', $high_bytes );
-    my $low  = unpack( 'N', $low_bytes );
-
-    print STDERR "HIGH: " . ($high // '<undef>') . "\n";
-    print STDERR "LOW:  " . ($low // '<undef>') . "\n";
+    my $high = $self->u4($high_bytes);
+    my $low  = $self->u4($low_bytes);
 
     my $vector = Bit::Vector->new_Dec( 64, 0+$high );
     $vector->Move_Left(32);
@@ -118,18 +144,84 @@ sub long {
     $vector->to_Dec()
 }
 
-sub u4 { # Bit::Vector for quadratic unpack
-  my $signed = $_[2] ? 1 : 0;
-  #
-  # 33 = 8 * 4 + 1, where +1 to make sure new_Dec never returns a signed value
-  #
-  my @bytes = split('', $_[1]);
-  my $vector = Bit::Vector->new_Dec($signed ? 32 : 33, unpack('C', $bytes[0]));
-  foreach (1..3) {
-    $vector->Move_Left(8);
-    $vector->Or($vector, Bit::Vector->new_Dec(33, unpack('C', $bytes[$_])))
+my @bitsForDoubleCmp = (
+                       Bit::Vector->new_Hex( 64, "7ff0000000000000" ),
+                       Bit::Vector->new_Hex( 64, "fff0000000000000" ),
+                       Bit::Vector->new_Hex( 64, "7ff0000000000001" ),
+                       Bit::Vector->new_Hex( 64, "7fffffffffffffff" ),
+                       Bit::Vector->new_Hex( 64, "fff0000000000001" ),
+                       Bit::Vector->new_Hex( 64, "ffffffffffffffff" )
+                      );
+
+sub double {
+    my ($self, $high_bytes, $low_bytes ) = @_;
+
+    my $high = $self->u4($high_bytes);
+    my $low  = $self->u4($low_bytes);
+
+    my $vector = Bit::Vector->new_Dec( 64, $high );
+    $vector->Move_Left(32);
+    my $vectorLow = Bit::Vector->new_Dec( 64, $low );
+    $vector->Or( $vector, $vectorLow );
+
+  my $value;
+  if ( $vector->equal( $bitsForDoubleCmp[0] ) ) {
+    #
+    # Positive infinity
+    #
+    $value = '+inf';
   }
-  $vector->to_Dec()
+  elsif ( $vector->equal( $bitsForDoubleCmp[1] ) ) {
+    #
+    # Negative infinity
+    #
+    $value = '-inf';
+  }
+  elsif (
+         (      ( $vector->Lexicompare( $bitsForDoubleCmp[2] ) >= 0 )
+                && ( $vector->Lexicompare( $bitsForDoubleCmp[3] ) <= 0 )
+         )
+         || (   ( $vector->Lexicompare( $bitsForDoubleCmp[4] ) >= 0 )
+                && ( $vector->Lexicompare( $bitsForDoubleCmp[5] ) <= 0 ) )
+        )
+    {
+      #
+      # NaN
+      #
+      $value = 'NaN';
+    }
+  else {
+    my $s = $vector->Clone();
+    $s->Move_Right(63);
+
+    my $e = $vector->Clone();
+    $e->Move_Right(52);
+    $e->And( $e, Bit::Vector->new_Hex( 64, "7ff" ) );
+
+    my $m = $vector->Clone();
+    if ( $e->is_empty() ) {
+      $m->And( $m, Bit::Vector->new_Hex( 64, "fffffffffffff" ) );
+      $m->Move_Left(1);
+    }
+    else {
+      $m->And( $m, Bit::Vector->new_Hex( 64, "fffffffffffff" ) );
+      $m->Or( $m, Bit::Vector->new_Hex( 64, "10000000000000" ) );
+    }
+
+    #
+    # s * m * 2e-1075
+    #
+    $m = $m->to_Dec();
+    $e = $e->to_Dec();
+    if ( !$s->is_empty() ) {
+      $value = -1 * $m * (2 ** ($e - 1075));
+    }
+    else {
+      $value = $m * (2 ** ($e - 1075));
+    }
+  }
+
+  $value
 }
 
 sub utf8 {
