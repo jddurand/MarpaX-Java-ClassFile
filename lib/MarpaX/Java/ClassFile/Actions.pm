@@ -20,7 +20,7 @@ sub integer {
   #
   # Bit::Vector always assumes unsigned in input and says signed in output
   #
-  Bit::Vector->new_Dec(32, $unsigned)->to_Dec
+  Bit::Vector->new_Dec(32, 0+$unsigned)->to_Dec
 }
 
 my @bitsForCmp = (
@@ -34,7 +34,7 @@ my @bitsForCmp = (
 
 sub float {
   my $unsigned = unpack('N', $_[1]);
-  my $vector = Bit::Vector->new_Dec( 32, $unsigned);
+  my $vector = Bit::Vector->new_Dec( 32, 0+$unsigned);
 
   my $value;
   if ( $vector->equal( $bitsForCmp[0] ) ) {
@@ -108,9 +108,9 @@ sub long {
     print STDERR "HIGH: " . ($high // '<undef>') . "\n";
     print STDERR "LOW:  " . ($low // '<undef>') . "\n";
 
-    my $vector = Bit::Vector->new_Dec( 64, $high );
+    my $vector = Bit::Vector->new_Dec( 64, 0+$high );
     $vector->Move_Left(32);
-    my $vectorLow = Bit::Vector->new_Dec( 64, $low );
+    my $vectorLow = Bit::Vector->new_Dec( 64, 0+$low );
     $vector->Or( $vector, $vectorLow );
 
     $vector->to_Dec()
@@ -121,10 +121,10 @@ sub u4 { # Bit::Vector for quadratic unpack
   # 33 = 8 * 4 + 1, where +1 to make sure new_Dec never returns a signed value
   #
   my @bytes = split('', $_[1]);
-  my $vector = Bit::Vector->new_Dec(33, unpack('C', $bytes[0]));
+  my $vector = Bit::Vector->new_Dec(33, 0+unpack('C', $bytes[0]));
   foreach (1..3) {
     $vector->Move_Left(8);
-    $vector->Or($vector, Bit::Vector->new_Dec(33, unpack('C', $bytes[$_])))
+    $vector->Or($vector, Bit::Vector->new_Dec(33, 0+unpack('C', $bytes[$_])))
   }
   $vector->to_Dec()
 }
