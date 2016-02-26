@@ -4,70 +4,76 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile;
 use Moo;
 
+use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::ConstantPool;
 use Types::Standard -all;
 
-extends 'MarpaX::Java::ClassFile::BNF';
+my $_data      = ${__PACKAGE__->section_data('bnf')};
+my %_CALLBACKS = ('constantPoolCount$' => \&_constantPoolCount);
 
-my $G         = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf(do { local $/; <DATA> })});
-my %CALLBACKS = ('constant_pool_count$' => \&_constant_pool_count);
+has grammar   => (is => 'ro', isa => InstanceOf['Marpa::R2::Scanless::G'], lazy => 1, builder => 1);
+has callbacks => (is => 'ro', isa => HashRef[CodeRef], default => sub { \%_CALLBACKS });
 
-has grammar   => (is => 'ro', isa => InstanceOf['Marpa::R2::Scanless::G'], default => sub { $G });
-has callbacks => (is => 'ro', isa => HashRef[CodeRef], default => sub { \%CALLBACKS });
+sub _build_grammar {
+  my ($self) = @_;
 
-sub _constant_pool_count {
+  Marpa::R2::Scanless::G->new({bless_package => 'ClassFile', source => \__PACKAGE__->bnf($_data)})
+}
+
+sub _constantPoolCount {
   my ($self, $r) = @_;
 
-  my $count = $self->u1($r, 'constant_pool_count');
+  my $count = $self->literalU2($r, 'constantPoolCount');
   my $imax = $count - 1;
   my @managed = ();
   my $i = 0;
-  my $pos = $self->pos;
+  my $lastPos = $self->pos;
   while (++$i <= $imax) {
-    my $inner = MarpaX::Java::ClassFile::ConstantPool->new(input => $self->input, pos => $pos);
+    my $inner = MarpaX::Java::ClassFile::ConstantPool->new(input => $self->input, pos => $lastPos, level => $self->level + 1);
     push(@managed, $inner->ast);
-    $pos = $inner->pos
+    $lastPos = $inner->pos
   }
-  $pos
 }
 
-with 'MarpaX::Java::ClassFile::Common';
+with qw/MarpaX::Java::ClassFile::BNF
+        MarpaX::Java::ClassFile::Common/;
 
 1;
 
 __DATA__
-event 'constant_pool_count$' = completed constant_pool_count
+__[ bnf ]__
+event 'constantPoolCount$' = completed constantPoolCount
 ClassFile ::=
              magic
-             minor_version
-             major_version
-             constant_pool_count
-             constant_pool
-             access_flags
-             this_class
-             super_class
-             interfaces_count
+             minorVersion
+             majorVersion
+             constantPoolCount
+             constantPool
+             accessFlags
+             thisClass
+             superClass
+             interfacesCount
              interfaces
-             fields_count
-             fields
-             methods_count
-             methods
-             attributes_count
-             attributes
-magic               ::= u4
-minor_version       ::= u2
-major_version       ::= u2
-constant_pool_count ::= u2
-constant_pool       ::= managed
-access_flags        ::= u2
-this_class          ::= u2
-super_class         ::= u2
-interfaces_count    ::= u2
-interfaces          ::= u2
-fields_count        ::= u2
-fields              ::= managed
-methods_count       ::= u2
-methods             ::= managed
-attributes_count    ::= u2
-attributes          ::= managed
+             fieldsCount
+#             fields
+#             methods_count
+#             methods
+#             attributes_count
+#             attributes
+magic              ::= u4
+minorVersion       ::= u2
+majorVersion       ::= u2
+constantPoolCount  ::= u2
+constantPool       ::= managed
+accessFlags        ::= u2
+thisClass          ::= u2
+superClass         ::= u2
+interfacesCount    ::= u2
+interfaces         ::= u2
+fieldsCount        ::= u2
+#fields              ::= managed
+#methods_count       ::= u2
+#methods             ::= managed
+#attributes_count    ::= u2
+#attributes          ::= managed

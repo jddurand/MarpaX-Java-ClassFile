@@ -8,15 +8,18 @@ use Carp qw/croak/;
 use MarpaX::Java::ClassFile::Actions;
 use MarpaX::Java::ClassFile::MarpaTrace;
 use Data::Section -setup;
+use Scalar::Util qw/blessed/;
 use Types::Common::Numeric -all;
 use Types::Standard -all;
 use Types::Encodings qw/Bytes/;
 use Try::Tiny;
 
-has input => (is => 'ro',  isa => Bytes, required => 1);
-has ast   => (is => 'rwp', isa => Any);
-has pos   => (is => 'rwp', isa => PositiveOrZeroInt, default => sub { 0 });
-has max   => (is => 'rwp', isa => PositiveOrZeroInt, lazy => 1, builder => 1);
+has input  => (is => 'ro',  isa => Bytes, required => 1);
+has max    => (is => 'rw', isa => PositiveOrZeroInt, lazy => 1, builder => 1);
+has ast    => (is => 'rwp', isa => Any);
+has pos    => (is => 'rwp', isa => PositiveOrZeroInt, default => sub { 0 });
+has whoami => (is => 'rwp', isa => Str, lazy => 1, builder => 1);
+has level  => (is => 'rwp', isa => PositiveOrZeroInt, default => sub { 0 });
 
 my $MARPA_TRACE_FILE_HANDLE;
 my $MARPA_TRACE_BUFFER;
@@ -47,11 +50,10 @@ sub BUILD {
   # Unless our consumer already have an event on exhaustion,
   # we provide the default one
   #
-  $self->_logger->debugf('[%s/%s] %s is starting', $self->pos, $self->max, ref($self));
   $self->callbacks->{'\'exhausted'} //= sub {
     my ($self, $r) = @_;
-    $self->_logger->debugf('[%s/%s] Setting max position to %s', $self->pos, $self->max, $self->pos);
-    $self->_set_max($self->pos);
+    $self->debugf('Setting max position to %s', $self->pos);
+    $self->max($self->pos);
     $self->pos
   };
   $self->_parse
@@ -70,6 +72,12 @@ sub _build_max {
   length($self->input)
 }
 
+sub _build_whoami {
+  my ($self) = @_;
+
+  return (split(/::/, blessed($self)))[-1]
+}
+
 # -----------------------
 # General events dispatch
 # -----------------------
@@ -77,12 +85,12 @@ sub _manageEvents {
   my ($self, $r) = @_;
 
   my @eventNames = map { $_->[0] } (@{$self->_events($r)});
-  $self->_logger->tracef('[%s/%s] Events: %s', $self->pos, $self->max, \@eventNames);
+  $self->tracef('Events: %s', \@eventNames);
   foreach (@eventNames) {
+    $self->debugf('--------- %s', $_);
     my $callback = $self->callbacks->{$_};
-    croak "Internal error, unknown event $_" unless defined($callback);
-    $self->_logger->debugf('[%s/%s] --------- %s', $self->pos, $self->max, $_);
-    $self->_set_pos($self->$callback($r));
+    $self->_croak($r, "Unmanaged event $_") unless defined($callback);
+    $self->$callback($r)
   }
 }
 
@@ -96,19 +104,36 @@ sub _parse {
   local $MarpaX::Java::ClassFile::Common::R    = undef;
 
   my $r = Marpa::R2::Scanless::R->new({trace_file_handle => $MARPA_TRACE_FILE_HANDLE,
-                                       semantics_package => 'MarpaX::Java::ClassFile::Actions',
                                        grammar => $self->grammar,
                                        exhaustion => 'event',
+                                       semantics_package => 'MarpaX::Java::ClassFile::Actions',
                                        trace_terminals => 1,
-                                       trace_actions => 1
+                                       # trace_actions => 1
                                       });
   $MarpaX::Java::ClassFile::Common::R = $r;
 
-  for ($self->_read($r); $self->pos < $self->max; $self->_resume($r)) {
-    $self->_manageEvents($r)
+  $self->_read($r);
+  while ($self->pos < $self->max) {
+    $self->_resume($r)
   }
 
   $self->_set_ast($self->_value($r))
+}
+
+sub debugf {
+  my ($self, $format, @arguments) = @_;
+
+  my $inputLength = length($self->input);
+  my $nbcharacters = length("$inputLength");
+  $self->_logger->tracef("%s[%*s/%*s] %s: $format", '.' x $self->level, $nbcharacters, $self->pos, $nbcharacters, $self->max, $self->whoami, @arguments)
+}
+
+sub tracef {
+  my ($self, $format, @arguments) = @_;
+
+  my $inputLength = length($self->input);
+  my $nbcharacters = length("$inputLength");
+  $self->_logger->tracef("%s[%*s/%*s] %s: $format", '.' x $self->level, $nbcharacters, $self->pos, $nbcharacters, $self->max, $self->whoami, @arguments)
 }
 
 sub _croak {
@@ -118,18 +143,18 @@ sub _croak {
 
 sub _read {
   my ($self, $r) = @_;
-  $self->_logger->tracef('[%s/%s] read($inputRef, pos=%s)', $self->pos, $self->max, $self->pos);
+  $self->tracef('$r->read($inputRef, pos=%s)', $self->pos);
   try {
     $self->_set_pos($r->read(\$self->input, $self->pos))
   } catch {
     $self->_croak($r, $_)
   };
-  - $self->pos
+  $self->_manageEvents($r)
 }
 
 sub _events {
   my ($self, $r) = @_;
-  $self->_logger->tracef('[%s/%s] events()', $self->pos, $self->max);
+  $self->tracef('$r->events()');
   my $eventsRef;
   try {
     $eventsRef = $r->events
@@ -143,7 +168,7 @@ sub _value {
   my ($self, $r) = @_;
 
   my $ambiguity_metric;
-  $self->_logger->tracef('[%s/%s] ambiguity_metric()', $self->pos, $self->max);
+  $self->tracef('$r->ambiguity_metric()');
   try {
     $ambiguity_metric = $r->ambiguity_metric()
   } catch {
@@ -155,7 +180,7 @@ sub _value {
     $self->_croak($r, 'Parse is ambiguous')
   }
 
-  $self->_logger->tracef('[%s/%s] value($self)', $self->pos, $self->max);
+  $self->tracef('$r->value($self)');
   my $valueRef;
   try {
     $valueRef = $r->value($self)
@@ -164,61 +189,63 @@ sub _value {
   };
   $self->_croak($r, 'Value reference is undefined') if (! defined($valueRef));
   my $value = ${$valueRef};
-  $self->_logger->tracef('[%s/%s] value is %s', $self->pos, $self->max, $value);
+  $self->tracef('Parse tree value is %s', $value);
   $value
 }
 
 sub _resume {
   my ($self, $r) = @_;
-  $self->_logger->tracef('[%s/%s] resume', $self->pos, $self->max);
+  $self->tracef('$r->resume');
   try {
     $self->_set_pos($r->resume)
   } catch {
     $self->_croak($r, $_)
   };
-  - $self->pos
+  $self->_manageEvents($r)
 }
 
-sub literal {
+sub _literal {
   my ($self, $r, $symbol) = @_;
+  $self->tracef('$r->last_completed_span(\'%s\')', $symbol);
   my @span = $r->last_completed_span($symbol);
   $self->_croak($r, "No symbol instance for the symbol $symbol") if (! @span);
+  $self->tracef('$r->literal(%s, %s)', $span[0], $span[1]);
   $r->literal(@span);
 }
 
 sub lexeme_read {
   my ($self, $r, $lexeme_name, $lexeme_pos, $lexeme_length, $lexeme_value) = @_;
 
-  $self->_logger->tracef('[%s/%s] lexeme_read(name=%s, pos=%s, length=%s, value=%s)', $self->pos, $self->max, $lexeme_name, $lexeme_pos, $lexeme_length, $lexeme_value);
+  $self->tracef('$r->lexeme_read(name=\'%s\', pos=%s, length=%s, value=%s)', $lexeme_name, $lexeme_pos, $lexeme_length, $lexeme_value);
   try {
     $self->_set_pos($r->lexeme_read($lexeme_name, $lexeme_pos, $lexeme_length, $lexeme_value)) || croak sprintf('lexeme_read failure for symbol %s at position %s, length %s', $lexeme_name, $lexeme_pos // 'undef', $lexeme_length // 'undef')
   } catch {
     $self->_croak($r, $_)
   };
-  - $self->pos
+  $self->_manageEvents($r)
 }
 
-sub u1 {
+sub literalU1 {
   my ($self, $r, $symbol) = @_;
 
-  my $u1 = MarpaX::Java::ClassFile::Actions->u1($self->literal($r, $symbol));
-  $self->_logger->tracef('[%s/%s] %s value is %s', $self->pos, $self->max, $symbol, $u1);
+  my $u1 = $self->MarpaX::Java::ClassFile::Actions::u1($self->_literal($r, $symbol));
+  $self->tracef('Got %s=%s', $symbol, $u1);
   $u1
 }
 
-sub u2 {
+sub literalU2 {
   my ($self, $r, $symbol) = @_;
 
-  my $u2 = MarpaX::Java::ClassFile::Actions->u2($self->literal($r, $symbol));
-  $self->_logger->tracef('[%s/%s] %s value is %s', $self->pos, $self->max, $symbol, $u2);
+  my $u2 = $self->MarpaX::Java::ClassFile::Actions::u2($self->_literal($r, $symbol));
+  $self->tracef('Got %s=%s', $symbol, $u2);
   $u2
 }
 
-sub u4 {
+sub literalU3 {
   my ($self, $r, $symbol) = @_;
 
-  my $u4 = MarpaX::Java::ClassFile::Actions->u4($self->literal($r, $symbol));
-  $self->_logger->tracef('[%s/%s] %s value is %s', $self->pos, $self->max, $symbol, $u4);
+  my $u4 = $self->MarpaX::Java::ClassFile::Actions::u4($self->_literal($r, $symbol));
+  $self->tracef('Got %s=%s', $symbol, $u4);
   $u4
 }
 
@@ -228,34 +255,3 @@ requires 'callbacks';
 requires 'grammar';
 
 1;
-
-__DATA__
-__[ bnf_top ]__
-:default ::= action => [values]
-lexeme default = latm => 1
-inaccessible is ok by default
-
-__[ bnf_bottom ]__
-########################################
-#           Common rules               #
-########################################
-u1      ::= U1                 action => u1
-u2      ::= U2                 action => u2
-u4      ::= U4                 action => u4
-managed ::= MANAGED            action => ::first
-
-# ----------------
-# Internal Lexemes
-# ----------------
-_U1      ~ [\s\S]
-_U2      ~ _U1 _U1
-_U4      ~ _U2 _U2
-_MANAGED ~ [^\s\S]
-
-########################################
-#          Common lexemes              #
-########################################
-U1      ~ _U1
-U2      ~ _U2
-U4      ~ _U4
-MANAGED ~ _MANAGED

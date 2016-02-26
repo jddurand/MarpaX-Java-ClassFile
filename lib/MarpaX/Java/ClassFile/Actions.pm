@@ -3,9 +3,18 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Actions;
 use Bit::Vector;
+use Scalar::Util qw/blessed/;
 
-sub new {
-  $MarpaX::Java::ClassFile::Common::SELF
+sub first {
+  $_[1]
+}
+
+sub asHashRef {
+  my %rc;
+  foreach (@_[1..$#_]) {
+    $rc{blessed($_[1])} = $_[1]->[0];
+  }
+  \%rc
 }
 
 sub u1 {
@@ -15,6 +24,7 @@ sub u1 {
 sub u2 {
   unpack('n', $_[1])
 }
+
 sub u4 { # Bit::Vector for quadratic unpack
   #
   # 33 = 8 * 4 + 1, where +1 to make sure new_Dec never returns a signed value
