@@ -38,7 +38,7 @@ binmode($fh);
 my $input = do { local $/; <$fh>};
 close($fh) || warn "Cannot close $file, $!";
 # hexdump($input);
-dspp(MarpaX::Java::ClassFile->new(input => $input)->output);
+dspp(MarpaX::Java::ClassFile->new(input => $input)->ast);
 
 exit(EXIT_SUCCESS);
 sub hexdump
