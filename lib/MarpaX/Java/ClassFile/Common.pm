@@ -50,10 +50,16 @@ sub _build_max {
   length($self->input)
 }
 
+sub _whoami {
+  my ($self, $class) = @_;
+
+  (split(/::/, $class // blessed($self)))[-1]
+}
+
 sub _build_whoami {
   my ($self) = @_;
 
-  return (split(/::/, blessed($self)))[-1]
+  $self->_whoami
 }
 
 # -----------------------
@@ -233,6 +239,32 @@ sub literalU3 {
   my $u4 = $self->u4($self->_literal($r, $symbol));
   $self->tracef('Got %s=%s', $symbol, $u4);
   $u4
+}
+
+sub executeInnerGrammar {
+  my ($self, $r, $innerGrammarClass, $size, $lexeme_name) = @_;
+
+  my $whoisit = $self->_whoami($innerGrammarClass);
+  $self->debugf('Asking for %d %s%s', $size, $whoisit, $size ? 's' : '');
+  my $inner = $innerGrammarClass->new(
+     input => $self->input,
+     pos   => $self->pos,
+     level => $self->level + 1,
+     size  => $size
+    );
+  my $ast      = $inner->ast;                # Inner value
+  my $bytes    = $inner->pos - $self->pos;   # Inner size
+  my $next_pos = $self->pos + $bytes;        # Next position
+  #
+  # Setting optional last argument $next_pos handles the case of an empty array
+  #
+  $self->lexeme_read($r,
+                     $lexeme_name // 'MANAGED',
+                     $bytes ? $self->pos : 0,# Import it at position 0 if no byte
+                     $bytes || 1,            # lexeme_read wants at least one byte
+                     $ast,
+                     $next_pos);             # With next_pos we always do the right thing
+  $self->debugf('%s over', $whoisit);
 }
 
 with qw/MooX::Role::Logger MarpaX::Java::ClassFile::Common::Actions/;
