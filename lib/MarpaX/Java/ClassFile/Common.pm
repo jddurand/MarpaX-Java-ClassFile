@@ -15,7 +15,7 @@ use Try::Tiny;
 
 has input  => (is => 'ro',  isa => Bytes, required => 1);
 has max    => (is => 'rw', isa => PositiveOrZeroInt, lazy => 1, builder => 1);
-has ast    => (is => 'rwp', isa => Any);
+has ast    => (is => 'rwp', isa => Any, lazy => 1, builder => 1);
 has pos    => (is => 'rwp', isa => PositiveOrZeroInt, default => sub { 0 });
 has whoami => (is => 'rwp', isa => Str, lazy => 1, builder => 1);
 has level  => (is => 'rwp', isa => PositiveOrZeroInt, default => sub { 0 });
@@ -55,7 +55,6 @@ sub BUILD {
     $self->max($self->pos);
     $self->pos
   };
-  $self->_parse
 }
 
 sub BUILDARGS {
@@ -93,7 +92,7 @@ sub _manageEvents {
   }
 }
 
-sub _parse {
+sub _build_ast {
   my ($self) = @_;
 
   #
@@ -115,7 +114,7 @@ sub _parse {
     $self->_resume($r)
   }
 
-  $self->_set_ast($self->_value($r))
+  $self->_value($r)
 }
 
 sub debugf {
