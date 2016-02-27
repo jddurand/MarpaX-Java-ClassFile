@@ -44,8 +44,6 @@ sub _constantPoolCount {
     }
     $lastPos = $inner->pos
   }
-  use Data::Scan::Printer;
-  dspp(\@managed);
 }
 
 with qw/MarpaX::Java::ClassFile::Common/;
