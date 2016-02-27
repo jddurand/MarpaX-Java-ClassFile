@@ -13,38 +13,35 @@ use Types::Standard -all;
 
 my $_data      = ${__PACKAGE__->section_data('bnf')};
 my $_grammar   = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf($_data)});
-my %_CALLBACKS = ('constantPoolCount$' => \&_constantPoolCount);
+my %_CALLBACKS = ('constantPoolCount$' => \&_constantPoolCountEvent);
 
-has callbacks => (is => 'ro', isa => HashRef[CodeRef], default => sub { \%_CALLBACKS });
+# --------------------------------------------------
+# What role MarpaX::Java::ClassFile::Common requires
+# --------------------------------------------------
+sub grammar   { $_grammar }
+sub callbacks { \%_CALLBACKS }
 
+# ------------
+# Our thingies
+# ------------
 sub BUILD {
   my ($self) = @_;
   $self->debugf('Starting');
 }
 
-sub grammar { $_grammar }
-
-sub _constantPoolCount {
+# ---------------
+# Event callbacks
+# ---------------
+sub _constantPoolCountEvent {
   my ($self, $r) = @_;
 
   my $constantPoolCount = $self->literalU2($r, 'constantPoolCount');
-  my $constantPoolSize = $constantPoolCount - 1; # Hey, spec says size is $count -1
-  $self->debugf('Asking for %d constant pool%s', $constantPoolSize, $constantPoolSize ? 's' : '');
-  my $constantPoolArray = MarpaX::Java::ClassFile::ConstantPoolArray->new
-    (
-     input => $self->input,
-     pos   => $self->pos,
-     level => $self->level + 1,
-     size  => $constantPoolSize
-    );
-  my $constantPoolArrayAst  = $constantPoolArray->ast;                # Inner value
-  my $constantPoolArraySize = $constantPoolArray->pos - $self->pos;   # Inner size
-  my $next_pos              = $self->pos + $constantPoolArraySize;    # Next position
-  #
-  # Setting optional last argument $next_pos handles the case of an empty array
-  #
-  $self->lexeme_read($r, 'MANAGED', $self->pos, $constantPoolArraySize, $constantPoolArrayAst, $next_pos);
-  $self->debugf('Constant pool over');
+  $self->executeInnerGrammar($r,
+                             'MarpaX::Java::ClassFile::ConstantPoolArray',
+                             #
+                             # Hey, spec says size of constant pool is $count -1
+                             #
+                             $constantPoolCount - 1)
 }
 
 with qw/MarpaX::Java::ClassFile::Common/;

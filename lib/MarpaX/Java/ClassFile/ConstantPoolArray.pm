@@ -12,45 +12,25 @@ use Types::Standard -all;
 
 my $_data      = ${__PACKAGE__->section_data('bnf')};
 my $_grammar   = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf($_data)});
-my %_CALLBACKS = ('utf8Length$' => sub {
-                    my ($self, $r) = @_;
-
-                    my $utf8Length = $self->literalU2($r, 'utf8Length');
-                    $self->lexeme_read($r,
-                                       'MANAGED',
-                                       $self->pos,
-                                       $utf8Length,
-                                       substr($self->input, $self->pos, $utf8Length)
-                                      ) if ($utf8Length > 0);
-                  },
-                  'constantLongInfo$' => sub {
-                    my ($self, $r) = @_;
-
-                    $self->_skipNextEntry(1);
-                  },
-                  'constantDoubleInfo$' => sub {
-                    my ($self, $r) = @_;
-
-                    $self->_skipNextEntry(1);
-                  },
-                  'cpInfo$' => sub {
-                    my ($self, $r) = @_;
-                    $self->_nbDone($self->_nbDone + 1);
-                    $self->debugf('Completed');
-                    if ($self->_skipNextEntry) {
-                      $self->debugf('Skipping next entry');
-                      $self->_nbDone($self->_nbDone + 1);
-                      $self->_skipNextEntry(0)
-                    }
-                    $self->max($self->pos) if ($self->_nbDone >= $self->size); # Set the max position so that parsing end
-                  }
+my %_CALLBACKS = ('utf8Length$'         => \&_utf8LengthEvent,
+                  'constantLongInfo$'   => \&_constantLongInfoEvent,
+                  'constantDoubleInfo$' => \&_constantDoubleInfoEvent,
+                  'cpInfo$'             => \&_cpInfoEvent
                  );
 
-has size            => (is => 'ro', isa => PositiveOrZeroInt,                    required => 1);
-has callbacks       => (is => 'ro', isa => HashRef[CodeRef],                     default => sub { \%_CALLBACKS });
-has _lastTag        => (is => 'rw', isa => PositiveOrZeroInt,                    default => sub { 0 });  # Tag with value 0 does not exist -;
-has _nbDone         => (is => 'rw', isa => PositiveOrZeroInt,                    default => sub { 0 });
-has _skipNextEntry  => (is => 'rw', isa => Bool,                                 default => sub { 0 });
+# --------------------------------------------------
+# What role MarpaX::Java::ClassFile::Common requires
+# --------------------------------------------------
+sub grammar   { $_grammar }
+sub callbacks { \%_CALLBACKS }
+
+# ------------
+# Our thingies
+# ------------
+has size            => (is => 'ro', isa => PositiveOrZeroInt, required => 1);
+has _lastTag        => (is => 'rw', isa => PositiveOrZeroInt, default => sub { 0 });  # Tag with value 0 does not exist -;
+has _nbDone         => (is => 'rw', isa => PositiveOrZeroInt, default => sub { 0 });
+has _skipNextEntry  => (is => 'rw', isa => Bool,              default => sub { 0 });
 
 sub BUILD {
   my ($self) = @_;
@@ -58,8 +38,48 @@ sub BUILD {
   $self->ast([]) if (! $self->size)
 }
 
-sub grammar { $_grammar }
+# ---------------
+# Event callbacks
+# ---------------
+sub _utf8LengthEvent {
+  my ($self, $r) = @_;
 
+  my $utf8Length = $self->literalU2($r, 'utf8Length');
+  $self->lexeme_read($r,
+                     'MANAGED',
+                     $self->pos,
+                     $utf8Length,
+                     substr($self->input, $self->pos, $utf8Length)
+                    ) if ($utf8Length > 0);
+}
+
+sub _constantLongInfoEvent {
+  my ($self, $r) = @_;
+
+  $self->_skipNextEntry(1);
+}
+
+sub _constantDoubleInfoEvent {
+  my ($self, $r) = @_;
+
+  $self->_skipNextEntry(1);
+}
+
+sub _cpInfoEvent {
+  my ($self, $r) = @_;
+  $self->_nbDone($self->_nbDone + 1);
+  $self->debugf('Completed');
+  if ($self->_skipNextEntry) {
+    $self->debugf('Skipping next entry');
+    $self->_nbDone($self->_nbDone + 1);
+    $self->_skipNextEntry(0)
+  }
+  $self->max($self->pos) if ($self->_nbDone >= $self->size); # Set the max position so that parsing end
+}
+
+# --------------------
+# Our grammar actions
+# --------------------
 my %_ARG2HASH =
   (
    CONSTANT_Class_info              => [qw/name_index/],
@@ -107,6 +127,9 @@ sub _constantInvokeDynamic          { $_[0]->_arg2hash('CONSTANT_InvokeDynamic_i
 
 with qw/MarpaX::Java::ClassFile::Common/;
 
+# ------------------
+# Role modifications
+# ------------------
 around whoami => sub {
   my ($orig, $self, @args) = @_;
 
