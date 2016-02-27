@@ -31,13 +31,14 @@ sub _constantPoolCount {
   my ($self, $r) = @_;
 
   my $constantPoolCount = $self->literalU2($r, 'constantPoolCount');
-  $self->debugf('Asking for constant pool');
+  my $constantPoolSize = $constantPoolCount - 1; # Hey, spec says size is $count -1
+  $self->debugf('Asking for %d constant pool%s', $constantPoolSize, $constantPoolSize ? 's' : '');
   my $constantPoolArray = MarpaX::Java::ClassFile::ConstantPoolArray->new
     (
      input => $self->input,
      pos   => $self->pos,
      level => $self->level + 1,
-     size  => $constantPoolCount - 1 # Hey, spec says size is $count -1
+     size  => $constantPoolSize
     );
   my $constantPoolArrayAst  = $constantPoolArray->ast;                # Inner value
   my $constantPoolArraySize = $constantPoolArray->pos - $self->pos;   # Inner size
@@ -69,23 +70,23 @@ ClassFile ::=
              interfacesCount
              interfaces
              fieldsCount
-#             fields
+#             fieldsArray
 #             methods_count
 #             methods
 #             attributes_count
 #             attributes
-magic              ::= U4
-minorVersion       ::= U2
-majorVersion       ::= U2
-constantPoolCount  ::= U2
-constantPoolArray  ::= MANAGED
-accessFlags        ::= U2
-thisClass          ::= U2
-superClass         ::= U2
-interfacesCount    ::= U2
-interfaces         ::= U2
-fieldsCount        ::= U2
-#fields              ::= managed
+magic              ::= U4          action => u4
+minorVersion       ::= U2          action => u2
+majorVersion       ::= U2          action => u2
+constantPoolCount  ::= U2          action => u2
+constantPoolArray  ::= MANAGED     action => ::first
+accessFlags        ::= U2          action => u2
+thisClass          ::= U2          action => u2
+superClass         ::= U2          action => u2
+interfacesCount    ::= U2          action => u2
+interfaces         ::= U2          action => u2
+fieldsCount        ::= U2          action => u2
+#fieldsArray        ::= MANAGED     action => ::first
 #methods_count       ::= u2
 #methods             ::= managed
 #attributes_count    ::= u2
