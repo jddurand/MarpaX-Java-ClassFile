@@ -149,21 +149,21 @@ cpInfo ::=
 # Note: a single byte is endianness independant, this is why it is ok
 # to write it in the \x{} form here
 #
-constantClassInfo              ::= ([\x{07}]) u2                   action => _constantClassInfo
-constantFieldrefInfo           ::= ([\x{09}]) u2 u2                action => _constantFieldrefInfo
-constantMethodrefInfo          ::= ([\x{0a}]) u2 u2                action => _constantMethodrefInfo
-constantInterfaceMethodrefInfo ::= ([\x{0b}]) u2 u2                action => _constantInterfaceMethodrefInfo
-constantStringInfo             ::= ([\x{08}]) u2                   action => _constantStringInfo
+constantClassInfo              ::= ([\x{07}]) U2                   action => _constantClassInfo
+constantFieldrefInfo           ::= ([\x{09}]) U2 U2                action => _constantFieldrefInfo
+constantMethodrefInfo          ::= ([\x{0a}]) U2 U2                action => _constantMethodrefInfo
+constantInterfaceMethodrefInfo ::= ([\x{0b}]) U2 U2                action => _constantInterfaceMethodrefInfo
+constantStringInfo             ::= ([\x{08}]) U2                   action => _constantStringInfo
 constantIntegerInfo            ::= ([\x{03}]) integerBytes         action => _constantIntegerInfo
 constantFloatInfo              ::= ([\x{04}]) floatBytes           action => _constantFloatInfo
 constantLongInfo               ::= ([\x{05}]) longBytes            action => _constantLongInfo
 constantDoubleInfo             ::= ([\x{06}]) doubleBytes          action => _constantDoubleInfo
-constantNameAndTypeInfo        ::= ([\x{0c}]) u2 u2                action => _constantNameAndTypeInfo
+constantNameAndTypeInfo        ::= ([\x{0c}]) U2 U2                action => _constantNameAndTypeInfo
 constantUtf8Info               ::= (EMPTY_UTF8)                    action => _constantUtf8Info_empty
                                  | ([\x{01}]) utf8Length utf8Bytes action => _constantUtf8Info
-constantMethodHandleInfo       ::= ([\x{0f}]) u1 u2                action => _constantMethodHandleInfo
-constantMethodTypeInfo         ::= ([\x{10}]) u2                   action => _constantMethodType
-constantInvokeDynamicInfo      ::= ([\x{12}]) u2 u2                action => _constantInvokeDynamic
+constantMethodHandleInfo       ::= ([\x{0f}]) U1 U2                action => _constantMethodHandleInfo
+constantMethodTypeInfo         ::= ([\x{10}]) U2                   action => _constantMethodType
+constantInvokeDynamicInfo      ::= ([\x{12}]) U2 U2                action => _constantInvokeDynamic
 
 integerBytes               ::= U4      action => integer
 floatBytes                 ::= U4      action => float
