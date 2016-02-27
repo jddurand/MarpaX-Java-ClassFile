@@ -1,30 +1,66 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::ConstantPool;
+package MarpaX::Java::ClassFile::ConstantPoolArray;
 use Moo;
 
 use Data::Section -setup;
 use Marpa::R2;
+use Types::Common::Numeric -all;
 use Types::Standard -all;
 
 my $_data      = ${__PACKAGE__->section_data('bnf')};
-my %_CALLBACKS = ('utf8Length$' => \&_utf8Length);
+my %_CALLBACKS = ('utf8Length$' => sub {
+                    my ($self, $r) = @_;
 
-has grammar   => (is => 'ro', isa => InstanceOf['Marpa::R2::Scanless::G'], lazy => 1, builder => 1);
-has callbacks => (is => 'ro', isa => HashRef[CodeRef], default => sub { \%_CALLBACKS });
+                    my $utf8Length = $self->literalU2($r, 'utf8Length');
+                    $self->lexeme_read($r,
+                                       'MANAGED',
+                                       $self->pos,
+                                       $utf8Length,
+                                       substr($self->input, $self->pos, $utf8Length)
+                                      ) if ($utf8Length > 0);
+                  },
+                  'constantLongInfo$' => sub {
+                    my ($self, $r) = @_;
+
+                    $self->_skipNextEntry(1);
+                  },
+                  'constantDoubleInfo$' => sub {
+                    my ($self, $r) = @_;
+
+                    $self->_skipNextEntry(1);
+                  },
+                  'cpInfo$' => sub {
+                    my ($self, $r) = @_;
+                    $self->_nbDone($self->_nbDone + 1);
+                    $self->debugf('Completed');
+                    if ($self->_skipNextEntry) {
+                      $self->debugf('Skipping next entry');
+                      $self->_nbDone($self->_nbDone + 1);
+                      $self->_skipNextEntry(0)
+                    }
+                    $self->max($self->pos) if ($self->_nbDone >= $self->size); # Set the max position so that parsing end
+                  }
+                 );
+
+has size            => (is => 'ro', isa => PositiveOrZeroInt,                    required => 1);
+has grammar         => (is => 'ro', isa => InstanceOf['Marpa::R2::Scanless::G'], lazy => 1, builder => 1);
+has callbacks       => (is => 'ro', isa => HashRef[CodeRef],                     default => sub { \%_CALLBACKS });
+has _lastTag        => (is => 'rw', isa => PositiveOrZeroInt,                    default => sub { 0 });  # Tag with value 0 does not exist -;
+has _nbDone         => (is => 'rw', isa => PositiveOrZeroInt,                    default => sub { 0 });
+has _skipNextEntry  => (is => 'rw', isa => Bool,                                 default => sub { 0 });
+
+sub BUILD {
+  my ($self) = @_;
+  $self->debugf('Starting');
+  $self->ast([]) if (! $self->size)
+}
 
 sub _build_grammar {
   my ($self) = @_;
 
-  Marpa::R2::Scanless::G->new({bless_package => 'ConstantPool', source => \__PACKAGE__->bnf($_data)})
-}
-
-sub _utf8Length {
-  my ($self, $r) = @_;
-
-  my $utf8Length = $self->literalU2($r, 'utf8Length');
-  $self->lexeme_read($r, 'MANAGED', $self->pos, $utf8Length, substr($self->input, $self->pos, $utf8Length)) if ($utf8Length > 0);
+  Marpa::R2::Scanless::G->new({bless_package => $self->whoami, source => \__PACKAGE__->bnf($_data)})
 }
 
 my %_ARG2HASH =
@@ -74,26 +110,41 @@ sub _constantInvokeDynamic          { $_[0]->_arg2hash('CONSTANT_InvokeDynamic_i
 
 with qw/MarpaX::Java::ClassFile::Common/;
 
+around whoami => sub {
+  my ($orig, $self, @args) = @_;
+
+  my $whoami = $self->$orig(@args);
+  #
+  # Append the array indice, eventually
+  #
+  $self->_nbDone ? join('', $whoami, '[', $self->_nbDone, '/', $self->size, ']') : $whoami
+};
+
 1;
 
 __DATA__
 __[ bnf ]__
-event 'utf8Length$' = completed utf8Length
+event 'cpInfo$' = completed cpInfo
+event 'utf8Length$'         = completed utf8Length
+event 'constantLongInfo$'   = completed constantLongInfo
+event 'constantDoubleInfo$' = completed constantDoubleInfo
+
+cpInfoArray ::= cpInfo*                                            action => [values]
 cpInfo ::=
-    constantClassInfo                       action => ::first
-  | constantFieldrefInfo                       action => ::first
-  | constantMethodrefInfo                       action => ::first
-  | constantInterfaceMethodrefInfo                       action => ::first
-  | constantStringInfo                       action => ::first
-  | constantIntegerInfo                       action => ::first
-  | constantFloatInfo                       action => ::first
-  | constantLongInfo                       action => ::first
-  | constantDoubleInfo                       action => ::first
-  | constantNameAndTypeInfo                       action => ::first
-  | constantUtf8Info                       action => ::first
-  | constantMethodHandleInfo                       action => ::first
-  | constantMethodTypeInfo                       action => ::first
-  | constantInvokeDynamicInfo                       action => ::first
+    constantClassInfo                                              action => ::first
+  | constantFieldrefInfo                                           action => ::first
+  | constantMethodrefInfo                                          action => ::first
+  | constantInterfaceMethodrefInfo                                 action => ::first
+  | constantStringInfo                                             action => ::first
+  | constantIntegerInfo                                            action => ::first
+  | constantFloatInfo                                              action => ::first
+  | constantLongInfo                                               action => ::first
+  | constantDoubleInfo                                             action => ::first
+  | constantNameAndTypeInfo                                        action => ::first
+  | constantUtf8Info                                               action => ::first
+  | constantMethodHandleInfo                                       action => ::first
+  | constantMethodTypeInfo                                         action => ::first
+  | constantInvokeDynamicInfo                                      action => ::first
 #
 # Note: a single byte is endianness independant, this is why it is ok
 # to write it in the \x{} form here
