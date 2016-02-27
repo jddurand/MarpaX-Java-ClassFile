@@ -13,12 +13,13 @@ use Types::Standard -all;
 use Types::Encodings qw/Bytes/;
 use Try::Tiny;
 
-has input  => (is => 'ro',  isa => Bytes, required => 1);
-has max    => (is => 'rw', isa => PositiveOrZeroInt, lazy => 1, builder => 1);
-has ast    => (is => 'rwp', isa => Any, lazy => 1, builder => 1);
-has pos    => (is => 'rwp', isa => PositiveOrZeroInt, default => sub { 0 });
-has whoami => (is => 'rwp', isa => Str, lazy => 1, builder => 1);
-has level  => (is => 'rwp', isa => PositiveOrZeroInt, default => sub { 0 });
+has input      => (is => 'ro',  isa => Bytes,                 required => 1);
+has exhaustion => (is => 'ro',  isa => Enum[qw/event fatal/], default => sub { 'fatal' });
+has max        => (is => 'rw',  isa => PositiveOrZeroInt,     lazy => 1, builder => 1);
+has ast        => (is => 'rw',  isa => Any,                   lazy => 1, builder => 1);
+has pos        => (is => 'rwp', isa => PositiveOrZeroInt,     default => sub { 0 });
+has whoami     => (is => 'rwp', isa => Str,                   lazy => 1, builder => 1);
+has level      => (is => 'rwp', isa => PositiveOrZeroInt,     default => sub { 0 });
 
 my $MARPA_TRACE_FILE_HANDLE;
 my $MARPA_TRACE_BUFFER;
@@ -43,27 +44,6 @@ sub BEGIN {
     }
 }
 
-sub BUILD {
-  my ($self) = @_;
-  #
-  # Unless our consumer already have an event on exhaustion,
-  # we provide the default one
-  #
-  $self->callbacks->{'\'exhausted'} //= sub {
-    my ($self, $r) = @_;
-    $self->debugf('Setting max position to %s', $self->pos);
-    $self->max($self->pos);
-    $self->pos
-  };
-}
-
-sub BUILDARGS {
-  my ($class, @args) = @_;
-
-  unshift @args, 'input' if (@args % 2 == 1);
-  return { @args };
-}
-
 sub _build_max {
   my ($self) = @_;
 
@@ -85,7 +65,7 @@ sub _manageEvents {
   my @eventNames = map { $_->[0] } (@{$self->_events($r)});
   $self->tracef('Events: %s', \@eventNames);
   foreach (@eventNames) {
-    $self->debugf('--------- %s', $_);
+    $self->tracef('--------- %s', $_);
     my $callback = $self->callbacks->{$_};
     $self->_croak($r, "Unmanaged event $_") unless defined($callback);
     $self->$callback($r)
@@ -103,9 +83,8 @@ sub _build_ast {
 
   my $r = Marpa::R2::Scanless::R->new({trace_file_handle => $MARPA_TRACE_FILE_HANDLE,
                                        grammar => $self->grammar,
-                                       exhaustion => 'event',
-                                       trace_terminals => 1,
-                                       # trace_actions => 1
+                                       exhaustion => $self->exhaustion,
+                                       trace_terminals => $self->_logger->is_trace
                                       });
   $MarpaX::Java::ClassFile::Common::R = $r;
 
@@ -122,7 +101,7 @@ sub debugf {
 
   my $inputLength = length($self->input);
   my $nbcharacters = length("$inputLength");
-  $self->_logger->tracef("%s[%*s/%*s] %s: $format", '.' x $self->level, $nbcharacters, $self->pos, $nbcharacters, $self->max, $self->whoami, @arguments)
+  $self->_logger->debugf("%s[%*s/%*s] %s: $format", '.' x $self->level, $nbcharacters, $self->pos, $nbcharacters, $self->max, $self->whoami, @arguments)
 }
 
 sub tracef {
@@ -186,7 +165,10 @@ sub _value {
   };
   $self->_croak($r, 'Value reference is undefined') if (! defined($valueRef));
   my $value = ${$valueRef};
-  $self->tracef('Parse tree value is %s', $value);
+  #
+  # It is definitely an error to have an undefined value
+  #
+  $self->_croak($r, 'Value is undefined') if (! defined($value));
   $value
 }
 
@@ -211,11 +193,18 @@ sub _literal {
 }
 
 sub lexeme_read {
-  my ($self, $r, $lexeme_name, $lexeme_pos, $lexeme_length, $lexeme_value) = @_;
+  my ($self, $r, $lexeme_name, $lexeme_pos, $lexeme_length, $lexeme_value, $next_pos) = @_;
 
-  $self->tracef('$r->lexeme_read(name=\'%s\', pos=%s, length=%s, value=%s)', $lexeme_name, $lexeme_pos, $lexeme_length, $lexeme_value);
+  $self->tracef('$r->lexeme_read(name=\'%s\', pos=%s, length=%s, $value)', $lexeme_name, $lexeme_pos, $lexeme_length);
   try {
-    $self->_set_pos($r->lexeme_read($lexeme_name, $lexeme_pos, $lexeme_length, $lexeme_value)) || croak sprintf('lexeme_read failure for symbol %s at position %s, length %s', $lexeme_name, $lexeme_pos // 'undef', $lexeme_length // 'undef')
+    #
+    # Do the lexeme_read in any case
+    #
+    my $pos = $r->lexeme_read($lexeme_name, $lexeme_pos, $lexeme_length, $lexeme_value) || croak sprintf('lexeme_read failure for symbol %s at position %s, length %s', $lexeme_name, $lexeme_pos // 'undef', $lexeme_length // 'undef');
+    #
+    # And commit its return unless next position is forced
+    #
+    $self->_set_pos($next_pos // $pos)
   } catch {
     $self->_croak($r, $_)
   };
