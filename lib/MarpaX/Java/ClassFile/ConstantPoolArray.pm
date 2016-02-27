@@ -6,10 +6,12 @@ use Moo;
 
 use Data::Section -setup;
 use Marpa::R2;
+use MarpaX::Java::ClassFile::Common::BNF qw/bnf/;
 use Types::Common::Numeric -all;
 use Types::Standard -all;
 
 my $_data      = ${__PACKAGE__->section_data('bnf')};
+my $_grammar   = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf($_data)});
 my %_CALLBACKS = ('utf8Length$' => sub {
                     my ($self, $r) = @_;
 
@@ -45,7 +47,6 @@ my %_CALLBACKS = ('utf8Length$' => sub {
                  );
 
 has size            => (is => 'ro', isa => PositiveOrZeroInt,                    required => 1);
-has grammar         => (is => 'ro', isa => InstanceOf['Marpa::R2::Scanless::G'], lazy => 1, builder => 1);
 has callbacks       => (is => 'ro', isa => HashRef[CodeRef],                     default => sub { \%_CALLBACKS });
 has _lastTag        => (is => 'rw', isa => PositiveOrZeroInt,                    default => sub { 0 });  # Tag with value 0 does not exist -;
 has _nbDone         => (is => 'rw', isa => PositiveOrZeroInt,                    default => sub { 0 });
@@ -57,11 +58,7 @@ sub BUILD {
   $self->ast([]) if (! $self->size)
 }
 
-sub _build_grammar {
-  my ($self) = @_;
-
-  Marpa::R2::Scanless::G->new({bless_package => $self->whoami, source => \__PACKAGE__->bnf($_data)})
-}
+sub grammar { $_grammar }
 
 my %_ARG2HASH =
   (

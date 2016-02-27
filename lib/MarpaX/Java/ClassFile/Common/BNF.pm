@@ -2,8 +2,10 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Common::BNF;
-use Moo::Role;
 use Data::Section -setup;
+use Exporter 'import';
+
+our @EXPORT_OK = qw/bnf/;
 
 my $_bnf_top    = ${__PACKAGE__->section_data('bnf_top')};
 my $_bnf_bottom = ${__PACKAGE__->section_data('bnf_bottom')};

@@ -6,14 +6,15 @@ use Moo;
 
 use Data::Section -setup;
 use Marpa::R2;
+use MarpaX::Java::ClassFile::Common::BNF qw/bnf/;
 use MarpaX::Java::ClassFile::ConstantPoolArray;
 use Scalar::Util qw/blessed/;
 use Types::Standard -all;
 
 my $_data      = ${__PACKAGE__->section_data('bnf')};
+my $_grammar   = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf($_data)});
 my %_CALLBACKS = ('constantPoolCount$' => \&_constantPoolCount);
 
-has grammar   => (is => 'ro', isa => InstanceOf['Marpa::R2::Scanless::G'], lazy => 1, builder => 1);
 has callbacks => (is => 'ro', isa => HashRef[CodeRef], default => sub { \%_CALLBACKS });
 
 sub BUILD {
@@ -21,11 +22,7 @@ sub BUILD {
   $self->debugf('Starting');
 }
 
-sub _build_grammar {
-  my ($self) = @_;
-
-  Marpa::R2::Scanless::G->new({bless_package => $self->whoami, source => \__PACKAGE__->bnf($_data)})
-}
+sub grammar { $_grammar }
 
 sub _constantPoolCount {
   my ($self, $r) = @_;
