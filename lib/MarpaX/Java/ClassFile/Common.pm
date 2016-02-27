@@ -247,8 +247,9 @@ sub literalU3 {
   $u4
 }
 
-with 'MooX::Role::Logger';
-with 'MarpaX::Java::ClassFile::Actions';
+with qw/MooX::Role::Logger
+        MarpaX::Java::ClassFile::Common::Actions
+        MarpaX::Java::ClassFile::Common::BNF/;
 
 requires 'callbacks';
 requires 'grammar';

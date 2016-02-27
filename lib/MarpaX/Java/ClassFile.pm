@@ -7,6 +7,7 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::ConstantPool;
+use Scalar::Util qw/blessed/;
 use Types::Standard -all;
 
 my $_data      = ${__PACKAGE__->section_data('bnf')};
@@ -31,13 +32,23 @@ sub _constantPoolCount {
   my $lastPos = $self->pos;
   while (++$i <= $imax) {
     my $inner = MarpaX::Java::ClassFile::ConstantPool->new(input => $self->input, pos => $lastPos, level => $self->level + 1);
-    push(@managed, $inner->ast);
+    my $constantPool = $inner->ast;
+    push(@managed, $constantPool);
+    my $blessed = blessed($constantPool);
+    if ($blessed eq 'CONSTANT_Long_info' || $blessed eq 'CONSTANT_Double_info') {
+      #
+      # If a CONSTANT_Long_info or CONSTANT_Double_info structure is the item in the constant_pool table at index n, then the next usable item in the pool is located at index n+2. The constant_pool index n+1 must be valid but is considered unusable.
+      #
+      push(@managed, undef);
+      ++$i
+    }
     $lastPos = $inner->pos
   }
+  use Data::Scan::Printer;
+  dspp(\@managed);
 }
 
-with qw/MarpaX::Java::ClassFile::BNF
-        MarpaX::Java::ClassFile::Common/;
+with qw/MarpaX::Java::ClassFile::Common/;
 
 1;
 

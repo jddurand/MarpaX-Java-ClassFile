@@ -37,7 +37,20 @@ open(my $fh, '<', $file) || die "Cannot open $file, $!";
 binmode($fh);
 my $input = do { local $/; <$fh>};
 close($fh) || warn "Cannot close $file, $!";
-
+# hexdump($input);
 dspp(MarpaX::Java::ClassFile->new(input => $input)->output);
 
 exit(EXIT_SUCCESS);
+sub hexdump
+{
+    my $offset = 0;
+    foreach my $chunk (unpack "(a16)*", $_[0])
+    {
+        my $hex = unpack "H*", $chunk; # hexadecimal magic
+        $chunk =~ tr/ -~/./c;          # replace unprintables
+        $hex   =~ s/(.{1,8})/$1 /gs;   # insert spaces
+        printf "0x%08x (%05u)  %-*s %s\n",
+            $offset, $offset, 36, $hex, $chunk;
+        $offset += 16;
+    }
+  }

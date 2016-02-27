@@ -1,7 +1,7 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::BNF;
+package MarpaX::Java::ClassFile::Common::BNF;
 use Moo::Role;
 use Data::Section -setup;
 
@@ -12,7 +12,8 @@ my $_bnf_bottom = ${__PACKAGE__->section_data('bnf_bottom')};
 # Class method
 #
 sub bnf {
-  $_bnf_top . $_[1] . $_bnf_bottom
+  my ($class, $bnf) = @_;
+  join('', $_bnf_top, $bnf, $_bnf_bottom)
 }
 
 1;
@@ -31,7 +32,7 @@ __[ bnf_bottom ]__
 u1      ::= U1                 action => u1
 u2      ::= U2                 action => u2
 u4      ::= U4                 action => u4
-managed ::= MANAGED
+managed ::= MANAGED            action => ::first
 
 # ----------------
 # Internal Lexemes
