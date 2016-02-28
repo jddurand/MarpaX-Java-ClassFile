@@ -1,7 +1,8 @@
 Changelog for MarpaX-Java-ClassFile
 
-0.001 2016-02-28T09:49:47
+0.001 2016-02-28T09:50:41
  [Jean-Damien Durand <jeandamiendurand@free.fr>]
+ - Changes,META.json,README.pod: for first release
  - Java/ClassFile.pm: SYNPOSIS -> SYNOPSIS
  - Java/ClassFile.pm: put a NOTES section in POD
  - lib: General POD fixes
