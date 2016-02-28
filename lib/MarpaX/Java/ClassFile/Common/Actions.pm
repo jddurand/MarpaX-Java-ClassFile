@@ -2,6 +2,13 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Common::Actions;
+
+# ABSTRACT: Grammar actions role for .class file parsing
+
+# VERSION
+
+# AUTHORITY
+
 use Moo::Role;
 #
 # This package is part of the core of the engine. So it is optimized

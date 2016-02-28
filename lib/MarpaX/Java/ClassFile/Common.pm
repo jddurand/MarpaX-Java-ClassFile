@@ -2,6 +2,13 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Common;
+
+# ABSTRACT: Parsing engine role for .class file parsing
+
+# VERSION
+
+# AUTHORITY
+
 use Moo::Role;
 
 use Carp qw/croak/;
