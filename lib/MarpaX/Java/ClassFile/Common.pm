@@ -104,6 +104,9 @@ sub _build_ast {
   #
   local $MarpaX::Java::ClassFile::Common::IS_TRACE    = $self->_logger->is_trace;
   local $MarpaX::Java::ClassFile::Common::IS_DEBUG    = $self->_logger->is_debug;
+  local $MarpaX::Java::ClassFile::Common::IS_INFO     = $self->_logger->is_info;
+  local $MarpaX::Java::ClassFile::Common::IS_WARN     = $self->_logger->is_warn;
+  local $MarpaX::Java::ClassFile::Common::IS_ERROR    = $self->_logger->is_error;
 
   my $r = Marpa::R2::Scanless::R->new({trace_file_handle => $MARPA_TRACE_FILE_HANDLE,
                                        grammar => $self->grammar,
@@ -120,24 +123,47 @@ sub _build_ast {
   $self->_value($r)
 }
 
+sub _dolog {
+  my ($self, $method, $format, @arguments) = @_;
+
+  my $inputLength = length($self->input);
+  my $nbcharacters = length("$inputLength");
+  $self->_logger->$method("%s[%*s/%*s] %s: $format", '.' x $self->level, $nbcharacters, $self->pos, $nbcharacters, $self->max, $self->whoami, @arguments)
+}
+
 sub debugf {
   my ($self, $format, @arguments) = @_;
 
   return unless $MarpaX::Java::ClassFile::Common::IS_DEBUG;
+  $self->_dolog('debugf', $format, @arguments);
+}
 
-  my $inputLength = length($self->input);
-  my $nbcharacters = length("$inputLength");
-  $self->_logger->debugf("%s[%*s/%*s] %s: $format", '.' x $self->level, $nbcharacters, $self->pos, $nbcharacters, $self->max, $self->whoami, @arguments)
+sub infof {
+  my ($self, $format, @arguments) = @_;
+
+  return unless $MarpaX::Java::ClassFile::Common::IS_INFO;
+  $self->_dolog('infof', $format, @arguments);
+}
+
+sub errorf {
+  my ($self, $format, @arguments) = @_;
+
+  return unless $MarpaX::Java::ClassFile::Common::IS_ERROR;
+  $self->_dolog('errorf', $format, @arguments);
+}
+
+sub warnf {
+  my ($self, $format, @arguments) = @_;
+
+  return unless $MarpaX::Java::ClassFile::Common::IS_WARN;
+  $self->_dolog('warnf', $format, @arguments);
 }
 
 sub tracef {
   my ($self, $format, @arguments) = @_;
 
   return unless $MarpaX::Java::ClassFile::Common::IS_TRACE;
-
-  my $inputLength = length($self->input);
-  my $nbcharacters = length("$inputLength");
-  $self->_logger->tracef("%s[%*s/%*s] %s: $format", '.' x $self->level, $nbcharacters, $self->pos, $nbcharacters, $self->max, $self->whoami, @arguments)
+  $self->_dolog('tracef', $format, @arguments);
 }
 
 sub _croak {
