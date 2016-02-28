@@ -10,7 +10,11 @@ package MarpaX::Java::ClassFile::Common;
 # AUTHORITY
 
 use Moo::Role;
-
+#
+# Note: This package is part of the core of the engine. Therefore it
+# optimized except the logging (when you trace this package, I assume
+# you are not interested in micro-optimizations)
+#
 use Carp qw/croak/;
 use MarpaX::Java::ClassFile::MarpaTrace;
 use Data::Section -setup;
@@ -59,70 +63,194 @@ sub BEGIN {
 }
 
 sub _build_max {
-  my ($self) = @_;
-
-  length($self->input)
+  # my ($self) = @_;
+  length($_[0]->input)
 }
 
 sub _whoami {
-  my ($self, $class) = @_;
-
-  (split(/::/, $class // blessed($self)))[-1]
+  # my ($self, $class) = @_;
+  (split(/::/, $_[1] // blessed($_[0])))[-1]
 }
 
 sub _build_whoami {
-  my ($self) = @_;
-
-  $self->_whoami
+  # my ($self) = @_;
+  $_[0]->_whoami
 }
 
 # -----------------------
 # General events dispatch
 # -----------------------
 sub _manageEvents {
-  my ($self) = @_;
+  # my ($self) = @_;
 
-  my @eventNames = map { $_->[0] } (@{$self->_events});
-  $self->tracef('Events: %s', \@eventNames);
+  my @eventNames = map { $_->[0] } (@{$_[0]->_events});
+  $_[0]->tracef('Events: %s', \@eventNames);
   foreach (@eventNames) {
-    $self->tracef('--------- %s', $_);
-    my $callback = $self->callbacks->{$_};
-    $self->_croak("Unmanaged event $_") unless defined($callback);
-    $self->$callback
+    $_[0]->tracef('--------- %s', $_);
+    my $callback = $_[0]->callbacks->{$_};
+    $_[0]->_croak("Unmanaged event $_") unless defined($callback);
+    $_[0]->$callback
   }
 }
 
 sub _build_r {
-  my ($self) = @_;
+  # my ($self) = @_;
   Marpa::R2::Scanless::R->new({
                                trace_file_handle => $MARPA_TRACE_FILE_HANDLE,
-                               grammar           => $self->grammar,
-                               exhaustion        => $self->exhaustion,
-                               trace_terminals   => $self->_logger->is_trace
+                               grammar           => $_[0]->grammar,
+                               exhaustion        => $_[0]->exhaustion,
+                               trace_terminals   => $_[0]->_logger->is_trace
                               })
 }
 
 sub _build_ast {
-  my ($self) = @_;
+  # my ($self) = @_;
   #
   # For our marpa tied logger
   #
-  local $MarpaX::Java::ClassFile::Common::SELF = $self;
+  local $MarpaX::Java::ClassFile::Common::SELF = $_[0];
   #
   # It is far quicker to maintain ourself booleans for trace and debug mode
   # rather than letting logger's tracef() and debugf() handle the request
   #
-  local $MarpaX::Java::ClassFile::Common::IS_TRACE    = $self->_logger->is_trace;
-  local $MarpaX::Java::ClassFile::Common::IS_DEBUG    = $self->_logger->is_debug;
-  local $MarpaX::Java::ClassFile::Common::IS_INFO     = $self->_logger->is_info;
-  local $MarpaX::Java::ClassFile::Common::IS_WARN     = $self->_logger->is_warn;
-  local $MarpaX::Java::ClassFile::Common::IS_ERROR    = $self->_logger->is_error;
+  local $MarpaX::Java::ClassFile::Common::IS_TRACE    = $_[0]->_logger->is_trace;
+  local $MarpaX::Java::ClassFile::Common::IS_DEBUG    = $_[0]->_logger->is_debug;
+  local $MarpaX::Java::ClassFile::Common::IS_INFO     = $_[0]->_logger->is_info;
+  local $MarpaX::Java::ClassFile::Common::IS_WARN     = $_[0]->_logger->is_warn;
+  local $MarpaX::Java::ClassFile::Common::IS_ERROR    = $_[0]->_logger->is_error;
 
-  $self->_read;
-  while ($self->pos < $self->max) { $self->_resume }
-  $self->_value
+  $_[0]->_read;
+  while ($_[0]->pos < $_[0]->max) { $_[0]->_resume }
+  $_[0]->_value
 }
 
+sub _read {
+  # my ($self) = @_;
+
+  $_[0]->tracef('read($inputRef, pos=%s)', $_[0]->pos);
+  eval {
+    $_[0]->_set_pos($_[0]->r->read(\$_[0]->input, $_[0]->pos))
+  };
+  $_[0]->_croak($@) if ($@);
+  $_[0]->_manageEvents
+}
+
+sub _events {
+  # my ($self) = @_;
+
+  $_[0]->tracef('events()');
+  my $eventsRef = eval { $_[0]->r->events };
+  $_[0]->_croak($@) if ($@);
+  $eventsRef
+}
+
+sub _value {
+  # my ($self) = @_;
+
+  $_[0]->tracef('ambiguity_metric()');
+  my $ambiguity_metric = eval { $_[0]->r->ambiguity_metric() };
+  $_[0]->_croak($@) if ($@);
+  $_[0]->_croak('Ambiguity metric is undefined') if (! defined($ambiguity_metric));
+  $_[0]->_croak('Parse is ambiguous') if ($ambiguity_metric != 1);
+
+  $_[0]->tracef('value($_[0])');
+  my $valueRef = eval { $_[0]->r->value($_[0]) };
+  $_[0]->_croak($@) if ($@);
+  $_[0]->_croak('Value reference is undefined') if (! defined($valueRef));
+
+  my $value = ${$valueRef};
+  $_[0]->_croak('Value is undefined') if (! defined($value));
+
+  $value
+}
+
+sub _resume {
+  # my ($self) = @_;
+
+  $_[0]->tracef('resume(%d)', $_[0]->pos);
+  eval { $_[0]->_set_pos($_[0]->r->resume($_[0]->pos)) };
+  $_[0]->_croak($@) if ($@);
+  $_[0]->_manageEvents
+}
+
+sub _literal {
+  # my ($self, $symbol) = @_;
+
+  $_[0]->tracef('last_completed_span(\'%s\')', $_[1]);
+  my @span = $_[0]->r->last_completed_span($_[1]);
+  $_[0]->_croak("No symbol instance for the symbol $_[1]") if (! @span);
+  $_[0]->tracef('literal(%s, %s)', $span[0], $span[1]);
+  $_[0]->r->literal(@span)
+}
+
+sub lexeme_read {
+  # my ($self, $lexeme_name, $lexeme_length, $lexeme_value) = @_;
+
+  #
+  # If the length is zero, force the read to be at position 0.
+  # We will anyway explicitely re-set position and it works
+  # because we always do $self->r->resume($self->pos) -;
+  #
+  my $_lexeme_length = $_[2] || 1;
+  my $_lexeme_pos    = $_[2] ? $_[0]->pos : 0;
+  $_[0]->tracef('lexeme_read(\'%s\', %s, %s, $value)', $_[1], $_lexeme_pos, $_lexeme_length);
+  my $pos;
+  eval {
+    #
+    # Do the lexeme_read in any case
+    #
+    $pos = $_[0]->r->lexeme_read($_[1], $_lexeme_pos, $_lexeme_length, $_[3]) || croak sprintf('lexeme_read failure for symbol %s at position %s, length %s', $_[1], $_lexeme_pos, $_lexeme_length);
+    #
+    # And commit its return position unless length is 0
+    #
+    $_[0]->_set_pos($pos) if ($_[2])
+  };
+  $_[0]->_croak($@) if ($@);
+  $_[0]->_manageEvents
+}
+
+sub literalU1 {
+  # my ($self, $symbol) = @_;
+
+  my $u1 = $_[0]->u1($_[0]->_literal($_[1] //= 'u1'));
+  $_[0]->tracef('Got %s=%s', $_[1], $u1);
+  $u1
+}
+
+sub literalU2 {
+  # my ($self, $_[1]) = @_;
+
+  my $u2 = $_[0]->u2($_[0]->_literal($_[1] //= 'u2'));
+  $_[0]->tracef('Got %s=%s', $_[1], $u2);
+  $u2
+}
+
+sub literalU4 {
+  # my ($self, $symbol) = @_;
+
+  my $u4 = $_[0]->u4($_[0]->_literal($_[1] //= 'u4'));
+  $_[0]->tracef('Got %s=%s', $_[1], $u4);
+  $u4
+}
+
+#
+# I let this one not optimized, it is not called very often
+#
+sub executeInnerGrammar {
+  my ($self, $innerGrammarClass, $lexeme_name, %args) = @_;
+
+  my $whoisit = $self->_whoami($innerGrammarClass);
+  $self->debugf('Asking for %s', $whoisit);
+  my $inner = $innerGrammarClass->new(input => $self->input, pos => $self->pos, level => $self->level + 1, %args);
+  my $value = $inner->ast;    # It is very important to call ast BEFORE calling pos
+  my $length = $inner->pos - $self->pos;
+  $self->lexeme_read($lexeme_name, $length, $value);
+  $self->debugf('%s over', $whoisit)
+}
+
+#
+# Logging/croak stuff
+#
 sub _dolog {
   my ($self, $method, $format, @arguments) = @_;
 
@@ -177,147 +305,6 @@ sub _croak {
   #
   $msg .= "\nContext:\n" . $self->r->show_progress if $self->_has_r;
   croak($msg)
-}
-
-sub _read {
-  my ($self) = @_;
-
-  $self->tracef('read($inputRef, pos=%s)', $self->pos);
-  try {
-    $self->_set_pos($self->r->read(\$self->input, $self->pos))
-  } catch {
-    $self->_croak($_)
-  };
-  $self->_manageEvents
-}
-
-sub _events {
-  my ($self) = @_;
-
-  $self->tracef('events()');
-  my $eventsRef;
-  try {
-    $eventsRef = $self->r->events
-  } catch {
-    $self->_croak($_)
-  };
-  $eventsRef
-}
-
-sub _value {
-  my ($self) = @_;
-
-  my $ambiguity_metric;
-  $self->tracef('ambiguity_metric()');
-  try {
-    $ambiguity_metric = $self->r->ambiguity_metric()
-  } catch {
-    $self->_croak($_)
-  };
-  if (! defined($ambiguity_metric)) {
-    $self->_croak('Ambiguity metric is undefined')
-  } elsif ($ambiguity_metric != 1) {
-    $self->_croak('Parse is ambiguous')
-  }
-
-  $self->tracef('value($self)');
-  my $valueRef;
-  try {
-    $valueRef = $self->r->value($self)
-  } catch {
-    $self->_croak($_)
-  };
-  $self->_croak('Value reference is undefined') if (! defined($valueRef));
-  my $value = ${$valueRef};
-  #
-  # It is definitely an error to have an undefined value
-  #
-  $self->_croak('Value is undefined') if (! defined($value));
-  $value
-}
-
-sub _resume {
-  my ($self) = @_;
-
-  $self->tracef('resume(%d)', $self->pos);
-  try {
-    $self->_set_pos($self->r->resume($self->pos))
-  } catch {
-    $self->_croak($_)
-  };
-  $self->_manageEvents
-}
-
-sub _literal {
-  my ($self, $symbol) = @_;
-
-  $self->tracef('last_completed_span(\'%s\')', $symbol);
-  my @span = $self->r->last_completed_span($symbol);
-  $self->_croak("No symbol instance for the symbol $symbol") if (! @span);
-  $self->tracef('literal(%s, %s)', $span[0], $span[1]);
-  $self->r->literal(@span)
-}
-
-sub lexeme_read {
-  my ($self, $lexeme_name, $lexeme_length, $lexeme_value) = @_;
-
-  #
-  # If the length is zero, force the read to be at position 0.
-  # We will anyway explicitely re-set position and it works
-  # because we always do $self->r->resume($self->pos) -;
-  #
-  my $_lexeme_length = $lexeme_length || 1;
-  my $_lexeme_pos    = $lexeme_length ? $self->pos : 0;
-  $self->tracef('lexeme_read(\'%s\', %s, %s, $value)', $lexeme_name, $_lexeme_pos, $_lexeme_length);
-  try {
-    #
-    # Do the lexeme_read in any case
-    #
-    my $pos = $self->r->lexeme_read($lexeme_name, $_lexeme_pos, $_lexeme_length, $lexeme_value) || croak sprintf('lexeme_read failure for symbol %s at position %s, length %s', $lexeme_name, $_lexeme_pos, $_lexeme_length);
-    #
-    # And commit its return position unless length is 0
-    #
-    $self->_set_pos($pos) if ($lexeme_length)
-  } catch {
-    $self->_croak($_)
-  };
-  $self->_manageEvents
-}
-
-sub literalU1 {
-  my ($self, $symbol) = @_;
-
-  my $u1 = $self->u1($self->_literal($symbol //= 'u1'));
-  $self->tracef('Got %s=%s', $symbol, $u1);
-  $u1
-}
-
-sub literalU2 {
-  my ($self, $symbol) = @_;
-
-  my $u2 = $self->u2($self->_literal($symbol //= 'u2'));
-  $self->tracef('Got %s=%s', $symbol, $u2);
-  $u2
-}
-
-sub literalU4 {
-  my ($self, $symbol) = @_;
-
-  my $u4 = $self->u4($self->_literal($symbol //= 'u4'));
-  $self->tracef('Got %s=%s', $symbol, $u4);
-  $u4
-}
-
-sub executeInnerGrammar {
-  my ($self, $innerGrammarClass, $lexeme_name, %args) = @_;
-
-  my $whoisit = $self->_whoami($innerGrammarClass);
-  $self->debugf('Asking for %s', $whoisit);
-  my $inner = $innerGrammarClass->new(input => $self->input, pos => $self->pos, level => $self->level + 1, %args);
-  my $value = $inner->ast;    # It is very important to call ast BEFORE calling pos
-  my $length = $inner->pos - $self->pos;
-  $self->lexeme_read($lexeme_name, $length, $value);
-  $self->debugf('%s over', $whoisit)
 }
 
 with qw/MooX::Role::Logger MarpaX::Java::ClassFile::Common::Actions/;
