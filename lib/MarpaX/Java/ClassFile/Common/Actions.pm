@@ -26,6 +26,12 @@ use constant {
   FLOAT_NEGATIVE_ONE => Math::BigFloat->new('-1'),
 };
 
+=head1 DESCRIPTION
+
+MarpaX::Java::ClassFile::Common::Actions is an internal class used by L<MarpaX::Java::ClassFile>, please refer to the later.
+
+=cut
+
 sub u1      { unpack('C', $_[1]) }
 sub u2      { unpack('n', $_[1]) }
 sub u4      { $_[0]->_quadraToVector($_[1], 1)->to_Dec }  # Ask for an unsigned value explicitely

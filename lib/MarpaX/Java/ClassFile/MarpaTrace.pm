@@ -12,6 +12,12 @@ use Class::Load qw/is_class_loaded/;
 
 # AUTHORITY
 
+=head1 DESCRIPTION
+
+MarpaX::Java::ClassFile::MarpaTrace is an internal class used by L<MarpaX::Java::ClassFile>, please refer to the later.
+
+=cut
+
 sub BEGIN {
   #
   ## Some Log implementation specificities

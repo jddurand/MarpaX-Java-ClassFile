@@ -17,6 +17,12 @@ use MarpaX::Java::ClassFile::Common::BNF qw/bnf/;
 use Types::Common::Numeric -all;
 use Types::Standard -all;
 
+=head1 DESCRIPTION
+
+MarpaX::Java::ClassFile::ConstantPoolArray is an internal class used by L<MarpaX::Java::ClassFile>, please refer to the later.
+
+=cut
+
 my $_data      = ${__PACKAGE__->section_data('bnf')};
 my $_grammar   = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf($_data)});
 my %_CALLBACKS = ('utf8Length$'         => \&_utf8LengthCallback,
@@ -53,7 +59,7 @@ sub _utf8LengthCallback {
   my ($self, $r) = @_;
 
   my $utf8Length = $self->literalU2($r);
-  my $utf8String = $utf8Length ? undef : substr($self->input, $self->pos, $utf8Length);
+  my $utf8String = $utf8Length ? substr($self->input, $self->pos, $utf8Length) : undef;
   $self->tracef('Modified UTF-8: %s', $utf8String);
   $self->lexeme_read($r, 'MANAGED', $utf8Length, $utf8String);  # Note: this lexeme_read() handles case of length 0
 }
@@ -189,10 +195,10 @@ constantMethodHandleInfo       ::= [\x{0f}] u1 u2                indice action =
 constantMethodTypeInfo         ::= [\x{10}] u2                   indice action =>  _constantMethodType
 constantInvokeDynamicInfo      ::= [\x{12}] u2 u2                indice action =>  _constantInvokeDynamic
 
-indice                     ::= managed action => ::first          # Because indices may be skipped we manage ourself its value
+indice                     ::= managed
 integerBytes               ::= U4      action => integer          # U4 and not u4
 floatBytes                 ::= U4      action => float            # U4 and not u4
 longBytes                  ::= U4 U4   action => long             # U4 and not u4
 doubleBytes                ::= U4 U4   action => double           # U4 and not u4
 utf8Length                 ::= u2
-utf8Bytes                  ::= managed action => utf8
+utf8Bytes                  ::= MANAGED action => utf8             # MANAGED and not managed

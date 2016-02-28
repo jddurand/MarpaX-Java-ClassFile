@@ -20,6 +20,12 @@ use MarpaX::Java::ClassFile::Common::BNF qw/bnf/;
 use Types::Common::Numeric -all;
 use Types::Standard -all;
 
+=head1 DESCRIPTION
+
+MarpaX::Java::ClassFile::MethodsArray is an internal class used by L<MarpaX::Java::ClassFile>, please refer to the later.
+
+=cut
+
 my $_data      = ${__PACKAGE__->section_data('bnf')};
 my $_grammar   = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf($_data)});
 my %_CALLBACKS = ('attributesCount$' => \&_attributesCountCallback,

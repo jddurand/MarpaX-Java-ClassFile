@@ -21,6 +21,71 @@ use MarpaX::Java::ClassFile::AttributesArray;
 use Scalar::Util qw/blessed/;
 use Types::Standard -all;
 
+=head1 DESCRIPTION
+
+MarpaX::Java::ClassFile is doing a parsing of a Java .class file, trying to stand as closed as possible to the binary format, with no Java specific interpretation except with the constant pool. From the grammar point of view, this mean that there is no interpretation of what is a descriptor, what is a signature, etc.
+
+Constant pool is a special case because the grammar imposes that every entry in it has a "type". Therefore the following entries in the constant pool at explicitely interpreted:
+
+=over Integer
+
+A per's scalar is returned.
+
+=over Float
+
+A Math::BigFloat object instance is returned.
+
+=over Long
+
+A per's scalar is returned.
+
+=over Double
+
+A Math::BigFloat object instance is returned.
+
+=over Utf8
+
+A per's scalar is returned.
+
+=back
+
+In addition, because a constant pool can skip its indices, and indice number is also returned for every entry.
+
+=head1 SYNOPSIS
+
+    use strict;
+    use warnings FATAL => 'all';
+    use MarpaX::Java::ClassFile;
+
+    my $file = '/path/to/some.class';
+    #
+    # It is the USER'S responsibility to make sure that the following handle
+    # is reading in binary format
+    #
+    open(my $fh, '<', $file) || die "Cannot open $file, $!";
+    binmode($fh);
+    my $input = do { local $/; <$fh>};
+    close($fh) || warn "Cannot close $file, $!";
+    my $binaryAst = MarpaX::Java::ClassFile->new(input => $input)->ast;
+
+=head1 CONSTRUCTOR OPTIONS
+
+=head2 input
+
+A scalar hosting a .class file content input. It is the responsibility of the user to make sure that this scalar contain only bytes, please refer to the SYNPOSIS section.
+
+=head1 SUBROUTINES/METHODS
+
+=head2 $class->new(input => Bytes)
+
+Instantiate a new MarpaX::Java::ClassFile object. Takes as parameter a required input.
+
+=head2 $self->ast(--> HashRef)
+
+Returns the AST of the .class file, with the less interpretation as possible. That is, for example, an integer that may be interpreted as a bytes mask is NOT interpreted. It is returned as-is: an integer.
+
+=cut
+
 my $_data = ${ __PACKAGE__->section_data('bnf') };
 my $_grammar
     = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_data) } );
@@ -42,7 +107,10 @@ sub callbacks { \%_CALLBACKS }
 # ------------
 # Our thingies
 # ------------
-sub BUILD { $_[0]->debugf('Starting') }
+sub BUILD {
+  my ($self) = @_;
+  $self->debugf('Starting')
+}
 
 # ---------------
 # Callback callbacks

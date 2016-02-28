@@ -12,6 +12,12 @@ package MarpaX::Java::ClassFile::Common::BNF;
 use Data::Section -setup;
 use Exporter 'import';
 
+=head1 DESCRIPTION
+
+MarpaX::Java::ClassFile::Common::BNF is an internal class used by L<MarpaX::Java::ClassFile>, please refer to the later.
+
+=cut
+
 our @EXPORT_OK = qw/bnf/;
 
 my $_bnf_top    = ${__PACKAGE__->section_data('bnf_top')};

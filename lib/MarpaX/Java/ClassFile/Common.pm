@@ -20,6 +20,12 @@ use Types::Standard -all;
 use Types::Encodings qw/Bytes/;
 use Try::Tiny;
 
+=head1 DESCRIPTION
+
+MarpaX::Java::ClassFile::Common is an internal class used by L<MarpaX::Java::ClassFile>, please refer to the later.
+
+=cut
+
 has input      => (is => 'ro',  isa => Bytes,                 required => 1);
 has exhaustion => (is => 'ro',  isa => Enum[qw/event fatal/], default => sub { 'fatal' });
 has max        => (is => 'rw',  isa => PositiveOrZeroInt,     lazy => 1, builder => 1);
