@@ -2,6 +2,13 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::ConstantPoolArray;
+
+# ABSTRACT: Java .class's cp_info parsing
+
+# VERSION
+
+# AUTHORITY
+
 use Moo;
 
 use Data::Section -setup;

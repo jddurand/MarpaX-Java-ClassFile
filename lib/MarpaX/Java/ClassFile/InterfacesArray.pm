@@ -2,6 +2,13 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::InterfacesArray;
+
+# ABSTRACT: Java .class's interfaces parsing
+
+# VERSION
+
+# AUTHORITY
+
 use Moo;
 
 use Data::Section -setup;

@@ -2,6 +2,13 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::AttributesArray;
+
+# ABSTRACT: Java .class's attribute_info parsing
+
+# VERSION
+
+# AUTHORITY
+
 use Moo;
 
 use Data::Section -setup;

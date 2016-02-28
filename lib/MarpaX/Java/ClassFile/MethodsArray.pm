@@ -2,6 +2,13 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::MethodsArray;
+
+# ABSTRACT: Java .class's method_info parsing
+
+# VERSION
+
+# AUTHORITY
+
 use Moo;
 #
 # Note: MethodsArray is simply a clone of FieldsArray -;

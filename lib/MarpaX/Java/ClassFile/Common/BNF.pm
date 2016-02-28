@@ -2,6 +2,13 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Common::BNF;
+
+# ABSTRACT: Provides common BNF top and header contents
+
+# VERSION
+
+# AUTHORITY
+
 use Data::Section -setup;
 use Exporter 'import';
 
