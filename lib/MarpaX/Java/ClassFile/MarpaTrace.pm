@@ -32,10 +32,15 @@ sub TIEHANDLE {
 sub PRINT {
   my $self = $MarpaX::Java::ClassFile::Common::SELF;
   #
-  # We do not want to be perturbed by automatic thingies coming from $\
+  # This is supported only if this localized variable is set
   #
-  local $\ = undef;
-  map { $self->tracef('%s', $_) } split(/\n/, join('', @_[1..$#_]));
+  if ($self) {
+    #
+    # We do not want to be perturbed by automatic thingies coming from $\
+    #
+    local $\ = undef;
+    map { $self->tracef('%s', $_) } split(/\n/, join('', @_[1..$#_]));
+  }
   1
 }
 

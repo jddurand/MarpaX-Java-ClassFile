@@ -52,12 +52,12 @@ sub BUILD {
 # Callback callbacks
 # ---------------
 sub _attributesCountCallback {
-  my ($self, $r) = @_;
-  $self->executeInnerGrammar($r, 'MarpaX::Java::ClassFile::AttributesArray', 'MANAGED', size => $self->literalU2($r))
+  my ($self) = @_;
+  $self->executeInnerGrammar('MarpaX::Java::ClassFile::AttributesArray', 'MANAGED', size => $self->literalU2)
 }
 
 sub _fieldInfoCallback {
-  my ($self, $r) = @_;
+  my ($self) = @_;
   $self->_nbDone($self->_nbDone + 1);
   $self->debugf('Completed');
   $self->max($self->pos) if ($self->_nbDone >= $self->size);

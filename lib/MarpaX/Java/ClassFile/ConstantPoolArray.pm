@@ -56,26 +56,26 @@ sub BUILD {
 # Callback callbacks
 # ---------------
 sub _utf8LengthCallback {
-  my ($self, $r) = @_;
+  my ($self) = @_;
 
-  my $utf8Length = $self->literalU2($r);
+  my $utf8Length = $self->literalU2;
   my $utf8String = $utf8Length ? substr($self->input, $self->pos, $utf8Length) : undef;
   $self->tracef('Modified UTF-8: %s', $utf8String);
-  $self->lexeme_read($r, 'MANAGED', $utf8Length, $utf8String);  # Note: this lexeme_read() handles case of length 0
+  $self->lexeme_read('MANAGED', $utf8Length, $utf8String);  # Note: this lexeme_read() handles case of length 0
 }
 
 sub _constantLongInfoCallback {
-  my ($self, $r) = @_;
+  my ($self) = @_;
   $self->_skipNextEntry(1);
 }
 
 sub _constantDoubleInfoCallback {
-  my ($self, $r) = @_;
+  my ($self) = @_;
   $self->_skipNextEntry(1);
 }
 
 sub _cpInfoCallback {
-  my ($self, $r) = @_;
+  my ($self) = @_;
   $self->_nbDone($self->_nbDone + 1);
   if ($self->_skipNextEntry) {
     $self->debugf('Skipping next entry');
@@ -86,8 +86,8 @@ sub _cpInfoCallback {
 }
 
 sub _indiceCallback {
-  my ($self, $r) = @_;
-  $self->lexeme_read($r, 'MANAGED', 0, $self->_nbDone + 1);
+  my ($self) = @_;
+  $self->lexeme_read('MANAGED', 0, $self->_nbDone + 1);
 }
 
 # --------------------

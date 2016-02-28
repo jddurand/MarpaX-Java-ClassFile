@@ -49,7 +49,7 @@ sub BUILD {
 # Callback callbacks
 # ---------------
 sub _u2Callback {
-  my ($self, $r) = @_;
+  my ($self) = @_;
   $self->_nbDone($self->_nbDone + 1);
   $self->debugf('Completed');
   $self->max($self->pos) if ($self->_nbDone >= $self->size);

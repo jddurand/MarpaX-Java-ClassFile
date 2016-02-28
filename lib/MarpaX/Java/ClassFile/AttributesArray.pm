@@ -51,16 +51,16 @@ sub BUILD {
 # Event callbacks
 # ---------------
 sub _attributeLengthEvent {
-  my ($self, $r) = @_;
+  my ($self) = @_;
 
-  my $attributeLength = $self->literalU4($r);                                 # Can be 0
-  my $bytes           = substr($self->input, $self->pos, $attributeLength);   # Ok when length is 0
-  my $value           = [ split('', $bytes) ];                                # Value is an array of u1
-  $self->lexeme_read($r, 'MANAGED', $attributeLength, $value);                # This lexeme_read() handles case of length 0
+  my $attributeLength = $self->literalU4;                                   # Can be 0
+  my $bytes           = substr($self->input, $self->pos, $attributeLength); # Ok when length is 0
+  my $value           = [ split('', $bytes) ];                              # Value is an array of u1
+  $self->lexeme_read('MANAGED', $attributeLength, $value);                  # This lexeme_read() handles case of length 0
 }
 
 sub _attributeInfoEvent {
-  my ($self, $r) = @_;
+  my ($self) = @_;
   $self->_nbDone($self->_nbDone + 1);
   $self->debugf('Completed');
   $self->max($self->pos) if ($self->_nbDone >= $self->size);
