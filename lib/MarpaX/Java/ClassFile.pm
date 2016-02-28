@@ -23,33 +23,7 @@ use Types::Standard -all;
 
 =head1 DESCRIPTION
 
-MarpaX::Java::ClassFile is doing a parsing of a Java .class file, trying to stand as closed as possible to the binary format, with no Java specific interpretation except with the constant pool. From the grammar point of view, this mean that there is no interpretation of what is a descriptor, what is a signature, etc.
-
-Constant pool is a special case because the grammar imposes that every entry in it has a "type". Therefore the following entries in the constant pool at explicitely interpreted:
-
-=over Integer
-
-A per's scalar is returned.
-
-=over Float
-
-A Math::BigFloat object instance is returned.
-
-=over Long
-
-A per's scalar is returned.
-
-=over Double
-
-A Math::BigFloat object instance is returned.
-
-=over Utf8
-
-A per's scalar is returned.
-
-=back
-
-In addition, because a constant pool can skip its indices, and indice number is also returned for every entry.
+MarpaX::Java::ClassFile is doing a parsing of a Java .class file, trying to stand as closed as possible to the binary format, with no Java specific interpretation except with the constant pool (see the NOTES section). From the grammar point of view, this mean that there is no interpretation of what is a descriptor, what is a signature, etc.
 
 =head1 SYNOPSIS
 
@@ -150,6 +124,38 @@ sub _attributesCountCallback {
         'MarpaX::Java::ClassFile::AttributesArray',
         'MANAGED', size => $self->literalU2($r) );
 }
+
+=head1 NOTES
+
+Constant pool is a special case because the grammar imposes that every entry in it has a "type". Therefore the following entries in the constant pool at explicitely interpreted:
+
+=over
+
+=item Integer
+
+A per's scalar is returned.
+
+=item Float
+
+A Math::BigFloat object instance is returned.
+
+=item Long
+
+A per's scalar is returned.
+
+=item Double
+
+A Math::BigFloat object instance is returned.
+
+=item Utf8
+
+A per's scalar is returned.
+
+=back
+
+In addition, because a constant pool can skip its indices, and indice number is also returned for every entry.
+
+=cut
 
 # --------------------
 # Our grammar actions
