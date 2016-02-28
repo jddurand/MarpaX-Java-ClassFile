@@ -1,0 +1,31 @@
+Changelog for MarpaX-Java-ClassFile
+
+0.001 2016-02-28T09:49:47
+ [Jean-Damien Durand <jeandamiendurand@free.fr>]
+ - Java/ClassFile.pm: SYNPOSIS -> SYNOPSIS
+ - Java/ClassFile.pm: put a NOTES section in POD
+ - lib: General POD fixes
+ - ClassFile/AttributesArray.pm: utf8 and POD fix
+ - dist.ini: Say files undef lib/MarpaX/Java/ClassFile should not be
+   indexed
+ - bin/javapp: Removed hexdump
+ - lib/: eof xtest compliance
+ - lib/: Add missing ABSTRACT, VERSION and AUTHORITY
+ - lib/: Add ABSTRACT, VERSION and AUTHORITY
+ - Working version -; !
+ - More readable code
+ - ClassFile/Common.pm: Generic executeInnerGrammar() method
+ - Make grammars looks like a class variable
+ - Java/ClassFile.pm: use explicitely lexeme in sub-rules and log how many
+   items we ask for when lauching an inner grammar
+ - ClassFile/ConstantPoolArray.pm: use explicitely lexeme in sub-rules
+ - use ConstantPoolArray instead of ConstantPool
+ - ClassFile/Common.pm: Removed BUILD and BUILDARGS they should never be in
+   a role, add possiblity to set next position on lexeme_read, add support
+   for eventual exhaustion user-space handling
+ - bin/javapp: Call ast() instead of non-existing output() -;
+ - Java/ClassFile.pm: Removed call to Data::Scan::Printer
+ - ClassFile/Common.pm: make ast be lazy and have a builder
+ - dev+: Constant pool working version -;
+ - dev+
+ - Init
