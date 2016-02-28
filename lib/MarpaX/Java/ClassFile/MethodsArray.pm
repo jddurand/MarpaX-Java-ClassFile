@@ -97,7 +97,7 @@ event 'methodInfo$'       = completed methodInfo
 event 'attributesCount$'  = completed attributesCount
 
 methodArray ::= methodInfo*  action => [values]
-methodInfo ::= 
+methodInfo ::=
     accessFlags
     nameIndex
     descriptorIndex

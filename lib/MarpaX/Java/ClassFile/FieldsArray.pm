@@ -95,7 +95,7 @@ event 'fieldInfo$'       = completed fieldInfo
 event 'attributesCount$' = completed attributesCount
 
 fieldArray ::= fieldInfo*  action => [values]
-fieldInfo ::= 
+fieldInfo ::=
     accessFlags
     nameIndex
     descriptorIndex
