@@ -80,12 +80,17 @@ sub _manageEvents {
 
 sub _build_ast {
   my ($self) = @_;
-
   #
   # For our marpa tied logger
   #
   local $MarpaX::Java::ClassFile::Common::SELF = $self;
   local $MarpaX::Java::ClassFile::Common::R    = undef;
+  #
+  # It is far quicker to maintain ourself booleans for trace and debug mode
+  # rather than letting logger's tracef() and debugf() handle the request
+  #
+  local $MarpaX::Java::ClassFile::Common::IS_TRACE    = $self->_logger->is_trace;
+  local $MarpaX::Java::ClassFile::Common::IS_DEBUG    = $self->_logger->is_debug;
 
   my $r = Marpa::R2::Scanless::R->new({trace_file_handle => $MARPA_TRACE_FILE_HANDLE,
                                        grammar => $self->grammar,
@@ -105,6 +110,8 @@ sub _build_ast {
 sub debugf {
   my ($self, $format, @arguments) = @_;
 
+  return unless $MarpaX::Java::ClassFile::Common::IS_DEBUG;
+
   my $inputLength = length($self->input);
   my $nbcharacters = length("$inputLength");
   $self->_logger->debugf("%s[%*s/%*s] %s: $format", '.' x $self->level, $nbcharacters, $self->pos, $nbcharacters, $self->max, $self->whoami, @arguments)
@@ -113,6 +120,8 @@ sub debugf {
 sub tracef {
   my ($self, $format, @arguments) = @_;
 
+  return unless $MarpaX::Java::ClassFile::Common::IS_TRACE;
+
   my $inputLength = length($self->input);
   my $nbcharacters = length("$inputLength");
   $self->_logger->tracef("%s[%*s/%*s] %s: $format", '.' x $self->level, $nbcharacters, $self->pos, $nbcharacters, $self->max, $self->whoami, @arguments)
@@ -120,11 +129,13 @@ sub tracef {
 
 sub _croak {
   my ($self, $r, $msg) = @_;
-  croak ($msg // '') . "\nContext:\n" . $r->show_progress;
+
+  croak ($msg // '') . "\nContext:\n" . $r->show_progress
 }
 
 sub _read {
   my ($self, $r) = @_;
+
   $self->tracef('$r->read($inputRef, pos=%s)', $self->pos);
   try {
     $self->_set_pos($r->read(\$self->input, $self->pos))
@@ -136,6 +147,7 @@ sub _read {
 
 sub _events {
   my ($self, $r) = @_;
+
   $self->tracef('$r->events()');
   my $eventsRef;
   try {
@@ -180,9 +192,10 @@ sub _value {
 
 sub _resume {
   my ($self, $r) = @_;
-  $self->tracef('$r->resume');
+
+  $self->tracef('$r->resume(%d)', $self->pos);
   try {
-    $self->_set_pos($r->resume)
+    $self->_set_pos($r->resume($self->pos))
   } catch {
     $self->_croak($r, $_)
   };
@@ -191,26 +204,34 @@ sub _resume {
 
 sub _literal {
   my ($self, $r, $symbol) = @_;
+
   $self->tracef('$r->last_completed_span(\'%s\')', $symbol);
   my @span = $r->last_completed_span($symbol);
   $self->_croak($r, "No symbol instance for the symbol $symbol") if (! @span);
   $self->tracef('$r->literal(%s, %s)', $span[0], $span[1]);
-  $r->literal(@span);
+  $r->literal(@span)
 }
 
 sub lexeme_read {
-  my ($self, $r, $lexeme_name, $lexeme_pos, $lexeme_length, $lexeme_value, $next_pos) = @_;
+  my ($self, $r, $lexeme_name, $lexeme_length, $lexeme_value) = @_;
 
-  $self->tracef('$r->lexeme_read(name=\'%s\', pos=%s, length=%s, $value)', $lexeme_name, $lexeme_pos, $lexeme_length);
+  #
+  # If the length is zero, force the read to be at position 0.
+  # We will anyway explicitely re-set position and it works
+  # because we always do $r->resume($self->pos) -;
+  #
+  my $_lexeme_length = $lexeme_length || 1;
+  my $_lexeme_pos    = $lexeme_length ? $self->pos : 0;
+  $self->tracef('$r->lexeme_read(name=\'%s\', pos=%s, length=%s, $value)', $lexeme_name, $_lexeme_pos, $_lexeme_length);
   try {
     #
     # Do the lexeme_read in any case
     #
-    my $pos = $r->lexeme_read($lexeme_name, $lexeme_pos, $lexeme_length, $lexeme_value) || croak sprintf('lexeme_read failure for symbol %s at position %s, length %s', $lexeme_name, $lexeme_pos // 'undef', $lexeme_length // 'undef');
+    my $pos = $r->lexeme_read($lexeme_name, $_lexeme_pos, $_lexeme_length, $lexeme_value) || croak sprintf('lexeme_read failure for symbol %s at position %s, length %s', $lexeme_name, $_lexeme_pos, $_lexeme_length);
     #
-    # And commit its return unless next position is forced
+    # And commit its return position unless length is 0
     #
-    $self->_set_pos($next_pos // $pos)
+    $self->_set_pos($pos) if ($lexeme_length)
   } catch {
     $self->_croak($r, $_)
   };
@@ -220,7 +241,7 @@ sub lexeme_read {
 sub literalU1 {
   my ($self, $r, $symbol) = @_;
 
-  my $u1 = $self->u1($self->_literal($r, $symbol));
+  my $u1 = $self->u1($self->_literal($r, $symbol //= 'u1'));
   $self->tracef('Got %s=%s', $symbol, $u1);
   $u1
 }
@@ -228,43 +249,29 @@ sub literalU1 {
 sub literalU2 {
   my ($self, $r, $symbol) = @_;
 
-  my $u2 = $self->u2($self->_literal($r, $symbol));
+  my $u2 = $self->u2($self->_literal($r, $symbol //= 'u2'));
   $self->tracef('Got %s=%s', $symbol, $u2);
   $u2
 }
 
-sub literalU3 {
+sub literalU4 {
   my ($self, $r, $symbol) = @_;
 
-  my $u4 = $self->u4($self->_literal($r, $symbol));
+  my $u4 = $self->u4($self->_literal($r, $symbol //= 'u4'));
   $self->tracef('Got %s=%s', $symbol, $u4);
   $u4
 }
 
 sub executeInnerGrammar {
-  my ($self, $r, $innerGrammarClass, $size, $lexeme_name) = @_;
+  my ($self, $r, $innerGrammarClass, $lexeme_name, %args) = @_;
 
   my $whoisit = $self->_whoami($innerGrammarClass);
-  $self->debugf('Asking for %d %s%s', $size, $whoisit, $size ? 's' : '');
-  my $inner = $innerGrammarClass->new(
-     input => $self->input,
-     pos   => $self->pos,
-     level => $self->level + 1,
-     size  => $size
-    );
-  my $ast      = $inner->ast;                # Inner value
-  my $bytes    = $inner->pos - $self->pos;   # Inner size
-  my $next_pos = $self->pos + $bytes;        # Next position
-  #
-  # Setting optional last argument $next_pos handles the case of an empty array
-  #
-  $self->lexeme_read($r,
-                     $lexeme_name // 'MANAGED',
-                     $bytes ? $self->pos : 0,# Import it at position 0 if no byte
-                     $bytes || 1,            # lexeme_read wants at least one byte
-                     $ast,
-                     $next_pos);             # With next_pos we always do the right thing
-  $self->debugf('%s over', $whoisit);
+  $self->debugf('Asking for %s', $whoisit);
+  my $inner = $innerGrammarClass->new(input => $self->input, pos => $self->pos, level => $self->level + 1, %args);
+  my $value = $inner->ast;    # It is very important to call ast BEFORE calling pos
+  my $length = $inner->pos - $self->pos;
+  $self->lexeme_read($r, $lexeme_name, $length, $value);
+  $self->debugf('%s over', $whoisit)
 }
 
 with qw/MooX::Role::Logger MarpaX::Java::ClassFile::Common::Actions/;

@@ -26,6 +26,10 @@ __[ bnf_top ]__
 # latm is a sane default that can be common to all grammars
 #
 lexeme default = latm => 1
+#
+# This is more dangerous, but let's say we know what we are doing.
+#
+inaccessible is ok by default
 
 __[ bnf_bottom ]__
 ########################################

@@ -3,7 +3,10 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Common::Actions;
 use Moo::Role;
-
+#
+# This package is part of the core of the engine. So it is optimized
+# using directly the stack (i.e. no $self)
+#
 use Math::BigFloat;
 use Carp qw/croak/;
 use Bit::Vector;
@@ -132,8 +135,6 @@ sub float {
 }
 
 sub long {
-  my ($self, $high_bytes, $low_bytes ) = @_;
-
   my $vhigh = $_[0]->_quadraToVector($_[1]);
   my $vlow  = $_[0]->_quadraToVector($_[2]);
   #
@@ -238,14 +239,13 @@ sub double {
 }
 
 sub utf8 {
-    my ($self, $bytes) = @_;
     #
     # Disable all conversion warnings:
     # either we know we succeed, either we abort -;
     #
     no warnings;
 
-    my @u1 = split('', $bytes);
+    my @u1 = split('', $_[1]);
     my $s     = '';
 
     while (@u1) {

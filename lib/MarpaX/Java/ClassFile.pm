@@ -8,12 +8,23 @@ use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Common::BNF qw/bnf/;
 use MarpaX::Java::ClassFile::ConstantPoolArray;
+use MarpaX::Java::ClassFile::InterfacesArray;
+use MarpaX::Java::ClassFile::FieldsArray;
+use MarpaX::Java::ClassFile::MethodsArray;
+use MarpaX::Java::ClassFile::AttributesArray;
 use Scalar::Util qw/blessed/;
 use Types::Standard -all;
 
 my $_data      = ${__PACKAGE__->section_data('bnf')};
 my $_grammar   = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf($_data)});
-my %_CALLBACKS = ('constantPoolCount$' => \&_constantPoolCountEvent);
+my %_CALLBACKS = (
+                  'constantPoolCount$' => \&_constantPoolCountCallback,
+                  'interfacesCount$' => \&_interfacesCountCallback,
+                  'fieldsCount$' => \&_fieldsCountCallback,
+                  'methodsCount$' => \&_methodsCountCallback,
+                  'attributesCount$' => \&_attributesCountCallback,
+                  'ClassFile$' => \&_ClassFile
+                 );
 
 # --------------------------------------------------
 # What role MarpaX::Java::ClassFile::Common requires
@@ -24,24 +35,62 @@ sub callbacks { \%_CALLBACKS }
 # ------------
 # Our thingies
 # ------------
-sub BUILD {
-  my ($self) = @_;
-  $self->debugf('Starting');
+sub BUILD { $_[0]->debugf('Starting') }
+
+# ---------------
+# Callback callbacks
+# ---------------
+sub _constantPoolCountCallback {
+  my ($self, $r) = @_;
+  #
+  # Hey, spec says constant pool'S SIZE is $constantPoolCount -1
+  #
+  $self->executeInnerGrammar($r, 'MarpaX::Java::ClassFile::ConstantPoolArray', 'MANAGED', size => $self->literalU2($r) - 1)
 }
 
-# ---------------
-# Event callbacks
-# ---------------
-sub _constantPoolCountEvent {
+sub _interfacesCountCallback {
   my ($self, $r) = @_;
+  $self->executeInnerGrammar($r, 'MarpaX::Java::ClassFile::InterfacesArray', 'MANAGED', size => $self->literalU2($r))
+}
 
-  my $constantPoolCount = $self->literalU2($r, 'constantPoolCount');
-  $self->executeInnerGrammar($r,
-                             'MarpaX::Java::ClassFile::ConstantPoolArray',
-                             #
-                             # Hey, spec says size of constant pool is $count -1
-                             #
-                             $constantPoolCount - 1)
+sub _fieldsCountCallback {
+  my ($self, $r) = @_;
+  $self->executeInnerGrammar($r, 'MarpaX::Java::ClassFile::FieldsArray', 'MANAGED', size => $self->literalU2($r))
+}
+
+sub _methodsCountCallback {
+  my ($self, $r) = @_;
+  $self->executeInnerGrammar($r, 'MarpaX::Java::ClassFile::MethodsArray', 'MANAGED', size => $self->literalU2($r))
+}
+
+sub _attributesCountCallback {
+  my ($self, $r) = @_;
+  $self->executeInnerGrammar($r, 'MarpaX::Java::ClassFile::AttributesArray', 'MANAGED', size => $self->literalU2($r))
+}
+
+# --------------------
+# Our grammar actions
+# --------------------
+sub _ClassFile {
+  my $i = 0;
+  bless({
+         magic             => $_[++$i],
+         minorVersion      => $_[++$i],
+         majorVersion      => $_[++$i],
+         constantPoolCount => $_[++$i],
+         constantPoolArray => $_[++$i],
+         accessFlags       => $_[++$i],
+         thisClass         => $_[++$i],
+         superClass        => $_[++$i],
+         interfacesCount   => $_[++$i],
+         interfacesArray   => $_[++$i],
+         fieldsCount       => $_[++$i],
+         fieldsArray       => $_[++$i],
+         methodsCount      => $_[++$i],
+         methods           => $_[++$i],
+         attributesCount   => $_[++$i],
+         attributes        => $_[++$i]
+        }, 'ClassFile')
 }
 
 with qw/MarpaX::Java::ClassFile::Common/;
@@ -50,8 +99,13 @@ with qw/MarpaX::Java::ClassFile::Common/;
 
 __DATA__
 __[ bnf ]__
-:default ::= action => [values]
+:default ::= action => ::first
 event 'constantPoolCount$' = completed constantPoolCount
+event 'interfacesCount$'   = completed interfacesCount
+event 'fieldsCount$'       = completed fieldsCount
+event 'methodsCount$'      = completed methodsCount
+event 'attributesCount$'   = completed attributesCount
+event 'ClassFile$'         = completed ClassFile
 ClassFile ::=
              magic
              minorVersion
@@ -62,26 +116,26 @@ ClassFile ::=
              thisClass
              superClass
              interfacesCount
-             interfaces
+             interfacesArray
              fieldsCount
-#             fieldsArray
-#             methods_count
-#             methods
-#             attributes_count
-#             attributes
-magic              ::= U4          action => u4
-minorVersion       ::= U2          action => u2
-majorVersion       ::= U2          action => u2
-constantPoolCount  ::= U2          action => u2
-constantPoolArray  ::= MANAGED     action => ::first
-accessFlags        ::= U2          action => u2
-thisClass          ::= U2          action => u2
-superClass         ::= U2          action => u2
-interfacesCount    ::= U2          action => u2
-interfaces         ::= U2          action => u2
-fieldsCount        ::= U2          action => u2
-#fieldsArray        ::= MANAGED     action => ::first
-#methods_count       ::= u2
-#methods             ::= managed
-#attributes_count    ::= u2
-#attributes          ::= managed
+             fieldsArray
+             methodsCount
+             methods
+             attributesCount
+             attributes             action => _ClassFile
+magic              ::= u4
+minorVersion       ::= u2
+majorVersion       ::= u2
+constantPoolCount  ::= u2
+constantPoolArray  ::= managed
+accessFlags        ::= u2
+thisClass          ::= u2
+superClass         ::= u2
+interfacesCount    ::= u2
+interfacesArray    ::= managed
+fieldsCount        ::= u2
+fieldsArray        ::= managed
+methodsCount       ::= u2
+methods            ::= managed
+attributesCount    ::= u2
+attributes         ::= managed

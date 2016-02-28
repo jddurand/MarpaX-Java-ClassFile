@@ -12,10 +12,11 @@ use Types::Standard -all;
 
 my $_data      = ${__PACKAGE__->section_data('bnf')};
 my $_grammar   = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf($_data)});
-my %_CALLBACKS = ('utf8Length$'         => \&_utf8LengthEvent,
-                  'constantLongInfo$'   => \&_constantLongInfoEvent,
-                  'constantDoubleInfo$' => \&_constantDoubleInfoEvent,
-                  'cpInfo$'             => \&_cpInfoEvent
+my %_CALLBACKS = ('utf8Length$'         => \&_utf8LengthCallback,
+                  'constantLongInfo$'   => \&_constantLongInfoCallback,
+                  'constantDoubleInfo$' => \&_constantDoubleInfoCallback,
+                  'cpInfo$'             => \&_cpInfoCallback,
+                  '^indice'             => \&_indiceCallback,
                  );
 
 # --------------------------------------------------
@@ -39,42 +40,41 @@ sub BUILD {
 }
 
 # ---------------
-# Event callbacks
+# Callback callbacks
 # ---------------
-sub _utf8LengthEvent {
+sub _utf8LengthCallback {
   my ($self, $r) = @_;
 
-  my $utf8Length = $self->literalU2($r, 'utf8Length');
-  $self->lexeme_read($r,
-                     'MANAGED',
-                     $self->pos,
-                     $utf8Length,
-                     substr($self->input, $self->pos, $utf8Length)
-                    ) if ($utf8Length > 0);
+  my $utf8Length = $self->literalU2($r);
+  my $utf8String = $utf8Length ? undef : substr($self->input, $self->pos, $utf8Length);
+  $self->tracef('Modified UTF-8: %s', $utf8String);
+  $self->lexeme_read($r, 'MANAGED', $utf8Length, $utf8String);  # Note: this lexeme_read() handles case of length 0
 }
 
-sub _constantLongInfoEvent {
+sub _constantLongInfoCallback {
   my ($self, $r) = @_;
-
   $self->_skipNextEntry(1);
 }
 
-sub _constantDoubleInfoEvent {
+sub _constantDoubleInfoCallback {
   my ($self, $r) = @_;
-
   $self->_skipNextEntry(1);
 }
 
-sub _cpInfoEvent {
+sub _cpInfoCallback {
   my ($self, $r) = @_;
   $self->_nbDone($self->_nbDone + 1);
-  $self->debugf('Completed');
   if ($self->_skipNextEntry) {
     $self->debugf('Skipping next entry');
     $self->_nbDone($self->_nbDone + 1);
     $self->_skipNextEntry(0)
   }
-  $self->max($self->pos) if ($self->_nbDone >= $self->size); # Set the max position so that parsing end
+  $self->max($self->pos) if ($self->_nbDone >= $self->size) # Set the max position so that parsing end
+}
+
+sub _indiceCallback {
+  my ($self, $r) = @_;
+  $self->lexeme_read($r, 'MANAGED', 0, $self->_nbDone + 1);
 }
 
 # --------------------
@@ -82,30 +82,27 @@ sub _cpInfoEvent {
 # --------------------
 my %_ARG2HASH =
   (
-   CONSTANT_Class_info              => [qw/name_index/],
-   CONSTANT_Fieldref_info           => [qw/class_index name_and_type_index/],
-   CONSTANT_Methodref_info          => [qw/class_index name_and_type_index/],
-   CONSTANT_InterfaceMethodref_info => [qw/class_index name_and_type_index/],
-   CONSTANT_String_info             => [qw/string_index/],
-   CONSTANT_Integer_info            => [qw/computed_value/],
-   CONSTANT_Float_info              => [qw/computed_value/],
-   CONSTANT_Long_info               => [qw/computed_value/],
-   CONSTANT_Double_info             => [qw/computed_value/],
-   CONSTANT_NameAndType_info        => [qw/name_index descriptor_index/],
-   CONSTANT_Utf8_info               => [qw/length computed_value/],
-   CONSTANT_MethodHandle_info       => [qw/reference_kind reference_index/],
-   CONSTANT_MethodType_info         => [qw/descriptor_index/],
-   CONSTANT_InvokeDynamic_info      => [qw/bootstrap_method_attr_index name_and_type_index/],
+   CONSTANT_Class_info              => [qw/tag name_index indice/],
+   CONSTANT_Fieldref_info           => [qw/tag class_index name_and_type_index indice/],
+   CONSTANT_Methodref_info          => [qw/tag class_index name_and_type_index indice/],
+   CONSTANT_InterfaceMethodref_info => [qw/tag class_index name_and_type_index indice/],
+   CONSTANT_String_info             => [qw/tag string_index indice/],
+   CONSTANT_Integer_info            => [qw/tag computed_value indice/],
+   CONSTANT_Float_info              => [qw/tag computed_value indice/],
+   CONSTANT_Long_info               => [qw/tag computed_value indice/],
+   CONSTANT_Double_info             => [qw/tag computed_value indice/],
+   CONSTANT_NameAndType_info        => [qw/tag name_index descriptor_index indice/],
+   CONSTANT_Utf8_info               => [qw/tag length computed_value indice/],
+   CONSTANT_MethodHandle_info       => [qw/tag reference_kind reference_index indice/],
+   CONSTANT_MethodType_info         => [qw/tag descriptor_index indice/],
+   CONSTANT_InvokeDynamic_info      => [qw/tag bootstrap_method_attr_index name_and_type_index indice/]
   );
 
 sub _arg2hash {
   my ($self, $struct, @args) = @_;
 
   my $descArrayRef = $_ARG2HASH{$struct};
-  my %hash = ();
-  foreach (0..$#args) {
-    $hash{$descArrayRef->[$_]} = $args[$_]
-  }
+  my %hash = map { $descArrayRef->[$_] => $args[$_] } 0..$#args;
   bless \%hash, $struct
 }
 
@@ -120,7 +117,6 @@ sub _constantLongInfo               { $_[0]->_arg2hash('CONSTANT_Long_info',    
 sub _constantDoubleInfo             { $_[0]->_arg2hash('CONSTANT_Double_info',             @_[1..$#_]) }
 sub _constantNameAndTypeInfo        { $_[0]->_arg2hash('CONSTANT_NameAndType_info',        @_[1..$#_]) }
 sub _constantUtf8Info               { $_[0]->_arg2hash('CONSTANT_Utf8_info',               @_[1..$#_]) }
-sub _constantUtf8Info_empty         { $_[0]->_arg2hash('CONSTANT_Utf8_info',               0, undef  ) }
 sub _constantMethodHandleInfo       { $_[0]->_arg2hash('CONSTANT_MethodHandle_info',       @_[1..$#_]) }
 sub _constantMethodType             { $_[0]->_arg2hash('CONSTANT_MethodType_info',         @_[1..$#_]) }
 sub _constantInvokeDynamic          { $_[0]->_arg2hash('CONSTANT_InvokeDynamic_info',      @_[1..$#_]) }
@@ -144,55 +140,52 @@ around whoami => sub {
 
 __DATA__
 __[ bnf ]__
-event 'cpInfo$' = completed cpInfo
+:default ::= action => ::first
+event '^indice'             = predicted indice
+event 'cpInfo$'             = completed cpInfo
 event 'utf8Length$'         = completed utf8Length
 event 'constantLongInfo$'   = completed constantLongInfo
 event 'constantDoubleInfo$' = completed constantDoubleInfo
 
-cpInfoArray ::= cpInfo*                                            action => [values]
+cpInfoArray ::= cpInfo*       action => [values]
 cpInfo ::=
-    constantClassInfo                                              action => ::first
-  | constantFieldrefInfo                                           action => ::first
-  | constantMethodrefInfo                                          action => ::first
-  | constantInterfaceMethodrefInfo                                 action => ::first
-  | constantStringInfo                                             action => ::first
-  | constantIntegerInfo                                            action => ::first
-  | constantFloatInfo                                              action => ::first
-  | constantLongInfo                                               action => ::first
-  | constantDoubleInfo                                             action => ::first
-  | constantNameAndTypeInfo                                        action => ::first
-  | constantUtf8Info                                               action => ::first
-  | constantMethodHandleInfo                                       action => ::first
-  | constantMethodTypeInfo                                         action => ::first
-  | constantInvokeDynamicInfo                                      action => ::first
+    constantClassInfo
+  | constantFieldrefInfo
+  | constantMethodrefInfo
+  | constantInterfaceMethodrefInfo
+  | constantStringInfo
+  | constantIntegerInfo
+  | constantFloatInfo
+  | constantLongInfo
+  | constantDoubleInfo
+  | constantNameAndTypeInfo
+  | constantUtf8Info
+  | constantMethodHandleInfo
+  | constantMethodTypeInfo
+  | constantInvokeDynamicInfo
 #
 # Note: a single byte is endianness independant, this is why it is ok
 # to write it in the \x{} form here
 #
-constantClassInfo              ::= ([\x{07}]) U2                   action => _constantClassInfo
-constantFieldrefInfo           ::= ([\x{09}]) U2 U2                action => _constantFieldrefInfo
-constantMethodrefInfo          ::= ([\x{0a}]) U2 U2                action => _constantMethodrefInfo
-constantInterfaceMethodrefInfo ::= ([\x{0b}]) U2 U2                action => _constantInterfaceMethodrefInfo
-constantStringInfo             ::= ([\x{08}]) U2                   action => _constantStringInfo
-constantIntegerInfo            ::= ([\x{03}]) integerBytes         action => _constantIntegerInfo
-constantFloatInfo              ::= ([\x{04}]) floatBytes           action => _constantFloatInfo
-constantLongInfo               ::= ([\x{05}]) longBytes            action => _constantLongInfo
-constantDoubleInfo             ::= ([\x{06}]) doubleBytes          action => _constantDoubleInfo
-constantNameAndTypeInfo        ::= ([\x{0c}]) U2 U2                action => _constantNameAndTypeInfo
-constantUtf8Info               ::= (EMPTY_UTF8)                    action => _constantUtf8Info_empty
-                                 | ([\x{01}]) utf8Length utf8Bytes action => _constantUtf8Info
-constantMethodHandleInfo       ::= ([\x{0f}]) U1 U2                action => _constantMethodHandleInfo
-constantMethodTypeInfo         ::= ([\x{10}]) U2                   action => _constantMethodType
-constantInvokeDynamicInfo      ::= ([\x{12}]) U2 U2                action => _constantInvokeDynamic
+constantClassInfo              ::= [\x{07}] u2                   indice action =>  _constantClassInfo
+constantFieldrefInfo           ::= [\x{09}] u2 u2                indice action =>  _constantFieldrefInfo
+constantMethodrefInfo          ::= [\x{0a}] u2 u2                indice action =>  _constantMethodrefInfo
+constantInterfaceMethodrefInfo ::= [\x{0b}] u2 u2                indice action =>  _constantInterfaceMethodrefInfo
+constantStringInfo             ::= [\x{08}] u2                   indice action =>  _constantStringInfo
+constantIntegerInfo            ::= [\x{03}] integerBytes         indice action =>  _constantIntegerInfo
+constantFloatInfo              ::= [\x{04}] floatBytes           indice action =>  _constantFloatInfo
+constantLongInfo               ::= [\x{05}] longBytes            indice action =>  _constantLongInfo
+constantDoubleInfo             ::= [\x{06}] doubleBytes          indice action =>  _constantDoubleInfo
+constantNameAndTypeInfo        ::= [\x{0c}] u2 u2                indice action =>  _constantNameAndTypeInfo
+constantUtf8Info               ::= [\x{01}] utf8Length utf8Bytes indice action =>  _constantUtf8Info
+constantMethodHandleInfo       ::= [\x{0f}] u1 u2                indice action =>  _constantMethodHandleInfo
+constantMethodTypeInfo         ::= [\x{10}] u2                   indice action =>  _constantMethodType
+constantInvokeDynamicInfo      ::= [\x{12}] u2 u2                indice action =>  _constantInvokeDynamic
 
-integerBytes               ::= U4      action => integer
-floatBytes                 ::= U4      action => float
-longBytes                  ::= U4 U4   action => long
-doubleBytes                ::= U4 U4   action => double
-utf8Length                 ::= U2      action => u2
-utf8Bytes                  ::= MANAGED action => utf8
-#
-# Subtility here: this lexeme will be three bytes long, so will have precedence over
-# seeing two lexemes "\x{01}", then "\x{00}\x{00}"
-#
-EMPTY_UTF8                   ~ [\x{01}] [\x{00}] [\x{00}]
+indice                     ::= managed action => ::first          # Because indices may be skipped we manage ourself its value
+integerBytes               ::= U4      action => integer          # U4 and not u4
+floatBytes                 ::= U4      action => float            # U4 and not u4
+longBytes                  ::= U4 U4   action => long             # U4 and not u4
+doubleBytes                ::= U4 U4   action => double           # U4 and not u4
+utf8Length                 ::= u2
+utf8Bytes                  ::= managed action => utf8
