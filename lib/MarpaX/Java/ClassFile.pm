@@ -46,7 +46,7 @@ MarpaX::Java::ClassFile is doing a parsing of a Java .class file, trying to stan
 
 =head2 input
 
-A scalar hosting a .class file content input. It is the responsibility of the user to make sure that this scalar contain only bytes, please refer to the SYNPOSIS section.
+A scalar hosting a .class file content input. It is the responsibility of the user to make sure that this scalar contain only bytes, please refer to the SYNOPSIS section.
 
 =head1 SUBROUTINES/METHODS
 
