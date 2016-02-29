@@ -310,7 +310,7 @@ sub _croak {
   #
   # Should never happen that $self->r is not set at this stage but who knows
   #
-  $msg .= "\nContext:\n" . $self->r->show_progress if $self->_has_r;
+  $msg .= "\nContext:\n" . $self->r->show_progress if $self->has_r;
   croak($msg)
 }
 
