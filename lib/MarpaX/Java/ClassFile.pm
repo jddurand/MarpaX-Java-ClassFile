@@ -120,7 +120,7 @@ sub _attributesCountCallback {
 
 =head1 NOTES
 
-Constant pool is a special case, it is sort of "base information" for everything afterwards. Therefore the following entries in the constant pool are explicitely interpreted for convenience:
+Constant pool is a special case, it is sort of "base information" for everything afterwards. Therefore the following entries in the constant pool are explicitely converted to a perl scalar when the associated string representation is unambiguous, or to a Math::BigFloat in case of uncertainty, i.e.:
 
 =over
 
@@ -146,7 +146,7 @@ A per's scalar.
 
 =back
 
-In addition, because an indice in the constant pool can remain valid but unusable when the preceeding entry is a float or a double, such invalid entry is returned as a perl's undef.
+This will be visible under the key "computed_value" into the hash containing the parse tree value of the associated pool entry.
 
 =cut
 
