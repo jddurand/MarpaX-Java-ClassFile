@@ -94,31 +94,28 @@ sub _constantPoolCountCallback {
     #
     # Hey, spec says constant pool'S SIZE is $constantPoolCount -1
     #
-    $self->executeInnerGrammar('MarpaX::Java::ClassFile::ConstantPoolArray', 'MANAGED', size => $self->literalU2 - 1 );
+    $self->executeInnerGrammar('MarpaX::Java::ClassFile::ConstantPoolArray', size => $self->literalU2 - 1 );
 }
 
 sub _interfacesCountCallback {
     my ($self) = @_;
-    $self->executeInnerGrammar('MarpaX::Java::ClassFile::InterfacesArray', 'MANAGED', size => $self->literalU2 );
+    $self->executeInnerGrammar('MarpaX::Java::ClassFile::InterfacesArray', size => $self->literalU2 );
 }
 
 sub _fieldsCountCallback {
     my ($self) = @_;
-    $self->executeInnerGrammar('MarpaX::Java::ClassFile::FieldsArray',
-        'MANAGED', size => $self->literalU2 );
+    $self->executeInnerGrammar('MarpaX::Java::ClassFile::FieldsArray', size => $self->literalU2 );
 }
 
 sub _methodsCountCallback {
     my ($self) = @_;
-    $self->executeInnerGrammar('MarpaX::Java::ClassFile::MethodsArray',
-        'MANAGED', size => $self->literalU2 );
+    $self->executeInnerGrammar('MarpaX::Java::ClassFile::MethodsArray', size => $self->literalU2 );
 }
 
 sub _attributesCountCallback {
     my ($self) = @_;
     $self->executeInnerGrammar(
-        'MarpaX::Java::ClassFile::AttributesArray',
-        'MANAGED', size => $self->literalU2 );
+        'MarpaX::Java::ClassFile::AttributesArray', size => $self->literalU2 );
 }
 
 =head1 NOTES

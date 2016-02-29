@@ -10,15 +10,11 @@ package MarpaX::Java::ClassFile::MethodsArray;
 # AUTHORITY
 
 use Moo;
-#
 # Note: MethodsArray is simply a clone of FieldsArray -;
-#
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::AttributesArray;
 use MarpaX::Java::ClassFile::Common::BNF qw/bnf/;
-use Types::Common::Numeric -all;
-use Types::Standard -all;
 
 =head1 DESCRIPTION
 
@@ -32,30 +28,18 @@ my %_CALLBACKS = ('attributesCount$' => \&_attributesCountCallback,
                   'methodInfo$'      => \&_methodInfoCallback
                  );
 
-# --------------------------------------------------
-# What role MarpaX::Java::ClassFile::Common requires
-# --------------------------------------------------
+# ----------------------------------------------------------------
+# What role MarpaX::Java::ClassFile::Common::InnerGrammar requires
+# ----------------------------------------------------------------
 sub grammar   { $_grammar }
 sub callbacks { \%_CALLBACKS }
 
-# ------------
-# Our thingies
-# ------------
-has size    => (is => 'ro', isa => PositiveOrZeroInt, required => 1);
-has _nbDone => (is => 'rw', isa => PositiveOrZeroInt, default => sub { 0 });
-
-sub BUILD {
-  my ($self) = @_;
-  $self->debugf('Starting');
-  $self->ast([]) if (! $self->size)
-}
-
 # ---------------
-# Callback callbacks
+# Event callbacks
 # ---------------
 sub _attributesCountCallback {
   my ($self) = @_;
-  $self->executeInnerGrammar('MarpaX::Java::ClassFile::AttributesArray', 'MANAGED', size => $self->literalU2)
+  $self->executeInnerGrammar('MarpaX::Java::ClassFile::AttributesArray', size => $self->literalU2)
 }
 
 sub _methodInfoCallback {
@@ -79,20 +63,7 @@ sub _methodInfo {
         }, 'method_info')
 }
 
-with qw/MarpaX::Java::ClassFile::Common/;
-
-# ------------------
-# Role modifications
-# ------------------
-around whoami => sub {
-  my ($orig, $self, @args) = @_;
-
-  my $whoami = $self->$orig(@args);
-  #
-  # Append the array indice, eventually
-  #
-  $self->_nbDone ? join('', $whoami, '[', $self->_nbDone, '/', $self->size, ']') : $whoami
-};
+with qw/MarpaX::Java::ClassFile::Common::InnerGrammar/;
 
 1;
 

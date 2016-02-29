@@ -14,8 +14,6 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Common::BNF qw/bnf/;
-use Types::Common::Numeric -all;
-use Types::Standard -all;
 
 =head1 DESCRIPTION
 
@@ -27,23 +25,11 @@ my $_data      = ${__PACKAGE__->section_data('bnf')};
 my $_grammar   = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf($_data)});
 my %_CALLBACKS = ('u2$' => \&_u2Callback);
 
-# --------------------------------------------------
-# What role MarpaX::Java::ClassFile::Common requires
-# --------------------------------------------------
+# ----------------------------------------------------------------
+# What role MarpaX::Java::ClassFile::Common::InnerGrammar requires
+# ----------------------------------------------------------------
 sub grammar   { $_grammar }
 sub callbacks { \%_CALLBACKS }
-
-# ------------
-# Our thingies
-# ------------
-has size    => (is => 'ro', isa => PositiveOrZeroInt, required => 1);
-has _nbDone => (is => 'rw', isa => PositiveOrZeroInt, default => sub { 0 });
-
-sub BUILD {
-  my ($self) = @_;
-  $self->debugf('Starting');
-  $self->ast([]) if (! $self->size)
-}
 
 # ---------------
 # Callback callbacks
@@ -55,20 +41,7 @@ sub _u2Callback {
   $self->max($self->pos) if ($self->_nbDone >= $self->size);
 }
 
-with qw/MarpaX::Java::ClassFile::Common/;
-
-# ------------------
-# Role modifications
-# ------------------
-around whoami => sub {
-  my ($orig, $self, @args) = @_;
-
-  my $whoami = $self->$orig(@args);
-  #
-  # Append the array indice, eventually
-  #
-  $self->_nbDone ? join('', $whoami, '[', $self->_nbDone, '/', $self->size, ']') : $whoami
-};
+with qw/MarpaX::Java::ClassFile::Common::InnerGrammar/;
 
 1;
 

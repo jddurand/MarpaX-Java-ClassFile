@@ -234,22 +234,23 @@ sub literalU4 {
 }
 
 #
-# I let this one not optimized, it is not called very often
+# An inner grammar is an opaque thing, so associated
+# lexeme must be MANAGED.
 #
 sub executeInnerGrammar {
-  my ($self, $innerGrammarClass, $lexeme_name, %args) = @_;
+  # my ($self, $innerGrammarClass, %args) = @_;
 
-  my $whoisit = $self->_whoami($innerGrammarClass);
-  $self->debugf('Asking for %s', $whoisit);
-  my $inner = $innerGrammarClass->new(input => $self->input, pos => $self->pos, level => $self->level + 1, %args);
+  my $whoisit = $_[0]->_whoami($_[1]);
+  $_[0]->debugf('Asking for %s', $whoisit);
+  my $inner = $_[1]->new(input => $_[0]->input, pos => $_[0]->pos, level => $_[0]->level + 1, @_[2..$#_]);
   my $value = $inner->ast;    # It is very important to call ast BEFORE calling pos
-  my $length = $inner->pos - $self->pos;
-  $self->lexeme_read($lexeme_name, $length, $value);
-  $self->debugf('%s over', $whoisit)
+  my $length = $inner->pos - $_[0]->pos;
+  $_[0]->lexeme_read('MANAGED', $length, $value);
+  $_[0]->debugf('%s over', $whoisit)
 }
 
 #
-# Logging/croak stuff
+# Logging/croak stuff : voluntarily not optimized
 #
 sub _dolog {
   my ($self, $method, $format, @arguments) = @_;

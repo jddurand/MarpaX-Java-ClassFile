@@ -14,8 +14,8 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Common::BNF qw/bnf/;
-use Types::Common::Numeric -all;
-use Types::Standard -all;
+use Types::Common::Numeric qw/PositiveOrZeroInt/;
+use Types::Standard qw/Bool/;
 
 =head1 DESCRIPTION
 
@@ -32,28 +32,20 @@ my %_CALLBACKS = ('utf8Length$'         => \&_utf8LengthCallback,
                   '^indice'             => \&_indiceCallback,
                  );
 
-# --------------------------------------------------
-# What role MarpaX::Java::ClassFile::Common requires
-# --------------------------------------------------
+# ----------------------------------------------------------------
+# What role MarpaX::Java::ClassFile::Common::InnerGrammar requires
+# ----------------------------------------------------------------
 sub grammar   { $_grammar }
 sub callbacks { \%_CALLBACKS }
 
 # ------------
 # Our thingies
 # ------------
-has size            => (is => 'ro', isa => PositiveOrZeroInt, required => 1);
 has _lastTag        => (is => 'rw', isa => PositiveOrZeroInt, default => sub { 0 });  # Tag with value 0 does not exist -;
-has _nbDone         => (is => 'rw', isa => PositiveOrZeroInt, default => sub { 0 });
 has _skipNextEntry  => (is => 'rw', isa => Bool,              default => sub { 0 });
 
-sub BUILD {
-  my ($self) = @_;
-  $self->debugf('Starting');
-  $self->ast([]) if (! $self->size)
-}
-
 # ---------------
-# Callback callbacks
+# Event callbacks
 # ---------------
 sub _utf8LengthCallback {
   my ($self) = @_;
@@ -134,20 +126,7 @@ sub _constantMethodHandleInfo       { $_[0]->_arg2hash('CONSTANT_MethodHandle_in
 sub _constantMethodType             { $_[0]->_arg2hash('CONSTANT_MethodType_info',         @_[1..$#_]) }
 sub _constantInvokeDynamic          { $_[0]->_arg2hash('CONSTANT_InvokeDynamic_info',      @_[1..$#_]) }
 
-with qw/MarpaX::Java::ClassFile::Common/;
-
-# ------------------
-# Role modifications
-# ------------------
-around whoami => sub {
-  my ($orig, $self, @args) = @_;
-
-  my $whoami = $self->$orig(@args);
-  #
-  # Append the array indice, eventually
-  #
-  $self->_nbDone ? join('', $whoami, '[', $self->_nbDone, '/', $self->size, ']') : $whoami
-};
+with qw/MarpaX::Java::ClassFile::Common::InnerGrammar/;
 
 1;
 
