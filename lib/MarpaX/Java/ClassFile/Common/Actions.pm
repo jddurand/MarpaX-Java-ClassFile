@@ -131,10 +131,9 @@ sub float {
     }
     #
     # $value = $s * $m * (2 ** ($e - 150))
-    #
-    my $str;
-    $str = $m->to_Dec(); my $mf = Math::BigFloat->new("$str");
-    $str = $e->to_Dec(); my $ef = Math::BigFloat->new("$str");
+    # Note: Bit::Vector->to_Dec() returns a string
+    my $mf = Math::BigFloat->new($m->to_Dec());
+    my $ef = Math::BigFloat->new($e->to_Dec());
 
     $ef->bsub($mathForFloat[0]);              # $e - 150
     my $mantissaf = $mathForFloat[1]->copy(); # 2
