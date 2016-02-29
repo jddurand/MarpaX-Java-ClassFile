@@ -56,13 +56,10 @@ sub _attributeInfoEvent {
 # Our grammar actions
 # --------------------
 sub _attributeInfo {
-  my $i = 0;
   bless({
-         access_flags     => $_[++$i],
-         name_index       => $_[++$i],
-         descriptor_index => $_[++$i],
-         attributes_count => $_[++$i],
-         attributes       => $_[++$i]
+         attributeNameIndex => $_[1],
+         attributeLength    => $_[2],
+         info               => $_[3]
         }, 'attribute_info')
 }
 
@@ -76,11 +73,11 @@ __[ bnf ]__
 event 'attributeInfo$'   = completed attributeInfo
 event 'attributeLength$' = completed attributeLength
 
-attributeArray ::= attributeInfo*  action => [values]
-attributeInfo ::=
+attributesArray    ::= attributeInfo*  action => [values]
+attributeInfo      ::=
  attributeNameIndex
  attributeLength
- infoBytes
+ infoBytes                             action => _attributeInfo
 
 attributeNameIndex ::= u2
 attributeLength    ::= u4

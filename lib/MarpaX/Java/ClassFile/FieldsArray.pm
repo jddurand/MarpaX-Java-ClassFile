@@ -53,13 +53,12 @@ sub _fieldInfoCallback {
 # Our grammar actions
 # --------------------
 sub _fieldInfo {
-  my $i = 0;
   bless({
-         access_flags     => $_[++$i],
-         name_index       => $_[++$i],
-         descriptor_index => $_[++$i],
-         attributes_count => $_[++$i],
-         attributes       => $_[++$i]
+         access_flags     => $_[1],
+         name_index       => $_[2],
+         descriptor_index => $_[3],
+         attributes_count => $_[4],
+         attributes       => $_[5]
         }, 'field_info')
 }
 
@@ -73,13 +72,13 @@ __[ bnf ]__
 event 'fieldInfo$'       = completed fieldInfo
 event 'attributesCount$' = completed attributesCount
 
-fieldArray ::= fieldInfo*  action => [values]
-fieldInfo ::=
+fieldsArray     ::= fieldInfo*  action => [values]
+fieldInfo       ::=
     accessFlags
     nameIndex
     descriptorIndex
     attributesCount
-    attributes
+    attributes                  action => _fieldInfo
 
 accessFlags     ::= u2
 nameIndex       ::= u2

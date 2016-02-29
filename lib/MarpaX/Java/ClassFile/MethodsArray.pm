@@ -53,13 +53,12 @@ sub _methodInfoCallback {
 # Our grammar actions
 # --------------------
 sub _methodInfo {
-  my $i = 0;
   bless({
-         access_flags     => $_[++$i],
-         name_index       => $_[++$i],
-         descriptor_index => $_[++$i],
-         attributes_count => $_[++$i],
-         attributes       => $_[++$i]
+         access_flags     => $_[1],
+         name_index       => $_[2],
+         descriptor_index => $_[3],
+         attributes_count => $_[4],
+         attributes       => $_[5]
         }, 'method_info')
 }
 
@@ -79,7 +78,7 @@ methodInfo ::=
     nameIndex
     descriptorIndex
     attributesCount
-    attributes
+    attributes               action => _methodInfo
 
 accessFlags     ::= u2
 nameIndex       ::= u2
