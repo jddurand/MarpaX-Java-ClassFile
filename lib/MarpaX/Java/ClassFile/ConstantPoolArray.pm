@@ -79,7 +79,7 @@ sub _cpInfoCallback {
 
 sub _indiceCallback {
   my ($self) = @_;
-  $self->lexeme_read('MANAGED', 0, $self->_nbDone + 1);
+  $self->lexeme_read('MANAGED', 0, $self->_nbDone);
 }
 
 # --------------------

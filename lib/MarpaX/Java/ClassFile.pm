@@ -213,6 +213,16 @@ sub _accessFlags {
   \@accessFlags
 }
 
+sub _constantPoolArray {
+  my ($self, $arrayRef) = @_;
+  #
+  # The following will naturally insert an undef for skipped indices
+  #
+  my @array = ();
+  map { $array[$_->{indice}] = $_ } @{$arrayRef};
+  \@array
+}
+
 with qw/MarpaX::Java::ClassFile::Common/;
 
 1;
@@ -247,7 +257,7 @@ magic              ::= u4
 minorVersion       ::= u2
 majorVersion       ::= u2
 constantPoolCount  ::= u2
-constantPoolArray  ::= managed
+constantPoolArray  ::= managed      action => _constantPoolArray
 accessFlags        ::= u2           action => _accessFlags
 thisClass          ::= u2
 superClass         ::= u2
