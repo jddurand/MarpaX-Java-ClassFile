@@ -213,7 +213,7 @@ sub literalU1 {
   # my ($self, $symbol) = @_;
 
   my $u1 = $_[0]->u1($_[0]->_literal('u1'));
-  $_[0]->tracef('Got %s=%s', $_[1], $u1);
+  $_[0]->tracef('Got u1=%s', $u1);
   $u1
 }
 
@@ -221,7 +221,7 @@ sub literalU2 {
   # my ($self, $_[1]) = @_;
 
   my $u2 = $_[0]->u2($_[0]->_literal('u2'));
-  $_[0]->tracef('Got %s=%s', $_[1], $u2);
+  $_[0]->tracef('Got u2=%s', $u2);
   $u2
 }
 
@@ -229,7 +229,7 @@ sub literalU4 {
   # my ($self, $symbol) = @_;
 
   my $u4 = $_[0]->u4($_[0]->_literal('u4'));
-  $_[0]->tracef('Got %s=%s', $_[1], $u4);
+  $_[0]->tracef('Got u4=%s', $u4);
   $u4
 }
 
