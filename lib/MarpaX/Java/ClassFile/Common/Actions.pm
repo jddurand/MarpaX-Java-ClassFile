@@ -235,9 +235,8 @@ sub double {
     #
     # $value = $s * $m * (2 ** ($e - 1075))
     #
-    my $str;
-    $str = $m->to_Dec(); my $mf = Math::BigFloat->new("$str");
-    $str = $e->to_Dec(); my $ef = Math::BigFloat->new("$str");
+    my $mf = Math::BigFloat->new($m->to_Dec());
+    my $ef = Math::BigFloat->new($e->to_Dec());
 
     $ef->bsub($mathForDouble[0]);              # $e - 1075
     my $mantissaf = $mathForDouble[1]->copy(); # 2
