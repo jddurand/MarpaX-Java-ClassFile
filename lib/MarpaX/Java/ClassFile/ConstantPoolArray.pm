@@ -25,10 +25,10 @@ MarpaX::Java::ClassFile::ConstantPoolArray is an internal class used by L<MarpaX
 
 my $_data      = ${__PACKAGE__->section_data('bnf')};
 my $_grammar   = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf($_data)});
-my %_CALLBACKS = ('utf8Length$'           => \&_utf8LengthCallback,
-                  'cpInfo$'               => \&_cpInfoCallback,
-                  '^indice'               => \&_indiceCallback,
-                  '^indice_and_skip_next' => \&_indiceAndSkipNextCallback
+my %_CALLBACKS = ('utf8Length$'  => \&_utf8LengthCallback,
+                  'cpInfo$'      => \&_cpInfoCallback,
+                  '^longBytes'   => \&_longBytesCallback,
+                  '^doubleBytes' => \&_doubleBytesCallback
                  );
 
 # ----------------------------------------------------------------
@@ -58,45 +58,44 @@ sub _utf8LengthCallback {
 sub _cpInfoCallback {
   my ($self) = @_;
   $self->_nbDone($self->_nbDone + 1);
+  $self->max($self->pos) if ($self->_nbDone >= $self->size); # Set the max position so that parsing end
   if ($self->_skipNextEntry) {
-    $self->debugf('Skipping next entry');
-    $self->_nbDone($self->_nbDone + 1);
-    $self->_skipNextEntry(0)
+    $self->_skipNextEntry(0);
+    if ($self->_nbDone < $self->size) {
+      $self->debugf('Pushing undef as next entry');
+      $self->lexeme_read('MANAGED', 0, undef);               # This will retrigger cpInfo$ event
+    }
   }
-  $self->max($self->pos) if ($self->_nbDone >= $self->size) # Set the max position so that parsing end
 }
 
-sub _indiceCallback {
+sub _setSkipNextEntry {
   my ($self) = @_;
-  $self->lexeme_read('MANAGED', 0, $self->_nbDone);
-}
-
-sub _indiceAndSkipNextCallback {
-  my ($self) = @_;
-  $self->lexeme_read('MANAGED', 0, $self->_nbDone);
-  $self->debugf('Flagging next entry as to be skipped');
+  $self->debugf('Say next eventual entry should be undef');
   $self->_skipNextEntry(1);
 }
+
+sub _longBytesCallback   { goto &_setSkipNextEntry }
+sub _doubleBytesCallback { goto &_setSkipNextEntry }
 
 # --------------------
 # Our grammar actions
 # --------------------
 my %_ARG2HASH =
   (
-   CONSTANT_Class_info              => [qw/tag name_index indice/],
-   CONSTANT_Fieldref_info           => [qw/tag class_index name_and_type_index indice/],
-   CONSTANT_Methodref_info          => [qw/tag class_index name_and_type_index indice/],
-   CONSTANT_InterfaceMethodref_info => [qw/tag class_index name_and_type_index indice/],
-   CONSTANT_String_info             => [qw/tag string_index indice/],
-   CONSTANT_Integer_info            => [qw/tag computed_value indice/],
-   CONSTANT_Float_info              => [qw/tag computed_value indice/],
-   CONSTANT_Long_info               => [qw/tag computed_value indice/],
-   CONSTANT_Double_info             => [qw/tag computed_value indice/],
-   CONSTANT_NameAndType_info        => [qw/tag name_index descriptor_index indice/],
-   CONSTANT_Utf8_info               => [qw/tag length computed_value indice/],
-   CONSTANT_MethodHandle_info       => [qw/tag reference_kind reference_index indice/],
-   CONSTANT_MethodType_info         => [qw/tag descriptor_index indice/],
-   CONSTANT_InvokeDynamic_info      => [qw/tag bootstrap_method_attr_index name_and_type_index indice/]
+   CONSTANT_Class_info              => [qw/tag name_index/],
+   CONSTANT_Fieldref_info           => [qw/tag class_index name_and_type_index/],
+   CONSTANT_Methodref_info          => [qw/tag class_index name_and_type_index/],
+   CONSTANT_InterfaceMethodref_info => [qw/tag class_index name_and_type_index/],
+   CONSTANT_String_info             => [qw/tag string_index/],
+   CONSTANT_Integer_info            => [qw/tag computed_value/],
+   CONSTANT_Float_info              => [qw/tag computed_value/],
+   CONSTANT_Long_info               => [qw/tag computed_value/],
+   CONSTANT_Double_info             => [qw/tag computed_value/],
+   CONSTANT_NameAndType_info        => [qw/tag name_index descriptor_index/],
+   CONSTANT_Utf8_info               => [qw/tag length computed_value/],
+   CONSTANT_MethodHandle_info       => [qw/tag reference_kind reference_index/],
+   CONSTANT_MethodType_info         => [qw/tag descriptor_index/],
+   CONSTANT_InvokeDynamic_info      => [qw/tag bootstrap_method_attr_index name_and_type_index/]
   );
 
 sub _arg2hash {
@@ -129,10 +128,10 @@ with qw/MarpaX::Java::ClassFile::Common::InnerGrammar/;
 __DATA__
 __[ bnf ]__
 :default ::= action => ::first
-event '^indice'               = predicted indice
-event '^indice_and_skip_next' = predicted indice_and_skip_next
-event 'cpInfo$'               = completed cpInfo
-event 'utf8Length$'           = completed utf8Length
+event 'cpInfo$'      = completed cpInfo
+event 'utf8Length$'  = completed utf8Length
+event '^longBytes'   = predicted longBytes
+event '^doubleBytes' = predicted doubleBytes
 
 cpInfoArray ::= cpInfo*       action => [values]
 cpInfo ::=
@@ -150,30 +149,30 @@ cpInfo ::=
   | constantMethodHandleInfo
   | constantMethodTypeInfo
   | constantInvokeDynamicInfo
+  | emptyInfo
 #
 # Note: a single byte is endianness independant, this is why it is ok
 # to write it in the \x{} form here
 #
-constantClassInfo              ::= [\x{07}] u2                   indice               action =>  _constantClassInfo
-constantFieldrefInfo           ::= [\x{09}] u2 u2                indice               action =>  _constantFieldrefInfo
-constantMethodrefInfo          ::= [\x{0a}] u2 u2                indice               action =>  _constantMethodrefInfo
-constantInterfaceMethodrefInfo ::= [\x{0b}] u2 u2                indice               action =>  _constantInterfaceMethodrefInfo
-constantStringInfo             ::= [\x{08}] u2                   indice               action =>  _constantStringInfo
-constantIntegerInfo            ::= [\x{03}] integerBytes         indice               action =>  _constantIntegerInfo
-constantFloatInfo              ::= [\x{04}] floatBytes           indice               action =>  _constantFloatInfo
-constantLongInfo               ::= [\x{05}] longBytes            indice_and_skip_next action =>  _constantLongInfo
-constantDoubleInfo             ::= [\x{06}] doubleBytes          indice_and_skip_next action =>  _constantDoubleInfo
-constantNameAndTypeInfo        ::= [\x{0c}] u2 u2                indice               action =>  _constantNameAndTypeInfo
-constantUtf8Info               ::= [\x{01}] utf8Length utf8Bytes indice               action =>  _constantUtf8Info
-constantMethodHandleInfo       ::= [\x{0f}] u1 u2                indice               action =>  _constantMethodHandleInfo
-constantMethodTypeInfo         ::= [\x{10}] u2                   indice               action =>  _constantMethodType
-constantInvokeDynamicInfo      ::= [\x{12}] u2 u2                indice               action =>  _constantInvokeDynamic
+constantClassInfo              ::= [\x{07}] u2                   action =>  _constantClassInfo
+constantFieldrefInfo           ::= [\x{09}] u2 u2                action =>  _constantFieldrefInfo
+constantMethodrefInfo          ::= [\x{0a}] u2 u2                action =>  _constantMethodrefInfo
+constantInterfaceMethodrefInfo ::= [\x{0b}] u2 u2                action =>  _constantInterfaceMethodrefInfo
+constantStringInfo             ::= [\x{08}] u2                   action =>  _constantStringInfo
+constantIntegerInfo            ::= [\x{03}] integerBytes         action =>  _constantIntegerInfo
+constantFloatInfo              ::= [\x{04}] floatBytes           action =>  _constantFloatInfo
+constantLongInfo               ::= [\x{05}] longBytes            action =>  _constantLongInfo
+constantDoubleInfo             ::= [\x{06}] doubleBytes          action =>  _constantDoubleInfo
+constantNameAndTypeInfo        ::= [\x{0c}] u2 u2                action =>  _constantNameAndTypeInfo
+constantUtf8Info               ::= [\x{01}] utf8Length utf8Bytes action =>  _constantUtf8Info
+constantMethodHandleInfo       ::= [\x{0f}] u1 u2                action =>  _constantMethodHandleInfo
+constantMethodTypeInfo         ::= [\x{10}] u2                   action =>  _constantMethodType
+constantInvokeDynamicInfo      ::= [\x{12}] u2 u2                action =>  _constantInvokeDynamic
 
-indice                     ::= managed
-indice_and_skip_next       ::= managed
 integerBytes               ::= U4      action => integer          # U4 and not u4
 floatBytes                 ::= U4      action => float            # U4 and not u4
 longBytes                  ::= U4 U4   action => long             # U4 and not u4
 doubleBytes                ::= U4 U4   action => double           # U4 and not u4
 utf8Length                 ::= u2
 utf8Bytes                  ::= MANAGED action => utf8             # MANAGED and not managed
+emptyInfo                  ::= managed
