@@ -23,7 +23,7 @@ use Types::Standard -all;
 
 =head1 DESCRIPTION
 
-MarpaX::Java::ClassFile is doing a parsing of a Java .class file, trying to stand as closed as possible to the binary format, with no Java specific interpretation except with the constant pool (see the NOTES section). From the grammar point of view, this mean that there is no interpretation of what is a descriptor, what is a signature, etc.
+MarpaX::Java::ClassFile is doing a parsing of a Java .class file, trying to stand as closed as possible to the binary format, with no language specific interpretation except with the constant pool (see the NOTES section). From the grammar point of view, this mean that there is no interpretation of what is a descriptor, what is a signature, etc.
 
 =head1 SYNOPSIS
 
@@ -120,33 +120,33 @@ sub _attributesCountCallback {
 
 =head1 NOTES
 
-Constant pool is a special case because the grammar imposes that every entry in it has a "type". Therefore the following entries in the constant pool at explicitely interpreted:
+Constant pool is a special case, it is sort of "base information" for everything afterwards. Therefore the following entries in the constant pool are explicitely interpreted for convenience:
 
 =over
 
 =item Integer
 
-A per's scalar is returned.
+A per's scalar.
 
 =item Float
 
-A Math::BigFloat object instance is returned.
+A Math::BigFloat object instance.
 
 =item Long
 
-A per's scalar is returned.
+A per's scalar.
 
 =item Double
 
-A Math::BigFloat object instance is returned.
+A Math::BigFloat object instance.
 
 =item Utf8
 
-A per's scalar is returned.
+A per's scalar.
 
 =back
 
-In addition, because a constant pool can skip its indices, and indice number is also returned for every entry.
+In addition, because an indice in the constant pool can remain valid but unusable when the preceeding entry is a float or a double, such invalid entry is returned as a perl's undef.
 
 =cut
 
