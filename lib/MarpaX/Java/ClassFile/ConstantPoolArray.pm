@@ -25,11 +25,10 @@ MarpaX::Java::ClassFile::ConstantPoolArray is an internal class used by L<MarpaX
 
 my $_data      = ${__PACKAGE__->section_data('bnf')};
 my $_grammar   = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf($_data)});
-my %_CALLBACKS = ('utf8Length$'         => \&_utf8LengthCallback,
-                  'constantLongInfo$'   => \&_constantLongInfoCallback,
-                  'constantDoubleInfo$' => \&_constantDoubleInfoCallback,
-                  'cpInfo$'             => \&_cpInfoCallback,
-                  '^indice'             => \&_indiceCallback,
+my %_CALLBACKS = ('utf8Length$'           => \&_utf8LengthCallback,
+                  'cpInfo$'               => \&_cpInfoCallback,
+                  '^indice'               => \&_indiceCallback,
+                  '^indice_and_skip_next' => \&_indiceAndSkipNextCallback
                  );
 
 # ----------------------------------------------------------------
@@ -56,16 +55,6 @@ sub _utf8LengthCallback {
   $self->lexeme_read('MANAGED', $utf8Length, $utf8String);  # Note: this lexeme_read() handles case of length 0
 }
 
-sub _constantLongInfoCallback {
-  my ($self) = @_;
-  $self->_skipNextEntry(1);
-}
-
-sub _constantDoubleInfoCallback {
-  my ($self) = @_;
-  $self->_skipNextEntry(1);
-}
-
 sub _cpInfoCallback {
   my ($self) = @_;
   $self->_nbDone($self->_nbDone + 1);
@@ -80,6 +69,13 @@ sub _cpInfoCallback {
 sub _indiceCallback {
   my ($self) = @_;
   $self->lexeme_read('MANAGED', 0, $self->_nbDone);
+}
+
+sub _indiceAndSkipNextCallback {
+  my ($self) = @_;
+  $self->lexeme_read('MANAGED', 0, $self->_nbDone);
+  $self->debugf('Flagging next entry as to be skipped');
+  $self->_skipNextEntry(1);
 }
 
 # --------------------
@@ -133,11 +129,10 @@ with qw/MarpaX::Java::ClassFile::Common::InnerGrammar/;
 __DATA__
 __[ bnf ]__
 :default ::= action => ::first
-event '^indice'             = predicted indice
-event 'cpInfo$'             = completed cpInfo
-event 'utf8Length$'         = completed utf8Length
-event 'constantLongInfo$'   = completed constantLongInfo
-event 'constantDoubleInfo$' = completed constantDoubleInfo
+event '^indice'               = predicted indice
+event '^indice_and_skip_next' = predicted indice_and_skip_next
+event 'cpInfo$'               = completed cpInfo
+event 'utf8Length$'           = completed utf8Length
 
 cpInfoArray ::= cpInfo*       action => [values]
 cpInfo ::=
@@ -159,22 +154,23 @@ cpInfo ::=
 # Note: a single byte is endianness independant, this is why it is ok
 # to write it in the \x{} form here
 #
-constantClassInfo              ::= [\x{07}] u2                   indice action =>  _constantClassInfo
-constantFieldrefInfo           ::= [\x{09}] u2 u2                indice action =>  _constantFieldrefInfo
-constantMethodrefInfo          ::= [\x{0a}] u2 u2                indice action =>  _constantMethodrefInfo
-constantInterfaceMethodrefInfo ::= [\x{0b}] u2 u2                indice action =>  _constantInterfaceMethodrefInfo
-constantStringInfo             ::= [\x{08}] u2                   indice action =>  _constantStringInfo
-constantIntegerInfo            ::= [\x{03}] integerBytes         indice action =>  _constantIntegerInfo
-constantFloatInfo              ::= [\x{04}] floatBytes           indice action =>  _constantFloatInfo
-constantLongInfo               ::= [\x{05}] longBytes            indice action =>  _constantLongInfo
-constantDoubleInfo             ::= [\x{06}] doubleBytes          indice action =>  _constantDoubleInfo
-constantNameAndTypeInfo        ::= [\x{0c}] u2 u2                indice action =>  _constantNameAndTypeInfo
-constantUtf8Info               ::= [\x{01}] utf8Length utf8Bytes indice action =>  _constantUtf8Info
-constantMethodHandleInfo       ::= [\x{0f}] u1 u2                indice action =>  _constantMethodHandleInfo
-constantMethodTypeInfo         ::= [\x{10}] u2                   indice action =>  _constantMethodType
-constantInvokeDynamicInfo      ::= [\x{12}] u2 u2                indice action =>  _constantInvokeDynamic
+constantClassInfo              ::= [\x{07}] u2                   indice               action =>  _constantClassInfo
+constantFieldrefInfo           ::= [\x{09}] u2 u2                indice               action =>  _constantFieldrefInfo
+constantMethodrefInfo          ::= [\x{0a}] u2 u2                indice               action =>  _constantMethodrefInfo
+constantInterfaceMethodrefInfo ::= [\x{0b}] u2 u2                indice               action =>  _constantInterfaceMethodrefInfo
+constantStringInfo             ::= [\x{08}] u2                   indice               action =>  _constantStringInfo
+constantIntegerInfo            ::= [\x{03}] integerBytes         indice               action =>  _constantIntegerInfo
+constantFloatInfo              ::= [\x{04}] floatBytes           indice               action =>  _constantFloatInfo
+constantLongInfo               ::= [\x{05}] longBytes            indice_and_skip_next action =>  _constantLongInfo
+constantDoubleInfo             ::= [\x{06}] doubleBytes          indice_and_skip_next action =>  _constantDoubleInfo
+constantNameAndTypeInfo        ::= [\x{0c}] u2 u2                indice               action =>  _constantNameAndTypeInfo
+constantUtf8Info               ::= [\x{01}] utf8Length utf8Bytes indice               action =>  _constantUtf8Info
+constantMethodHandleInfo       ::= [\x{0f}] u1 u2                indice               action =>  _constantMethodHandleInfo
+constantMethodTypeInfo         ::= [\x{10}] u2                   indice               action =>  _constantMethodType
+constantInvokeDynamicInfo      ::= [\x{12}] u2 u2                indice               action =>  _constantInvokeDynamic
 
 indice                     ::= managed
+indice_and_skip_next       ::= managed
 integerBytes               ::= U4      action => integer          # U4 and not u4
 floatBytes                 ::= U4      action => float            # U4 and not u4
 longBytes                  ::= U4 U4   action => long             # U4 and not u4
