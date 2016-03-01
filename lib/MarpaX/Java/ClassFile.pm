@@ -21,6 +21,18 @@ use MarpaX::Java::ClassFile::AttributesArray;
 use Scalar::Util qw/blessed/;
 use Types::Standard -all;
 
+my %_ACCESSFLAGS =
+  (
+   ACC_PUBLIC     => [ 0x0001, 'public'     ],
+   ACC_FINAL      => [ 0x0010, 'final'      ],
+   ACC_SUPER      => [ 0x0020, 'super'      ],
+   ACC_INTERFACE  => [ 0x0200, 'interface'  ],
+   ACC_ABSTRACT   => [ 0x0400, 'abstract'   ],
+   ACC_SYNTHETIC  => [ 0x1000, 'synthetic'  ],
+   ACC_ANNOTATION => [ 0x2000, 'annotation' ],
+   ACC_ENUM       => [ 0x4000, 'enum'       ]
+);
+
 =head1 DESCRIPTION
 
 MarpaX::Java::ClassFile is doing a parsing of a Java .class file, trying to stand as closed as possible to the binary format, with no language specific interpretation except with the constant pool (see the NOTES section). From the grammar point of view, this mean that there is no interpretation of what is a descriptor, what is a signature, etc.
@@ -81,6 +93,10 @@ sub callbacks { \%_CALLBACKS }
 # ------------
 # Our thingies
 # ------------
+
+has constantPoolArray => ( is => 'rwp', isa => ArrayRef );
+has classFiles        => ( is => 'ro',  isa => HashRef[InstanceOf[__PACKAGE__]], default => sub { {} } );
+
 sub BUILD {
   my ($self) = @_;
   $self->debugf('Starting')
@@ -93,8 +109,9 @@ sub _constantPoolCountCallback {
     my ($self) = @_;
     #
     # Hey, spec says constant pool'S SIZE is $constantPoolCount -1
+    # We remember the constantPool for a future use
     #
-    $self->executeInnerGrammar('MarpaX::Java::ClassFile::ConstantPoolArray', size => $self->literalU2 - 1 );
+    $self->_set_constantPoolArray($self->executeInnerGrammar('MarpaX::Java::ClassFile::ConstantPoolArray', size => $self->literalU2 - 1 , classFiles => $self->classFiles))
 }
 
 sub _interfacesCountCallback {
@@ -153,6 +170,78 @@ This will be visible under the key "computed_value" into the hash containing the
 # --------------------
 # Our grammar actions
 # --------------------
+sub _accessFlags {
+  my ($self, $u2) = @_;
+
+  my @accessFlags = ();
+
+  my $allbits = 0;
+  my %hasFlag = ();
+  foreach (keys %_ACCESSFLAGS) {
+    my ($mask, $value) = @{$_ACCESSFLAGS{$_}};
+    $hasFlag{$_} = (($u2 & $mask) == $mask) ? 1 : 0;
+    push(@accessFlags, $value) if ($hasFlag{$_});
+    $allbits |= $mask;
+  }
+  #
+  # Check what the spec says about access flags contraints
+  #
+  if ($hasFlag{ACC_INTERFACE}) {
+    #
+    # If the ACC_INTERFACE flag is set, the ACC_ABSTRACT flag must also be set,
+    # and the ACC_FINAL, ACC_SUPER, and ACC_ENUM flags set must not be set.
+    #
+    $self->errorf('ACC_ABSTRACT flag must be set') unless ($hasFlag{ACC_ABSTRACT});
+    $self->errorf('ACC_FINAL flag must not be set')    if ($hasFlag{ACC_FINAL});
+    $self->errorf('ACC_SUPER flag must not be set')    if ($hasFlag{ACC_SUPER});
+    $self->errorf('ACC_ENUM flag must not be set')     if ($hasFlag{ACC_ENUM});
+  } else {
+    #
+    # If the ACC_INTERFACE flag is not set, any of the other flags in (...) may be set
+    # except ACC_ANNOTATION.
+    #
+    $self->errorf('ACC_ANNOTATION flag must not be set') if ($hasFlag{ACC_ANNOTATION});
+    #
+    # However, such a class file must not have both its ACC_FINAL and ACC_ABSTRACT flags set
+    #
+    $self->errorf('ACC_FINAL and ACC_ABSTRACT flags must not be both set') if ($hasFlag{ACC_FINAL} && $hasFlag{ACC_ABSTRACT});
+  }
+  #
+  # If the ACC_ANNOTATION flag is set, the ACC_INTERFACE flag must also be set.
+  #
+  $self->errorf('ACC_INTERFACE flag must be set') if ($hasFlag{ACC_ANNOTATION} && ! $hasFlag{ACC_INTERFACE});
+
+  \@accessFlags
+}
+
+sub _thisClass {
+  my ($self, $u2) = @_;
+
+  my $thisClass = undef;
+  #
+  # The value of the this_class item must be a valid index into the constant_pool table.
+  #
+  my $constantPoolArray = $self->constantPoolArray;
+  if ($u2 > scalar(@{$constantPoolArray})) {
+    $self->warnf('this_class item must be a valid index into the constant_pool table, got %d > %d', $u2, scalar(@{$constantPoolArray}))
+  } else {
+    my $constantPoolItem = $constantPoolArray->[$u2 - 1];
+    #
+    # The constant_pool entry at that index must be a CONSTANT_Class_info structure (...)
+    # representing the class or interface defined by this class file.
+    #
+    my $blessed = blessed($constantPoolItem) // '';
+    if ($blessed ne 'CONSTANT_Class_info') {
+      $self->warnf('The constant_pool entry at index %d must be a CONSTANT_Class_info structure, got %s', $u2, $blessed)
+    } else {
+      my $name_index = $constantPoolItem->{name_index};
+      $thisClass = $constantPoolArray->[$name_index - 1]->{computed_value};
+    }
+  }
+
+  $thisClass
+}
+
 sub _ClassFile {
     my $i = 0;
     bless(
@@ -212,8 +301,8 @@ minorVersion       ::= u2
 majorVersion       ::= u2
 constantPoolCount  ::= u2
 constantPoolArray  ::= managed
-accessFlags        ::= u2
-thisClass          ::= u2
+accessFlags        ::= u2           action => _accessFlags
+thisClass          ::= u2           action => _thisClass
 superClass         ::= u2
 interfacesCount    ::= u2
 interfacesArray    ::= managed
