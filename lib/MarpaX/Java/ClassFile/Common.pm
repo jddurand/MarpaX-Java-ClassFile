@@ -154,6 +154,7 @@ sub _value {
   $_[0]->_croak('Parse is ambiguous') if ($ambiguity_metric != 1);
 
   $_[0]->tracef('value($_[0])');
+  local $MarpaX::Java::ClassFile::Common::VALUE_CONTEXT = 1;
   my $valueRef = eval { $_[0]->r->value($_[0]) };
   $_[0]->_croak($@) if ($@);
   $_[0]->_croak('Value reference is undefined') if (! defined($valueRef));
@@ -262,11 +263,22 @@ sub executeInnerGrammar {
 sub _dolog {
   my ($self, $method, $format, @arguments) = @_;
 
-  my $inputLength = length($self->input);
-  my $nbcharacters = length("$inputLength");
-  my ($offset, $max) = ($self->pos, $self->max);
+  #
+  # If we are in an action, we do nothing else
+  # but propage the message to the log handler
+  # as-is. Current and max positions are meaningul
+  # only in the lexing phase, that may not use
+  # another level but TRACE btw -;
+  #
+  if ($MarpaX::Java::ClassFile::Common::VALUE_CONTEXT) {
+    $self->_logger->$method($format, @arguments)
+  } else {
+    my $inputLength = length($self->input);
+    my $nbcharacters = length("$inputLength");
+    my ($offset, $max) = ($self->pos, $self->max);
 
-  $self->_logger->$method("%s[offset %*s/%*s] %s: $format", '.' x $self->level, $nbcharacters, $offset, $nbcharacters, $self->max, $self->whoami, @arguments)
+    $self->_logger->$method("%s[pos %*s->%*s] %s: $format", '.' x $self->level, $nbcharacters, $offset, $nbcharacters, $self->max, $self->whoami, @arguments)
+  }
 }
 
 sub debugf {
@@ -302,6 +314,12 @@ sub tracef {
 
   return unless $MarpaX::Java::ClassFile::Common::IS_TRACE;
   $self->_dolog('tracef', $format, @arguments);
+}
+
+sub fatalf {
+  my ($self, $format, @arguments) = @_;
+
+  croak sprintf($format, @arguments)
 }
 
 sub _croak {
