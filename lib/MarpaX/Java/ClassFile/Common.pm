@@ -252,7 +252,8 @@ sub executeInnerGrammar {
   my $value = $inner->ast;    # It is very important to call ast BEFORE calling pos
   my $length = $inner->pos - $_[0]->pos;
   $_[0]->lexeme_read('MANAGED', $length, $value);
-  $_[0]->debugf('%s over', $whoisit)
+  $_[0]->debugf('%s over', $whoisit);
+  $value
 }
 
 #
