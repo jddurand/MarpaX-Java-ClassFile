@@ -224,7 +224,9 @@ sub _checkItem {
     # The value of the name_and_type_index must be a valid index into the constant_pool table.
     # The constant_pool entry at that index must be a CONSTANT_NameAndType_info structure.
     #
-    $self->_checkItem($cpInfoArrayRef, $item->{name_and_type_index}, %constraint, blessed => 'CONSTANT_NameAndType_info');
+    my $nameAndTypeInfo = $self->_checkItem($cpInfoArrayRef, $item->{name_and_type_index}, %constraint, blessed => 'CONSTANT_NameAndType_info');
+    $utf8Info           = $self->_checkItem($cpInfoArrayRef, $nameAndTypeInfo->{name_index}, %constraint, blessed => 'CONSTANT_Utf8_info');
+    # $self->isValidUnqualifiedName($nameAndTypeInfoif ($blessed eq 'CONSTANT_Fieldref_info'
     #
     # In a CONSTANT_Fieldref_info, the indicated descriptor must be a field descriptor.
     # Otherwise, the indicated descriptor must be a method descriptor.
@@ -236,6 +238,27 @@ sub _checkItem {
   }
 
   $item
+}
+
+sub _isValidUnqualifiedName {
+  my ($self, $utf8, $type) = @_;
+
+  if ($type eq 'field' or $type eq 'method') {
+    #
+    # An unqualified name must contain at least one Unicode code point and must not contain any of the ASCII characters . ; [ / (that is, period or semicolon or left square bracket or forward slash).
+    #
+    $self->fatalf('%s must contain at least one Unicode point', $utf8) unless (length($utf8));
+    $self->fatalf('%s must contain not contain any of these characters: .;[/', $utf8) if ($utf8 =~ /[\.;\[\/]/);
+  }
+  if ($type eq 'method') {
+    #
+    # Method names are further constrained so that, with the exception of the special method names <init> and <clinit> (§2.9), they must not contain the ASCII characters < or > (that is, left angle bracket or right angle bracket).
+    #
+    if ($utf8 ne '<init>' && $utf8 ne '<clinit>') {
+      $self->fatalf('%s must contain not contain any of these characters: <>', $utf8) if ($utf8 =~ /[<>]/);
+    }
+  }
+  return 1;
 }
 
 sub _cpInfoArray {
