@@ -258,9 +258,10 @@ sub _checkItem {
       # If the value of the reference_kind item is 1 (REF_getField), 2 (REF_getStatic), 3 (REF_putField), or 4 (REF_putStatic),
       # then the constant_pool entry at that index must be a CONSTANT_Fieldref_info.
       #
+      my $referedItem;
       if (($referenceKind >= 1) && ($referenceKind <= 4)) {
         push(@{$parentIdArrayRef}, $itemIndex);
-        $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Fieldref_info');
+        $referedItem = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Fieldref_info');
         pop(@{$parentIdArrayRef});
       }
       #
@@ -269,7 +270,7 @@ sub _checkItem {
       #
       if (($referenceKind == 5) || ($referenceKind == 8)) {
         push(@{$parentIdArrayRef}, $itemIndex);
-        $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Methodref_info');
+        $referedItem = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Methodref_info');
         pop(@{$parentIdArrayRef});
       }
       #
@@ -282,11 +283,11 @@ sub _checkItem {
         my $version = $self->majorVersion . '.' . $self->minorVersion;
         if ($version < 52.0) {
           push(@{$parentIdArrayRef}, $itemIndex);
-          $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Methodref_info');
+          $referedItem = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Methodref_info');
           pop(@{$parentIdArrayRef});
         } else {
           push(@{$parentIdArrayRef}, $itemIndex);
-          $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => [qw/CONSTANT_Methodref_info CONSTANT_InterfaceMethodref_info/]);
+          $referedItem = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => [qw/CONSTANT_Methodref_info CONSTANT_InterfaceMethodref_info/]);
           pop(@{$parentIdArrayRef});
         }
       }
@@ -296,14 +297,45 @@ sub _checkItem {
       #
       if ($referenceKind == 9) {
         push(@{$parentIdArrayRef}, $itemIndex);
-        $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_InterfaceMethodref_info');
+        $referedItem = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_InterfaceMethodref_info');
         pop(@{$parentIdArrayRef});
       }
       #
       # If the value of the reference_kind item is 5 (REF_invokeVirtual), 6 (REF_invokeStatic), 7 (REF_invokeSpecial), or 9 (REF_invokeInterface), the name of the method represented by a CONSTANT_Methodref_info or a CONSTANT_InterfaceMethodref_info must not be <init> or <clinit>.
       #
+      if ((($referenceKind >= 5) && ($referenceKind <= 7)) || $referenceKind == 9) {
+        push(@{$parentIdArrayRef}, $itemIndex);
+        my $nameAndTypeInfo = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $referedItem->{name_and_type_index}, %constraint, blessed => 'CONSTANT_NameAndType_info');
+        pop(@{$parentIdArrayRef});
+        my $utf8Info = $cpInfoArrayRef->[$nameAndTypeInfo->{name_index} - 1];
+        my $methodName = $utf8Info->{computed_value};
+        $self->tracef('%sItem index %d refers to a method name %s that is not <init> or <clinit> ?',
+                    $parentIds,
+                    $itemIndex,
+                    $methodName);
+      $self->fatalf('%sItem index %d refers to a method name %s that must not be <init> or <clinit>',
+                    $parentIds,
+                    $itemIndex,
+                    $methodName) if (($methodName eq '<init>') || ($methodName eq '<clinit>'));
+      }
+      #
       # If the value is 8 (REF_newInvokeSpecial), the name of the method represented by a CONSTANT_Methodref_info structure must be <init>.
       #
+      if ($referenceKind == 8) {
+        push(@{$parentIdArrayRef}, $itemIndex);
+        my $nameAndTypeInfo = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $referedItem->{name_and_type_index}, %constraint, blessed => 'CONSTANT_NameAndType_info');
+        pop(@{$parentIdArrayRef});
+        my $utf8Info = $cpInfoArrayRef->[$nameAndTypeInfo->{name_index} - 1];
+        my $methodName = $utf8Info->{computed_value};
+        $self->tracef('%sItem index %d refers to a method name %s that is <init> ?',
+                    $parentIds,
+                    $itemIndex,
+                    $methodName);
+      $self->fatalf('%sItem index %d refers to a method name %s that must be <init>',
+                    $parentIds,
+                    $itemIndex,
+                    $methodName) unless ($methodName eq '<init>');
+      }
     }
   elsif
     # ***************************************
