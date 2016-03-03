@@ -17,6 +17,9 @@ use MarpaX::Java::ClassFile::Common::BNF qw/bnf/;
 use Scalar::Util qw/blessed/;
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
 use Types::Standard -all;
+use constant {
+  ACC_INTERFACE  => 0x0200
+};
 
 =head1 DESCRIPTION
 
@@ -31,6 +34,14 @@ my %_CALLBACKS = ('utf8Length$'  => \&_utf8LengthCallback,
                   '^longBytes'   => \&_longBytesCallback,
                   '^doubleBytes' => \&_doubleBytesCallback
                  );
+
+#
+# Private grammars
+#
+my %_GRAMMARS =
+  map
+  { $_ => Marpa::R2::Scanless::G->new({source => __PACKAGE__->section_data($_)}) }
+  qw/fieldName methodName fieldDescriptor methodDescriptor/;
 
 # ----------------------------------------------------------------
 # What role MarpaX::Java::ClassFile::Common::InnerGrammar requires
@@ -150,115 +161,187 @@ sub _checkSubIndexType {
 # "inherited"
 #
 sub _checkItem {
-  my ($self, $cpInfoArrayRef, $itemIndex, %constraint)  = @_;
+  my ($self, $parentIdArrayRef, $cpInfoArrayRef, $itemIndex, %constraint)  = @_;
 
-  #
+  $parentIdArrayRef //= [];
+  my $parentIds = @{$parentIdArrayRef} ? '[' . join('->', @{$parentIdArrayRef}) . '] ' : '';
+  $self->tracef('%sChecking item at index %d', $parentIds, $itemIndex);
+
+  # ---------------------
   # minIndex constraint ?
-  #
-  $self->fatalf('Item index %d must be >= %d', $itemIndex, $constraint{minIndex})
-    if (defined($constraint{minIndex}) && $itemIndex < $constraint{minIndex});
-  #
+  # ---------------------
+  if (defined($constraint{minIndex})) {
+    $self->tracef('%sItem index %d is >= %d ?', $parentIds, $itemIndex, $constraint{minIndex});
+    $self->fatalf('%sItem index %d must be >= %d', $itemIndex, $constraint{minIndex}) unless ($itemIndex >= $constraint{minIndex})
+  }
+
+  # ---------------------
   # maxIndex constraint ?
-  #
-  $self->fatalf('Item index %d must be <= %d', $itemIndex, $constraint{maxIndex})
-    if (defined($constraint{maxIndex}) && $itemIndex > $constraint{maxIndex});
+  # ---------------------
+  if (defined($constraint{maxIndex})) {
+    $self->tracef('%sItem index %d is <= %d ?', $parentIds, $itemIndex, $constraint{maxIndex});
+    $self->fatalf('%sItem index %d must be <= %d', $parentIds, $itemIndex, $constraint{maxIndex}) unless ($itemIndex <= $constraint{maxIndex})
+  }
 
   my $item = $cpInfoArrayRef->[$itemIndex - 1];
   return unless (defined($item));
-  #
-  # Blessed constraint ?
-  #
-  my $blessed = blessed($item) // '';
-  $self->fatalf('Item %s is not blesssed to %s', $item)
-    if (defined($constraint{blessed}) && $constraint{blessed} ne $blessed);
 
-  if ($blessed eq 'CONSTANT_Class_info') {
-    #
-    # The value of the name_index item must be a valid index into the constant_pool table.
-    # The constant_pool entry at that index must be a CONSTANT_Utf8_info structure.
-    #
-    $self->_checkItem($cpInfoArrayRef, $item->{name_index}, %constraint, blessed => 'CONSTANT_Utf8_info')
+  # --------------------
+  # Blessed constraint ?
+  # --------------------
+  my $blessed = blessed($item) // '';
+  if (defined($constraint{blessed})) {
+    $self->tracef('%sItem index %d is a %s ?', $parentIds, $itemIndex, $blessed);
+    $self->fatalf('%sItem index %d is not blesssed to %s', $parentIds, $itemIndex, $blessed) unless ($constraint{blessed} eq $blessed);
   }
-  elsif ($blessed eq 'CONSTANT_Fieldref_info'           ||
-         $blessed eq 'CONSTANT_Methodref_info'          ||
-         $blessed eq 'CONSTANT_InterfaceMethodref_info') {
-    #
-    # The value of the class_index item must be a valid index into the constant_pool table.
-    # The constant_pool entry at that index must be a CONSTANT_Class_info structure.
-    #
-    my $classInfo = $self->_checkItem($cpInfoArrayRef, $item->{class_index}, %constraint, blessed => 'CONSTANT_Class_info');
-    #
-    # The class_index item of a CONSTANT_Methodref_info structure must be a class type.
-    # The class_index item of a CONSTANT_InterfaceMethodref_info structure must be an interface type.
-    # The class_index item of a CONSTANT_Fieldref_info structure may be either a class type or an interface type.
-    #
-    my $utf8Info = $cpInfoArrayRef->[$classInfo->{name_index} - 1];
-    my $className = $utf8Info->{computed_value};
-    if (exists($self->classFiles->{$className})) {
+
+  if
+    # *******************************
+    ($blessed eq 'CONSTANT_Class_info')
+    # *******************************
+    {
       #
-      # If not an interface, then this is class
+      # The value of the name_index item must be a valid index into the constant_pool table.
+      # The constant_pool entry at that index must be a CONSTANT_Utf8_info structure.
       #
-      my $accessFlags = $self->classFiles->{$className}->ast->{accessFlags};
-      my $isInterface = grep { $_ eq 'interface' } @{$accessFlags};
-      my $isClass     = ! $isInterface;
-      if ($blessed eq 'CONSTANT_Methodref_info') {
-        $self->fatalf('%s (constant pool item No %d) references a ClassFile named %s that is not a class, but: %s',
-                      blessed($item),
-                      $itemIndex,
-                      $className,
-                      $accessFlags) unless ($isClass);
-      } elsif ($blessed eq 'CONSTANT_InterfaceMethodref_info') {
-        $self->fatalf('%s (constant pool item No %d) references a ClassFile named %s that is not an interface, but: %s',
-                      blessed($item),
-                      $itemIndex,
-                      $className,
-                      $accessFlags) unless ($isInterface);
-      }
-    } else {
-      #
-      # Should we pollute logging with that
-      #
-      # $self->infof('Constant pool No %d, type %s, references a class name %s that is not loaded: cannot check if this is a class or an interface', $itemIndex, $blessed, $className)
+      push(@{$parentIdArrayRef}, $itemIndex);
+      $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{name_index}, %constraint, blessed => 'CONSTANT_Utf8_info');
+      pop(@{$parentIdArrayRef});
     }
-    #
-    # The value of the name_and_type_index must be a valid index into the constant_pool table.
-    # The constant_pool entry at that index must be a CONSTANT_NameAndType_info structure.
-    #
-    my $nameAndTypeInfo = $self->_checkItem($cpInfoArrayRef, $item->{name_and_type_index}, %constraint, blessed => 'CONSTANT_NameAndType_info');
-    $utf8Info           = $self->_checkItem($cpInfoArrayRef, $nameAndTypeInfo->{name_index}, %constraint, blessed => 'CONSTANT_Utf8_info');
-    # $self->isValidUnqualifiedName($nameAndTypeInfoif ($blessed eq 'CONSTANT_Fieldref_info'
-    #
-    # In a CONSTANT_Fieldref_info, the indicated descriptor must be a field descriptor.
-    # Otherwise, the indicated descriptor must be a method descriptor.
-    #
-    # If the name of the method of a CONSTANT_Methodref_info structure begins with a '<' ('\u003c'),
-    # then the name must be the special name <init>, representing an instance initialization method.
-    # The return type of such a method must be void.
-    #
-  }
+  elsif
+     # *******************************
+    ($blessed eq 'CONSTANT_Utf8_info')
+    # *******************************
+    {
+      # --------------------
+      # grammar constraint ?
+      # --------------------
+      if (defined($constraint{grammarName})) {
+        my $grammarName = $constraint{grammarName};
+        $self->tracef('%sItem index %d passes grammar %s on %s ?', $parentIds, $itemIndex, $grammarName, $item->{computed_value});
+        $item->{parseTreeValue} //= {};
+        if (! defined($item->{parseTreeValue}->{$grammarName})) {
+          my $parseTreeValueRef = $_GRAMMARS{$grammarName}->parse(\$item->{computed_value});
+          my $parseTreeValue = ${$parseTreeValueRef};
+          $item->{parseTreeValue}->{$grammarName} = $parseTreeValue;
+        }
+      }
+    }
+  elsif
+    # ***************************************
+    ($blessed eq 'CONSTANT_NameAndType_info')
+    # ***************************************
+    {
+      #
+      # Make sure constraint dispatching is correct: there are two values inside this single entry
+      #
+      my $methodOrFieldName       = delete($constraint{methodOrFieldName});
+      my $methodOrFieldDescriptor = delete($constraint{methodOrFieldDescriptor});
+      #
+      # The value of the name_index item must be a valid index into the constant_pool table.
+      # The constant_pool entry at that index must be a CONSTANT_Utf8_info structure representing either the special method name <init> or a valid unqualified name denoting a field or method (§4.2.2).
+      #
+      push(@{$parentIdArrayRef}, $itemIndex);
+      $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{name_index}, %constraint, grammarName => $methodOrFieldName, blessed => 'CONSTANT_Utf8_info');
+      pop(@{$parentIdArrayRef});
+      #
+      # The value of the descriptor_index item must be a valid index into the constant_pool table.
+      # The constant_pool entry at that index must be a CONSTANT_Utf8_info structure representing a valid field descriptor or method descriptor
+      #
+      push(@{$parentIdArrayRef}, $itemIndex);
+      $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{descriptor_index}, %constraint, grammarName => $methodOrFieldDescriptor, blessed => 'CONSTANT_Utf8_info');
+      pop(@{$parentIdArrayRef});
+    }
+  elsif
+    # ************************************************
+    ($blessed eq 'CONSTANT_Fieldref_info'           ||
+     $blessed eq 'CONSTANT_Methodref_info'          ||
+     $blessed eq 'CONSTANT_InterfaceMethodref_info')
+    # ************************************************
+    {
+      #
+      # The value of the class_index item must be a valid index into the constant_pool table.
+      # The constant_pool entry at that index must be a CONSTANT_Class_info structure.
+      #
+      push(@{$parentIdArrayRef}, $itemIndex);
+      my $classInfo = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{class_index}, %constraint, blessed => 'CONSTANT_Class_info');
+      pop(@{$parentIdArrayRef});
+      #
+      # The class_index item of a CONSTANT_Methodref_info structure must be a class type.
+      # The class_index item of a CONSTANT_InterfaceMethodref_info structure must be an interface type.
+      # The class_index item of a CONSTANT_Fieldref_info structure may be either a class type or an interface type.
+      #
+      my $utf8Info = $cpInfoArrayRef->[$classInfo->{name_index} - 1];
+      my $className = $utf8Info->{computed_value};
+      if (exists($self->classFiles->{$className})) {
+        #
+        # If not an interface, then this is class
+        #
+        my $accessFlags = $self->classFiles->{$className}->ast->{accessFlags};
+        my $isInterface = (($accessFlags->{u2} & ACC_INTERFACE) == ACC_INTERFACE) ? 1 : 0;
+        my $isClass     = $isInterface ? 0 : 1;
+        if ($blessed eq 'CONSTANT_Methodref_info') {
+          $self->fatalf('%sItem index %d references a ClassFile named %s that is not a class, but: %s',
+                        $parentIds,
+                        $itemIndex,
+                        $className,
+                        $accessFlags->{computed_value}) unless ($isClass);
+        } elsif ($blessed eq 'CONSTANT_InterfaceMethodref_info') {
+          $self->fatalf('%sItem index %d references a ClassFile named %s that is not an interface, but: %s',
+                        $parentIds,
+                        $itemIndex,
+                        $className,
+                        $accessFlags->{computed_value}) unless ($isInterface);
+        }
+      } else {
+        #
+        # Should we pollute logging with that
+        #
+        # $self->infof('Constant pool No %d, type %s, references a class name %s that is not loaded: cannot check if this is a class or an interface', $itemIndex, $blessed, $className)
+      }
+      #
+      # The value of the name_and_type_index must be a valid index into the constant_pool table.
+      # The constant_pool entry at that index must be a CONSTANT_NameAndType_info structure.
+      #
+      #
+      # In a CONSTANT_Fieldref_info, the indicated descriptor must be a field descriptor.
+      # Otherwise, the indicated descriptor must be a method descriptor.
+      #
+      my ($methodOrFieldName, $methodOrFieldDescriptor) = ($blessed eq 'CONSTANT_Fieldref_info') ? ('fieldName', 'fieldDescriptor') : ('methodName', 'methodDescriptor');
+
+      push(@{$parentIdArrayRef}, $itemIndex);
+      my $nameAndTypeInfo = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{name_and_type_index}, %constraint,
+                                              blessed => 'CONSTANT_NameAndType_info',
+                                              methodOrFieldName => $methodOrFieldName,
+                                              methodOrFieldDescriptor => $methodOrFieldDescriptor);
+      pop(@{$parentIdArrayRef});
+      #
+      # If the name of the method of a CONSTANT_Methodref_info structure begins with a '<' ('\u003c'),
+      # then the name must be the special name <init>, representing an instance initialization method.
+      # The return type of such a method must be void.
+      #
+      if ($blessed eq 'CONSTANT_Methodref_info') {
+        $utf8Info = $cpInfoArrayRef->[$nameAndTypeInfo->{name_index} - 1];
+        my $methodName = $utf8Info->{computed_value};
+        if (substr($methodName, 0, 1) eq '<') {
+          $self->fatalf('%sItem index %d references a method name %s instead of %s',
+                        $parentIds,
+                        $itemIndex,
+                        $methodName,
+                        '<init>') unless ($methodName eq '<init>');
+          $utf8Info = $cpInfoArrayRef->[$nameAndTypeInfo->{descriptor_index} - 1];
+          my $methodDescriptor = $utf8Info->{parseTreeValue}->{methodDescriptor};
+          my $ReturnDescriptor = $methodDescriptor->{ReturnDescriptor};
+          $self->fatalf('%sItem index %d references a method whose return type is %s instead of being blessed to %s',
+                        $parentIds,
+                        $itemIndex,
+                        $ReturnDescriptor,
+                        'VoidDescriptor') unless (blessed($ReturnDescriptor) eq 'VoidDescriptor');
+        }
+      }
+    }
 
   $item
-}
-
-sub _isValidUnqualifiedName {
-  my ($self, $utf8, $type) = @_;
-
-  if ($type eq 'field' or $type eq 'method') {
-    #
-    # An unqualified name must contain at least one Unicode code point and must not contain any of the ASCII characters . ; [ / (that is, period or semicolon or left square bracket or forward slash).
-    #
-    $self->fatalf('%s must contain at least one Unicode point', $utf8) unless (length($utf8));
-    $self->fatalf('%s must contain not contain any of these characters: .;[/', $utf8) if ($utf8 =~ /[\.;\[\/]/);
-  }
-  if ($type eq 'method') {
-    #
-    # Method names are further constrained so that, with the exception of the special method names <init> and <clinit> (§2.9), they must not contain the ASCII characters < or > (that is, left angle bracket or right angle bracket).
-    #
-    if ($utf8 ne '<init>' && $utf8 ne '<clinit>') {
-      $self->fatalf('%s must contain not contain any of these characters: <>', $utf8) if ($utf8 =~ /[<>]/);
-    }
-  }
-  return 1;
 }
 
 sub _cpInfoArray {
@@ -267,7 +350,43 @@ sub _cpInfoArray {
   my ($minIndex, $maxIndex) = (1, scalar(@cpInfo));
   my @commonArgs = (\@cpInfo, 1, scalar(@cpInfo));
 
-  [ map { $self->_checkItem(\@cpInfo, $_, minIndex => $minIndex, maxIndex => $maxIndex) } ($minIndex..$maxIndex) ]
+  [ map { $self->_checkItem(undef, \@cpInfo, $_, minIndex => $minIndex, maxIndex => $maxIndex) } ($minIndex..$maxIndex) ]
+}
+
+sub _MethodDescriptor {
+  my ($self, $ParameterDescriptors, $ReturnDescriptor) = @_;
+
+  return { ParameterDescriptors => $ParameterDescriptors, ReturnDescriptor => $ReturnDescriptor }
+}
+
+sub _ClassName {
+  my ($self, @UnqualifiedName) = @_;
+
+  join('/', @UnqualifiedName)
+}
+
+sub _BaseType {
+  my ($self, $value) = @_;
+
+  return bless(\$value, 'BaseType')
+}
+
+sub _ObjectType {
+  my ($self, $value) = @_;
+
+  return bless(\$value, 'ObjectType')
+}
+
+sub _ArrayType {
+  my ($self, $value) = @_;
+
+  return bless(\$value, 'ArrayType')
+}
+
+sub _VoidDescriptor {
+  my ($self, $value) = @_;
+
+  return bless(\$value, 'VoidDescriptor')
 }
 
 with qw/MarpaX::Java::ClassFile::Common::InnerGrammar/;
@@ -325,3 +444,67 @@ doubleBytes                ::= U4 U4   action => double           # U4 and not u
 utf8Length                 ::= u2
 utf8Bytes                  ::= MANAGED action => utf8             # MANAGED and not managed
 emptyInfo                  ::= managed
+
+__[ fieldName ]__
+:default ::= action => ::first
+lexeme default = latm => 1
+
+# fieldName is equivalent to an unqualified name.
+# An unqualified name must contain at least one Unicode code point and must not contain any of the ASCII characters . ; [ /
+#
+UnqualifiedName ::= UNQUALIFIEDNAME
+UNQUALIFIEDNAME   ~ [^.;[/]+
+
+__[ methodName ]__
+:default ::= action => ::first
+lexeme default = latm => 1
+
+#
+# UnqualifiedName, plus:
+# With the exception of the special method names <init> and <clinit>, must not contain the ASCII characters < or > (that is, left angle bracket or right angle bracket).
+#
+MethodName ::= '<init>' | '<clinit>' | METHODNAME
+METHODNAME   ~ [^.;[/<>]+
+
+__[ fieldDescriptor ]__
+:default ::= action => ::first
+lexeme default = latm => 1
+
+FieldDescriptor  ::= FieldType
+FieldType        ::= BaseType
+                   | ObjectType
+                   | ArrayType
+BaseType         ::= [BCDFIJSZ]                                                  action => MarpaX::Java::ClassFile::ConstantPoolArray::_BaseType
+ObjectType       ::= ('L') ClassName (';')                                       action => MarpaX::Java::ClassFile::ConstantPoolArray::_ObjectType
+ArrayType        ::= ('[') ComponentType                                         action => MarpaX::Java::ClassFile::ConstantPoolArray::_ArrayType
+ComponentType    ::= FieldType
+
+ClassName        ::= UnqualifiedName+ separator => FORWARDSLASH proper => 1      action => MarpaX::Java::ClassFile::ConstantPoolArray::_ClassName
+
+UnqualifiedName ::= UNQUALIFIEDNAME
+UNQUALIFIEDNAME   ~ [^.;[/]+
+FORWARDSLASH      ~ [/]
+
+__[ methodDescriptor ]__
+:default ::= action => ::first
+lexeme default = latm => 1
+
+MethodDescriptor     ::= ('(') ParameterDescriptors (')') ReturnDescriptor       action => MarpaX::Java::ClassFile::ConstantPoolArray::_MethodDescriptor
+ParameterDescriptors ::= ParameterDescriptor*                                    action => [values]
+ParameterDescriptor  ::= FieldType
+ReturnDescriptor     ::= FieldType
+                       | VoidDescriptor
+VoidDescriptor       ::= 'V'                                                     action => MarpaX::Java::ClassFile::ConstantPoolArray::_VoidDescriptor
+FieldType            ::= BaseType
+                       | ObjectType
+                       | ArrayType
+BaseType             ::= [BCDFIJSZ]                                              action => MarpaX::Java::ClassFile::ConstantPoolArray::_BaseType
+ObjectType           ::= ('L') ClassName (';')                                   action => MarpaX::Java::ClassFile::ConstantPoolArray::_ObjectType
+ArrayType            ::= ('[') ComponentType                                     action => MarpaX::Java::ClassFile::ConstantPoolArray::_ArrayType
+ComponentType        ::= FieldType
+
+ClassName            ::= UnqualifiedName+ separator => FORWARDSLASH proper => 1  action => MarpaX::Java::ClassFile::ConstantPoolArray::_ClassName
+
+UnqualifiedName      ::= UNQUALIFIEDNAME
+UNQUALIFIEDNAME        ~ [^.;[/]+
+FORWARDSLASH           ~ [/]
