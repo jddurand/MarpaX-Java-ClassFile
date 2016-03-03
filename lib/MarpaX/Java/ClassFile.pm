@@ -211,7 +211,7 @@ sub _accessFlags {
   #
   $self->errorf('ACC_INTERFACE flag must be set') if ($hasFlag{ACC_ANNOTATION} && ! $hasFlag{ACC_INTERFACE});
 
-  \@accessFlags
+  bless({ u2 => $u2, computed_value =>\@accessFlags }, 'access_flags')
 }
 
 sub _thisClass {
