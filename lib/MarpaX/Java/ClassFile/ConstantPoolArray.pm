@@ -52,9 +52,11 @@ sub callbacks { \%_CALLBACKS }
 # ------------
 # Our thingies
 # ------------
-has classFiles      => (is => 'ro', isa => HashRef[InstanceOf['MarpaX::Java::ClassFile']], default => sub { {} } );
-has _lastTag        => (is => 'rw', isa => PositiveOrZeroInt, default => sub { 0 });  # Tag with value 0 does not exist -;
-has _skipNextEntry  => (is => 'rw', isa => Bool,              default => sub { 0 });
+has classFiles      => ( is => 'ro', isa => HashRef[InstanceOf['MarpaX::Java::ClassFile']], default => sub { {} } );
+has majorVersion    => ( is => 'ro', isa => PositiveOrZeroInt, required => 1);
+has minorVersion    => ( is => 'ro', isa => PositiveOrZeroInt, required => 1);
+has _lastTag        => ( is => 'rw', isa => PositiveOrZeroInt, default => sub { 0 });  # Tag with value 0 does not exist -;
+has _skipNextEntry  => ( is => 'rw', isa => Bool,              default => sub { 0 });
 
 # ---------------
 # Event callbacks
@@ -191,8 +193,13 @@ sub _checkItem {
   # --------------------
   my $blessed = blessed($item) // '';
   if (defined($constraint{blessed})) {
-    $self->tracef('%sItem index %d is a %s ?', $parentIds, $itemIndex, $blessed);
-    $self->fatalf('%sItem index %d is not blesssed to %s', $parentIds, $itemIndex, $blessed) unless ($constraint{blessed} eq $blessed);
+    if (ref($constraint{blessed})) {
+      $self->tracef('%sItem index %d is one of %s ?', $parentIds, $itemIndex, $constraint{blessed});
+      $self->fatalf('%sItem index %d is %s, not one of %s', $parentIds, $itemIndex, $blessed, $constraint{blessed}) unless (grep { $blessed eq $_ } @{$constraint{blessed}});
+    } else {
+      $self->tracef('%sItem index %d is a %s ?', $parentIds, $itemIndex, $constraint{blessed});
+      $self->fatalf('%sItem index %d is %s, not %s', $parentIds, $itemIndex, $blessed, $constraint{blessed}) unless ($constraint{blessed} eq $blessed);
+    }
   }
 
   if
@@ -244,6 +251,59 @@ sub _checkItem {
                     $parentIds,
                     $itemIndex,
                     $referenceKind) unless (($referenceKind >= 1) && ($referenceKind <= 9));
+      #
+      # The value of the reference_index item must be a valid index into the constant_pool table.
+      # The constant_pool entry at that index must be as follows:
+      #
+      # If the value of the reference_kind item is 1 (REF_getField), 2 (REF_getStatic), 3 (REF_putField), or 4 (REF_putStatic),
+      # then the constant_pool entry at that index must be a CONSTANT_Fieldref_info.
+      #
+      if (($referenceKind >= 1) && ($referenceKind <= 4)) {
+        push(@{$parentIdArrayRef}, $itemIndex);
+        $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Fieldref_info');
+        pop(@{$parentIdArrayRef});
+      }
+      #
+      # If the value of the reference_kind item is 5 (REF_invokeVirtual) or 8 (REF_newInvokeSpecial),
+      # then the constant_pool entry at that index must be a CONSTANT_Methodref_info.
+      #
+      if (($referenceKind == 5) || ($referenceKind == 8)) {
+        push(@{$parentIdArrayRef}, $itemIndex);
+        $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Methodref_info');
+        pop(@{$parentIdArrayRef});
+      }
+      #
+      # If the value of the reference_kind item is 6 (REF_invokeStatic) or 7 (REF_invokeSpecial),
+      # then
+      # - if the class file version number is less than 52.0, the constant_pool entry at that index must be a CONSTANT_Methodref_info
+      # - if the class file version number is 52.0 or above, the constant_pool entry at that index must be either a CONSTANT_Methodref_info or a CONSTANT_InterfaceMethodref_info.
+      #
+      if (($referenceKind == 6) || ($referenceKind == 7)) {
+        my $version = $self->majorVersion . '.' . $self->minorVersion;
+        if ($version < 52.0) {
+          push(@{$parentIdArrayRef}, $itemIndex);
+          $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Methodref_info');
+          pop(@{$parentIdArrayRef});
+        } else {
+          push(@{$parentIdArrayRef}, $itemIndex);
+          $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => [qw/CONSTANT_Methodref_info CONSTANT_InterfaceMethodref_info/]);
+          pop(@{$parentIdArrayRef});
+        }
+      }
+      #
+      # If the value of the reference_kind item is 9 (REF_invokeInterface),
+      # then the constant_pool entry at that index must be a CONSTANT_InterfaceMethodref_info
+      #
+      if ($referenceKind == 9) {
+        push(@{$parentIdArrayRef}, $itemIndex);
+        $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_InterfaceMethodref_info');
+        pop(@{$parentIdArrayRef});
+      }
+      #
+      # If the value of the reference_kind item is 5 (REF_invokeVirtual), 6 (REF_invokeStatic), 7 (REF_invokeSpecial), or 9 (REF_invokeInterface), the name of the method represented by a CONSTANT_Methodref_info or a CONSTANT_InterfaceMethodref_info must not be <init> or <clinit>.
+      #
+      # If the value is 8 (REF_newInvokeSpecial), the name of the method represented by a CONSTANT_Methodref_info structure must be <init>.
+      #
     }
   elsif
     # ***************************************

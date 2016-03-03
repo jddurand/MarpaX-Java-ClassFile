@@ -19,6 +19,7 @@ use MarpaX::Java::ClassFile::FieldsArray;
 use MarpaX::Java::ClassFile::MethodsArray;
 use MarpaX::Java::ClassFile::AttributesArray;
 use Scalar::Util qw/blessed/;
+use Types::Common::Numeric qw/PositiveOrZeroInt/;
 use Types::Standard -all;
 
 my %_ACCESSFLAGS =
@@ -81,7 +82,8 @@ my %_CALLBACKS = (
     'fieldsCount$'       => \&_fieldsCountCallback,
     'methodsCount$'      => \&_methodsCountCallback,
     'attributesCount$'   => \&_attributesCountCallback,
-    'ClassFile$'         => \&_ClassFile
+    'minorVersion$'      => \&_minorVersionCallback,
+    'majorVersion$'      => \&_majorVersionCallback,
 );
 
 # --------------------------------------------------
@@ -95,6 +97,8 @@ sub callbacks { \%_CALLBACKS }
 # ------------
 
 has constantPoolArray => ( is => 'rwp', isa => ArrayRef );
+has majorVersion      => ( is => 'rwp', isa => PositiveOrZeroInt);
+has minorVersion      => ( is => 'rwp', isa => PositiveOrZeroInt);
 has classFiles        => ( is => 'ro',  isa => HashRef[InstanceOf[__PACKAGE__]], default => sub { {} } );
 
 sub BUILD {
@@ -111,7 +115,7 @@ sub _constantPoolCountCallback {
     # Hey, spec says constant pool'S SIZE is $constantPoolCount -1
     # We remember the constantPool for a future use
     #
-    $self->_set_constantPoolArray($self->executeInnerGrammar('MarpaX::Java::ClassFile::ConstantPoolArray', size => $self->literalU2 - 1 , classFiles => $self->classFiles))
+    $self->_set_constantPoolArray($self->executeInnerGrammar('MarpaX::Java::ClassFile::ConstantPoolArray', size => $self->literalU2 - 1 , classFiles => $self->classFiles, minorVersion => $self->minorVersion, majorVersion => $self->majorVersion))
 }
 
 sub _interfacesCountCallback {
@@ -134,6 +138,19 @@ sub _attributesCountCallback {
     $self->executeInnerGrammar(
         'MarpaX::Java::ClassFile::AttributesArray', size => $self->literalU2 );
 }
+
+sub _minorVersionCallback {
+  my ($self) = @_;
+
+  $self->_set_minorVersion($self->literalU2)
+}
+
+sub _majorVersionCallback {
+  my ($self) = @_;
+
+  $self->_set_majorVersion($self->literalU2)
+}
+
 
 =head1 NOTES
 
@@ -273,12 +290,13 @@ with qw/MarpaX::Java::ClassFile::Common/;
 __DATA__
 __[ bnf ]__
 :default ::= action => ::first
+event 'minorVersion$'      = completed minorVersion
+event 'majorVersion$'      = completed majorVersion
 event 'constantPoolCount$' = completed constantPoolCount
 event 'interfacesCount$'   = completed interfacesCount
 event 'fieldsCount$'       = completed fieldsCount
 event 'methodsCount$'      = completed methodsCount
 event 'attributesCount$'   = completed attributesCount
-event 'ClassFile$'         = completed ClassFile
 ClassFile ::=
              magic
              minorVersion
