@@ -188,10 +188,11 @@ sub _checkItem {
   my $item = $cpInfoArrayRef->[$itemIndex - 1];
   return unless (defined($item));
 
+  my $blessed = blessed($item) // '';
+
   # --------------------
   # Blessed constraint ?
   # --------------------
-  my $blessed = blessed($item) // '';
   if (defined($constraint{blessed})) {
     if (ref($constraint{blessed})) {
       $self->tracef('%sItem index %d is one of %s ?', $parentIds, $itemIndex, $constraint{blessed});
@@ -199,6 +200,12 @@ sub _checkItem {
     } else {
       $self->tracef('%sItem index %d is a %s ?', $parentIds, $itemIndex, $constraint{blessed});
       $self->fatalf('%sItem index %d is %s, not %s', $parentIds, $itemIndex, $blessed, $constraint{blessed}) unless ($constraint{blessed} eq $blessed);
+    }
+  } else {
+    if ($blessed) {
+      $self->tracef('%sItem index %d is a %s', $parentIds, $itemIndex, $blessed);
+    } else {
+      $self->tracef('%sItem index %d is not blessed', $parentIds, $itemIndex);
     }
   }
 
@@ -216,9 +223,9 @@ sub _checkItem {
       pop(@{$parentIdArrayRef});
     }
   elsif
-     # *******************************
+    # ********************************
     ($blessed eq 'CONSTANT_Utf8_info')
-    # *******************************
+    # ********************************
     {
       # --------------------
       # grammar constraint ?
@@ -235,7 +242,7 @@ sub _checkItem {
       }
     }
   elsif
-     # ***************************************
+    # ***************************************
     ($blessed eq 'CONSTANT_MethodHandle_info')
     # ****************************************
     {
@@ -449,6 +456,21 @@ sub _checkItem {
                         'VoidDescriptor') unless (blessed($ReturnDescriptor) eq 'VoidDescriptor');
         }
       }
+    }
+  elsif
+    # **************************************
+    ($blessed eq 'CONSTANT_MethodType_info')
+    # **************************************
+    {
+      #
+      # The value of the descriptor_index item must be a valid index into the constant_pool table.
+      # The constant_pool entry at that index must be a CONSTANT_Utf8_info structure representing a method descriptor.
+      #
+      push(@{$parentIdArrayRef}, $itemIndex);
+      $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{descriptor_index}, %constraint,
+                                              blessed => 'CONSTANT_Utf8_info',
+                                              methodOrFieldDescriptor => 'methodDescriptor');
+      pop(@{$parentIdArrayRef});
     }
 
   $item
