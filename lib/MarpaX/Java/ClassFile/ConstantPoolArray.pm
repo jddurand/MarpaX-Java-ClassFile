@@ -228,6 +228,24 @@ sub _checkItem {
       }
     }
   elsif
+     # ***************************************
+    ($blessed eq 'CONSTANT_MethodHandle_info')
+    # ****************************************
+    {
+      #
+      # The value of the reference_kind item must be in the range 1 to 9. The value denotes the kind of this method handle, which characterizes its bytecode behavior.
+      #
+      my $referenceKind = $item->{reference_kind};
+      $self->tracef('%sItem index %d reference_kind %s is inside range [1-9] ?',
+                    $parentIds,
+                    $itemIndex,
+                    $referenceKind);
+      $self->fatalf('%sItem index %d has a reference_kind item outside of range [1-9]: %s',
+                    $parentIds,
+                    $itemIndex,
+                    $referenceKind) unless (($referenceKind >= 1) && ($referenceKind <= 9));
+    }
+  elsif
     # ***************************************
     ($blessed eq 'CONSTANT_NameAndType_info')
     # ***************************************
