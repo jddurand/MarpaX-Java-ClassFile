@@ -162,7 +162,7 @@ sub _checkSubIndexType {
 # Default constraints are always on minIndex and maxIndex, and they are always
 # "inherited"
 #
-sub _checkItem {
+sub _checkConstantPoolItem {
   my ($self, $parentIdArrayRef, $cpInfoArrayRef, $itemIndex, %constraint)  = @_;
 
   $parentIdArrayRef //= [];
@@ -219,7 +219,7 @@ sub _checkItem {
       # The constant_pool entry at that index must be a CONSTANT_Utf8_info structure.
       #
       push(@{$parentIdArrayRef}, $itemIndex);
-      $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{name_index}, %constraint, blessed => 'CONSTANT_Utf8_info');
+      $self->_checkConstantPoolItem($parentIdArrayRef, $cpInfoArrayRef, $item->{name_index}, %constraint, blessed => 'CONSTANT_Utf8_info');
       pop(@{$parentIdArrayRef});
     }
   elsif
@@ -268,7 +268,7 @@ sub _checkItem {
       my $referedItem;
       if (($referenceKind >= 1) && ($referenceKind <= 4)) {
         push(@{$parentIdArrayRef}, $itemIndex);
-        $referedItem = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Fieldref_info');
+        $referedItem = $self->_checkConstantPoolItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Fieldref_info');
         pop(@{$parentIdArrayRef});
       }
       #
@@ -277,7 +277,7 @@ sub _checkItem {
       #
       if (($referenceKind == 5) || ($referenceKind == 8)) {
         push(@{$parentIdArrayRef}, $itemIndex);
-        $referedItem = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Methodref_info');
+        $referedItem = $self->_checkConstantPoolItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Methodref_info');
         pop(@{$parentIdArrayRef});
       }
       #
@@ -290,11 +290,11 @@ sub _checkItem {
         my $version = $self->majorVersion . '.' . $self->minorVersion;
         if ($version < 52.0) {
           push(@{$parentIdArrayRef}, $itemIndex);
-          $referedItem = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Methodref_info');
+          $referedItem = $self->_checkConstantPoolItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_Methodref_info');
           pop(@{$parentIdArrayRef});
         } else {
           push(@{$parentIdArrayRef}, $itemIndex);
-          $referedItem = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => [qw/CONSTANT_Methodref_info CONSTANT_InterfaceMethodref_info/]);
+          $referedItem = $self->_checkConstantPoolItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => [qw/CONSTANT_Methodref_info CONSTANT_InterfaceMethodref_info/]);
           pop(@{$parentIdArrayRef});
         }
       }
@@ -304,7 +304,7 @@ sub _checkItem {
       #
       if ($referenceKind == 9) {
         push(@{$parentIdArrayRef}, $itemIndex);
-        $referedItem = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_InterfaceMethodref_info');
+        $referedItem = $self->_checkConstantPoolItem($parentIdArrayRef, $cpInfoArrayRef, $item->{reference_index}, %constraint, blessed => 'CONSTANT_InterfaceMethodref_info');
         pop(@{$parentIdArrayRef});
       }
       #
@@ -312,7 +312,7 @@ sub _checkItem {
       #
       if ((($referenceKind >= 5) && ($referenceKind <= 7)) || $referenceKind == 9) {
         push(@{$parentIdArrayRef}, $itemIndex);
-        my $nameAndTypeInfo = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $referedItem->{name_and_type_index}, %constraint, blessed => 'CONSTANT_NameAndType_info');
+        my $nameAndTypeInfo = $self->_checkConstantPoolItem($parentIdArrayRef, $cpInfoArrayRef, $referedItem->{name_and_type_index}, %constraint, blessed => 'CONSTANT_NameAndType_info');
         pop(@{$parentIdArrayRef});
         my $utf8Info = $cpInfoArrayRef->[$nameAndTypeInfo->{name_index} - 1];
         my $methodName = $utf8Info->{computed_value};
@@ -330,7 +330,7 @@ sub _checkItem {
       #
       if ($referenceKind == 8) {
         push(@{$parentIdArrayRef}, $itemIndex);
-        my $nameAndTypeInfo = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $referedItem->{name_and_type_index}, %constraint, blessed => 'CONSTANT_NameAndType_info');
+        my $nameAndTypeInfo = $self->_checkConstantPoolItem($parentIdArrayRef, $cpInfoArrayRef, $referedItem->{name_and_type_index}, %constraint, blessed => 'CONSTANT_NameAndType_info');
         pop(@{$parentIdArrayRef});
         my $utf8Info = $cpInfoArrayRef->[$nameAndTypeInfo->{name_index} - 1];
         my $methodName = $utf8Info->{computed_value};
@@ -359,14 +359,14 @@ sub _checkItem {
       # The constant_pool entry at that index must be a CONSTANT_Utf8_info structure representing either the special method name <init> or a valid unqualified name denoting a field or method (§4.2.2).
       #
       push(@{$parentIdArrayRef}, $itemIndex);
-      $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{name_index}, %constraint, grammarName => $methodOrFieldName, blessed => 'CONSTANT_Utf8_info');
+      $self->_checkConstantPoolItem($parentIdArrayRef, $cpInfoArrayRef, $item->{name_index}, %constraint, grammarName => $methodOrFieldName, blessed => 'CONSTANT_Utf8_info');
       pop(@{$parentIdArrayRef});
       #
       # The value of the descriptor_index item must be a valid index into the constant_pool table.
       # The constant_pool entry at that index must be a CONSTANT_Utf8_info structure representing a valid field descriptor or method descriptor
       #
       push(@{$parentIdArrayRef}, $itemIndex);
-      $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{descriptor_index}, %constraint, grammarName => $methodOrFieldDescriptor, blessed => 'CONSTANT_Utf8_info');
+      $self->_checkConstantPoolItem($parentIdArrayRef, $cpInfoArrayRef, $item->{descriptor_index}, %constraint, grammarName => $methodOrFieldDescriptor, blessed => 'CONSTANT_Utf8_info');
       pop(@{$parentIdArrayRef});
     }
   elsif
@@ -381,7 +381,7 @@ sub _checkItem {
       # The constant_pool entry at that index must be a CONSTANT_Class_info structure.
       #
       push(@{$parentIdArrayRef}, $itemIndex);
-      my $classInfo = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{class_index}, %constraint, blessed => 'CONSTANT_Class_info');
+      my $classInfo = $self->_checkConstantPoolItem($parentIdArrayRef, $cpInfoArrayRef, $item->{class_index}, %constraint, blessed => 'CONSTANT_Class_info');
       pop(@{$parentIdArrayRef});
       #
       # The class_index item of a CONSTANT_Methodref_info structure must be a class type.
@@ -427,7 +427,7 @@ sub _checkItem {
       my ($methodOrFieldName, $methodOrFieldDescriptor) = ($blessed eq 'CONSTANT_Fieldref_info') ? ('fieldName', 'fieldDescriptor') : ('methodName', 'methodDescriptor');
 
       push(@{$parentIdArrayRef}, $itemIndex);
-      my $nameAndTypeInfo = $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{name_and_type_index}, %constraint,
+      my $nameAndTypeInfo = $self->_checkConstantPoolItem($parentIdArrayRef, $cpInfoArrayRef, $item->{name_and_type_index}, %constraint,
                                               blessed => 'CONSTANT_NameAndType_info',
                                               methodOrFieldName => $methodOrFieldName,
                                               methodOrFieldDescriptor => $methodOrFieldDescriptor);
@@ -467,7 +467,7 @@ sub _checkItem {
       # The constant_pool entry at that index must be a CONSTANT_Utf8_info structure representing a method descriptor.
       #
       push(@{$parentIdArrayRef}, $itemIndex);
-      $self->_checkItem($parentIdArrayRef, $cpInfoArrayRef, $item->{descriptor_index}, %constraint,
+      $self->_checkConstantPoolItem($parentIdArrayRef, $cpInfoArrayRef, $item->{descriptor_index}, %constraint,
                                               blessed => 'CONSTANT_Utf8_info',
                                               methodOrFieldDescriptor => 'methodDescriptor');
       pop(@{$parentIdArrayRef});
@@ -482,7 +482,7 @@ sub _cpInfoArray {
   my ($minIndex, $maxIndex) = (1, scalar(@cpInfo));
   my @commonArgs = (\@cpInfo, 1, scalar(@cpInfo));
 
-  [ map { $self->_checkItem(undef, \@cpInfo, $_, minIndex => $minIndex, maxIndex => $maxIndex) } ($minIndex..$maxIndex) ]
+  [ map { $self->_checkConstantPoolItem(undef, \@cpInfo, $_, minIndex => $minIndex, maxIndex => $maxIndex) } ($minIndex..$maxIndex) ]
 }
 
 sub _MethodDescriptor {
