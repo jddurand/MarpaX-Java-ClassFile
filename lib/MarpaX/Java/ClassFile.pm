@@ -22,18 +22,6 @@ use Scalar::Util qw/blessed/;
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
 use Types::Standard -all;
 
-my %_ACCESSFLAGS =
-  (
-   ACC_PUBLIC     => [ 0x0001, 'public'     ],
-   ACC_FINAL      => [ 0x0010, 'final'      ],
-   ACC_SUPER      => [ 0x0020, 'super'      ],
-   ACC_INTERFACE  => [ 0x0200, 'interface'  ],
-   ACC_ABSTRACT   => [ 0x0400, 'abstract'   ],
-   ACC_SYNTHETIC  => [ 0x1000, 'synthetic'  ],
-   ACC_ANNOTATION => [ 0x2000, 'annotation' ],
-   ACC_ENUM       => [ 0x4000, 'enum'       ]
-);
-
 =head1 DESCRIPTION
 
 MarpaX::Java::ClassFile is doing a parsing of a Java .class file, trying to stand as closed as possible to the binary format, with no language specific interpretation except with the constant pool (see the NOTES section). From the grammar point of view, this mean that there is no interpretation of what is a descriptor, what is a signature, etc.
