@@ -14,6 +14,7 @@ use Moo::Role;
 use Types::Common::Numeric -all;
 use Types::Standard -all;
 
+has array  => (is => 'rw', isa => ArrayRef[Object], default => sub { [] });
 has size   => (is => 'ro', isa => PositiveOrZeroInt, required => 1);
 has nbDone => (is => 'rw', isa => PositiveOrZeroInt, default => sub { 0 });
 
@@ -28,6 +29,14 @@ around BUILD => sub {
 
   $self->$orig() if ($self->size)
 
+};
+
+around ast => sub {
+  my ($orig, $self) = @_;
+
+  my $ast = $self->$orig;
+  $self->array($ast);
+  $ast
 };
 
 around whoami => sub {

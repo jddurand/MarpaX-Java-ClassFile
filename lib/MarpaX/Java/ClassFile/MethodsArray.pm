@@ -39,7 +39,7 @@ sub callbacks { \%_CALLBACKS }
 # ---------------
 sub _attributesCountCallback {
   my ($self) = @_;
-  $self->executeInnerGrammar('MarpaX::Java::ClassFile::AttributesArray', size => $self->literalU2)
+  $self->executeInnerGrammar('MarpaX::Java::ClassFile::AttributesArray', 'array', size => $self->literalU2)
 }
 
 sub _methodInfoCallback {

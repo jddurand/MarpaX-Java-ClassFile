@@ -14,6 +14,20 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Common::BNF qw/bnf/;
+use MarpaX::Java::ClassFile::ConstantPool::Class;
+use MarpaX::Java::ClassFile::ConstantPool::Fieldref;
+use MarpaX::Java::ClassFile::ConstantPool::Methodref;
+use MarpaX::Java::ClassFile::ConstantPool::InterfaceMethodref;
+use MarpaX::Java::ClassFile::ConstantPool::String;
+use MarpaX::Java::ClassFile::ConstantPool::Integer;
+use MarpaX::Java::ClassFile::ConstantPool::Float;
+use MarpaX::Java::ClassFile::ConstantPool::Long;
+use MarpaX::Java::ClassFile::ConstantPool::Double;
+use MarpaX::Java::ClassFile::ConstantPool::NameAndType;
+use MarpaX::Java::ClassFile::ConstantPool::Utf8;
+use MarpaX::Java::ClassFile::ConstantPool::MethodHandle;
+use MarpaX::Java::ClassFile::ConstantPool::MethodType;
+use MarpaX::Java::ClassFile::ConstantPool::InvokeDynamic;
 use Scalar::Util qw/blessed/;
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
 use Types::Standard -all;
@@ -92,20 +106,20 @@ sub _doubleBytesCallback { goto &_setSkipNextEntry }
 # --------------------
 my %_ARG2HASH =
   (
-   CONSTANT_Class_info              => [qw/tag name_index/],
-   CONSTANT_Fieldref_info           => [qw/tag class_index name_and_type_index/],
-   CONSTANT_Methodref_info          => [qw/tag class_index name_and_type_index/],
-   CONSTANT_InterfaceMethodref_info => [qw/tag class_index name_and_type_index/],
-   CONSTANT_String_info             => [qw/tag string_index/],
-   CONSTANT_Integer_info            => [qw/tag computed_value/],
-   CONSTANT_Float_info              => [qw/tag computed_value/],
-   CONSTANT_Long_info               => [qw/tag computed_value/],
-   CONSTANT_Double_info             => [qw/tag computed_value/],
-   CONSTANT_NameAndType_info        => [qw/tag name_index descriptor_index/],
-   CONSTANT_Utf8_info               => [qw/tag length computed_value/],
-   CONSTANT_MethodHandle_info       => [qw/tag reference_kind reference_index/],
-   CONSTANT_MethodType_info         => [qw/tag descriptor_index/],
-   CONSTANT_InvokeDynamic_info      => [qw/tag bootstrap_method_attr_index name_and_type_index/]
+   Class              => [qw/tag name_index/],
+   Fieldref           => [qw/tag class_index name_and_type_index/],
+   Methodref          => [qw/tag class_index name_and_type_index/],
+   InterfaceMethodref => [qw/tag class_index name_and_type_index/],
+   String             => [qw/tag string_index/],
+   Integer            => [qw/tag computed_value/],
+   Float              => [qw/tag computed_value/],
+   Long               => [qw/tag computed_value/],
+   Double             => [qw/tag computed_value/],
+   NameAndType        => [qw/tag name_index descriptor_index/],
+   Utf8               => [qw/tag length computed_value/],
+   MethodHandle       => [qw/tag reference_kind reference_index/],
+   MethodType         => [qw/tag descriptor_index/],
+   InvokeDynamic      => [qw/tag bootstrap_method_attr_index name_and_type_index/]
   );
 
 sub _arg2hash {
@@ -113,23 +127,24 @@ sub _arg2hash {
 
   my $descArrayRef = $_ARG2HASH{$struct};
   my %hash = map { $descArrayRef->[$_] => $args[$_] } 0..$#args;
-  bless \%hash, $struct
+  my $class = "MarpaX::Java::ClassFile::ConstantPool::$struct";
+  $class->new(%hash)
 }
 
-sub _constantClassInfo              { $_[0]->_arg2hash('CONSTANT_Class_info',              @_[1..$#_]) }
-sub _constantFieldrefInfo           { $_[0]->_arg2hash('CONSTANT_Fieldref_info',           @_[1..$#_]) }
-sub _constantMethodrefInfo          { $_[0]->_arg2hash('CONSTANT_Methodref_info',          @_[1..$#_]) }
-sub _constantInterfaceMethodrefInfo { $_[0]->_arg2hash('CONSTANT_InterfaceMethodref_info', @_[1..$#_]) }
-sub _constantStringInfo             { $_[0]->_arg2hash('CONSTANT_String_info',             @_[1..$#_]) }
-sub _constantIntegerInfo            { $_[0]->_arg2hash('CONSTANT_Integer_info',            @_[1..$#_]) }
-sub _constantFloatInfo              { $_[0]->_arg2hash('CONSTANT_Float_info',              @_[1..$#_]) }
-sub _constantLongInfo               { $_[0]->_arg2hash('CONSTANT_Long_info',               @_[1..$#_]) }
-sub _constantDoubleInfo             { $_[0]->_arg2hash('CONSTANT_Double_info',             @_[1..$#_]) }
-sub _constantNameAndTypeInfo        { $_[0]->_arg2hash('CONSTANT_NameAndType_info',        @_[1..$#_]) }
-sub _constantUtf8Info               { $_[0]->_arg2hash('CONSTANT_Utf8_info',               @_[1..$#_]) }
-sub _constantMethodHandleInfo       { $_[0]->_arg2hash('CONSTANT_MethodHandle_info',       @_[1..$#_]) }
-sub _constantMethodType             { $_[0]->_arg2hash('CONSTANT_MethodType_info',         @_[1..$#_]) }
-sub _constantInvokeDynamic          { $_[0]->_arg2hash('CONSTANT_InvokeDynamic_info',      @_[1..$#_]) }
+sub _constantClassInfo              { $_[0]->_arg2hash('Class',              @_[1..$#_]) }
+sub _constantFieldrefInfo           { $_[0]->_arg2hash('Fieldref',           @_[1..$#_]) }
+sub _constantMethodrefInfo          { $_[0]->_arg2hash('Methodref',          @_[1..$#_]) }
+sub _constantInterfaceMethodrefInfo { $_[0]->_arg2hash('InterfaceMethodref', @_[1..$#_]) }
+sub _constantStringInfo             { $_[0]->_arg2hash('String',             @_[1..$#_]) }
+sub _constantIntegerInfo            { $_[0]->_arg2hash('Integer',            @_[1..$#_]) }
+sub _constantFloatInfo              { $_[0]->_arg2hash('Float',              @_[1..$#_]) }
+sub _constantLongInfo               { $_[0]->_arg2hash('Long',               @_[1..$#_]) }
+sub _constantDoubleInfo             { $_[0]->_arg2hash('Double',             @_[1..$#_]) }
+sub _constantNameAndTypeInfo        { $_[0]->_arg2hash('NameAndType',        @_[1..$#_]) }
+sub _constantUtf8Info               { $_[0]->_arg2hash('Utf8',               @_[1..$#_]) }
+sub _constantMethodHandleInfo       { $_[0]->_arg2hash('MethodHandle',       @_[1..$#_]) }
+sub _constantMethodType             { $_[0]->_arg2hash('MethodType',         @_[1..$#_]) }
+sub _constantInvokeDynamic          { $_[0]->_arg2hash('InvokeDynamic',      @_[1..$#_]) }
 
 #
 # Take care: index means indice-1

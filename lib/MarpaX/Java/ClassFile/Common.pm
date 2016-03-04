@@ -41,7 +41,7 @@ sub BUILD {
   #
   # Build the ast
   #
-  $_[0]->_ast
+  $_[0]->ast
 }
 
 my $MARPA_TRACE_FILE_HANDLE;
@@ -107,7 +107,7 @@ sub _build__r {
                               })
 }
 
-sub _ast {
+sub ast {
   # my ($self) = @_;
   #
   # For our marpa tied logger
@@ -253,12 +253,13 @@ sub literalManaged {
 # lexeme must be MANAGED.
 #
 sub executeInnerGrammar {
-  # my ($self, $innerGrammarClass, %args) = @_;
+  # my ($self, $innerGrammarClass, $innerGrammarValueMethod, %args) = @_;
 
   my $whoisit = $_[0]->_whoami($_[1]);
   $_[0]->debugf('Asking for %s', $whoisit);
-  my $inner = $_[1]->new(inputRef => $_[0]->inputRef, pos => $_[0]->pos, level => $_[0]->level + 1, @_[2..$#_]);
-  $_[0]->lexeme_read('MANAGED', $inner->pos - $_[0]->pos, $inner);
+  my $inner = $_[1]->new(inputRef => $_[0]->inputRef, pos => $_[0]->pos, level => $_[0]->level + 1, @_[3..$#_]);
+  my $innerGrammarValueMethod = $_[2];
+  $_[0]->lexeme_read('MANAGED', $inner->pos - $_[0]->pos, $inner->$innerGrammarValueMethod);
   $_[0]->debugf('%s over', $whoisit);
 }
 
