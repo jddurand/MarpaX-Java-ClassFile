@@ -30,14 +30,19 @@ MarpaX::Java::ClassFile::Common is an internal class used by L<MarpaX::Java::Cla
 
 =cut
 
-has input      => (is => 'ro',  isa => Bytes,                 required => 1);
-has exhaustion => (is => 'ro',  isa => Enum[qw/event fatal/], default => sub { 'fatal' });
+has inputRef   => (is => 'ro',  isa => ScalarRef[Bytes],            required => 1);
 has max        => (is => 'rw',  isa => PositiveOrZeroInt,     lazy => 1, builder => 1);
-has ast        => (is => 'rw',  isa => Any,                   lazy => 1, builder => 1);
 has pos        => (is => 'rwp', isa => PositiveOrZeroInt,     default => sub { 0 });
-has whoami     => (is => 'rwp', isa => Str,                   lazy => 1, builder => 1);
+has whoami     => (is => 'ro',  isa => Str,                   lazy => 1, builder => 1);
 has level      => (is => 'rwp', isa => PositiveOrZeroInt,     default => sub { 0 });
-has r          => (is => 'rwp', isa => InstanceOf['Marpa::R2::Scanless::R'], lazy => 1, builder => 1, predicate => 1);
+has _r         => (is => 'rw',  isa => InstanceOf['Marpa::R2::Scanless::R'], lazy => 1, builder => 1, predicate => 1, clearer => 1);
+
+sub BUILD {
+  #
+  # Build the ast
+  #
+  $_[0]->_ast
+}
 
 my $MARPA_TRACE_FILE_HANDLE;
 my $MARPA_TRACE_BUFFER;
@@ -64,7 +69,7 @@ sub BEGIN {
 
 sub _build_max {
   # my ($self) = @_;
-  length($_[0]->input)
+  length(${$_[0]->inputRef})
 }
 
 sub _whoami {
@@ -93,17 +98,16 @@ sub _manageEvents {
   }
 }
 
-sub _build_r {
+sub _build__r {
   # my ($self) = @_;
   Marpa::R2::Scanless::R->new({
                                trace_file_handle => $MARPA_TRACE_FILE_HANDLE,
                                grammar           => $_[0]->grammar,
-                               exhaustion        => $_[0]->exhaustion,
                                trace_terminals   => $_[0]->_logger->is_trace
                               })
 }
 
-sub _build_ast {
+sub _ast {
   # my ($self) = @_;
   #
   # For our marpa tied logger
@@ -129,7 +133,7 @@ sub _read {
 
   $_[0]->tracef('read($inputRef, pos=%s)', $_[0]->pos);
   eval {
-    $_[0]->_set_pos($_[0]->r->read(\$_[0]->input, $_[0]->pos))
+    $_[0]->_set_pos($_[0]->_r->read($_[0]->inputRef, $_[0]->pos))
   };
   $_[0]->_croak($@) if ($@);
   $_[0]->_manageEvents
@@ -139,7 +143,7 @@ sub _events {
   # my ($self) = @_;
 
   $_[0]->tracef('events()');
-  my $eventsRef = eval { $_[0]->r->events };
+  my $eventsRef = eval { $_[0]->_r->events };
   $_[0]->_croak($@) if ($@);
   $eventsRef
 }
@@ -148,19 +152,23 @@ sub _value {
   # my ($self) = @_;
 
   $_[0]->tracef('ambiguity_metric()');
-  my $ambiguity_metric = eval { $_[0]->r->ambiguity_metric() };
+  my $ambiguity_metric = eval { $_[0]->_r->ambiguity_metric() };
   $_[0]->_croak($@) if ($@);
   $_[0]->_croak('Ambiguity metric is undefined') if (! defined($ambiguity_metric));
   $_[0]->_croak('Parse is ambiguous') if ($ambiguity_metric != 1);
 
   $_[0]->tracef('value($_[0])');
   local $MarpaX::Java::ClassFile::Common::VALUE_CONTEXT = 1;
-  my $valueRef = eval { $_[0]->r->value($_[0]) };
+  my $valueRef = eval { $_[0]->_r->value($_[0]) };
   $_[0]->_croak($@) if ($@);
   $_[0]->_croak('Value reference is undefined') if (! defined($valueRef));
 
   my $value = ${$valueRef};
   $_[0]->_croak('Value is undefined') if (! defined($value));
+  #
+  # We do not need the recognizer anymore
+  #
+  $_[0]->_clear_r;
 
   $value
 }
@@ -169,7 +177,7 @@ sub _resume {
   # my ($self) = @_;
 
   $_[0]->tracef('resume(%d)', $_[0]->pos);
-  eval { $_[0]->_set_pos($_[0]->r->resume($_[0]->pos)) };
+  eval { $_[0]->_set_pos($_[0]->_r->resume($_[0]->pos)) };
   $_[0]->_croak($@) if ($@);
   $_[0]->_manageEvents
 }
@@ -178,10 +186,10 @@ sub _literal {
   # my ($self, $symbol) = @_;
 
   $_[0]->tracef('last_completed_span(\'%s\')', $_[1]);
-  my @span = $_[0]->r->last_completed_span($_[1]);
+  my @span = $_[0]->_r->last_completed_span($_[1]);
   $_[0]->_croak("No symbol instance for the symbol $_[1]") if (! @span);
   $_[0]->tracef('literal(%s, %s)', $span[0], $span[1]);
-  $_[0]->r->literal(@span)
+  $_[0]->_r->literal(@span)
 }
 
 sub lexeme_read {
@@ -190,7 +198,7 @@ sub lexeme_read {
   #
   # If the length is zero, force the read to be at position 0.
   # We will anyway explicitely re-set position and it works
-  # because we always do $self->r->resume($self->pos) -;
+  # because we always do $self->_r->resume($self->pos) -;
   #
   my $_lexeme_length = $_[2] || 1;
   my $_lexeme_pos    = $_[2] ? $_[0]->pos : 0;
@@ -200,7 +208,7 @@ sub lexeme_read {
     #
     # Do the lexeme_read in any case
     #
-    $pos = $_[0]->r->lexeme_read($_[1], $_lexeme_pos, $_lexeme_length, $_[3]) || croak sprintf('lexeme_read failure for symbol %s at position %s, length %s', $_[1], $_lexeme_pos, $_lexeme_length);
+    $pos = $_[0]->_r->lexeme_read($_[1], $_lexeme_pos, $_lexeme_length, $_[3]) || croak sprintf('lexeme_read failure for symbol %s at position %s, length %s', $_[1], $_lexeme_pos, $_lexeme_length);
     #
     # And commit its return position unless length is 0
     #
@@ -249,12 +257,9 @@ sub executeInnerGrammar {
 
   my $whoisit = $_[0]->_whoami($_[1]);
   $_[0]->debugf('Asking for %s', $whoisit);
-  my $inner = $_[1]->new(input => $_[0]->input, pos => $_[0]->pos, level => $_[0]->level + 1, @_[2..$#_]);
-  my $value = $inner->ast;    # It is very important to call ast BEFORE calling pos
-  my $length = $inner->pos - $_[0]->pos;
-  $_[0]->lexeme_read('MANAGED', $length, $value);
+  my $inner = $_[1]->new(inputRef => $_[0]->inputRef, pos => $_[0]->pos, level => $_[0]->level + 1, @_[2..$#_]);
+  $_[0]->lexeme_read('MANAGED', $inner->pos - $_[0]->pos, $inner);
   $_[0]->debugf('%s over', $whoisit);
-  $value
 }
 
 #
@@ -273,7 +278,7 @@ sub _dolog {
   if ($MarpaX::Java::ClassFile::Common::VALUE_CONTEXT) {
     $self->_logger->$method($format, @arguments)
   } else {
-    my $inputLength = length($self->input);
+    my $inputLength = length(${$self->inputRef});
     my $nbcharacters = length("$inputLength");
     my ($offset, $max) = ($self->pos, $self->max);
 
@@ -327,9 +332,9 @@ sub _croak {
 
   $msg //= '';
   #
-  # Should never happen that $self->r is not set at this stage but who knows
+  # Should never happen that $self->_r is not set at this stage but who knows
   #
-  $msg .= "\nContext:\n" . $self->r->show_progress if $self->has_r;
+  $msg .= "\nContext:\n" . $self->_r->show_progress if $self->_has_r;
   croak($msg)
 }
 

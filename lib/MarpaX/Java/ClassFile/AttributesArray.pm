@@ -39,17 +39,17 @@ sub callbacks { \%_CALLBACKS }
 sub _attributeLengthEvent {
   my ($self) = @_;
 
-  my $attributeLength = $self->literalU4;                                   # Can be 0
-  my $bytes           = substr($self->input, $self->pos, $attributeLength); # Ok when length is 0
-  my $value           = [ split('', $bytes) ];                              # Value is an array of u1
-  $self->lexeme_read('MANAGED', $attributeLength, $value);                  # This lexeme_read() handles case of length 0
+  my $attributeLength = $self->literalU4;                                         # Can be 0
+  my $bytes           = substr(${$self->inputRef}, $self->pos, $attributeLength); # Ok when length is 0
+  my $value           = [ split('', $bytes) ];                                    # Value is an array of u1
+  $self->lexeme_read('MANAGED', $attributeLength, $value);                        # This lexeme_read() handles case of length 0
 }
 
 sub _attributeInfoEvent {
   my ($self) = @_;
   $self->debugf('Completed');
-  $self->_nbDone($self->_nbDone + 1);
-  $self->max($self->pos) if ($self->_nbDone >= $self->size);
+  $self->nbDone($self->nbDone + 1);
+  $self->max($self->pos) if ($self->nbDone >= $self->size);
 }
 
 # --------------------

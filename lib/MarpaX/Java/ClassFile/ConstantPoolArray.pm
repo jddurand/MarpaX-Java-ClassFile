@@ -35,26 +35,21 @@ my %_CALLBACKS = ('utf8Length$'  => \&_utf8LengthCallback,
                   '^doubleBytes' => \&_doubleBytesCallback
                  );
 
-#
+# ----------------
 # Private grammars
-#
-my %_GRAMMARS =
-  map
-  { $_ => Marpa::R2::Scanless::G->new({source => __PACKAGE__->section_data($_)}) }
+# ----------------
+my %_GRAMMARS = map { $_ => Marpa::R2::Scanless::G->new({source => __PACKAGE__->section_data($_)}) }
   qw/fieldName methodName fieldDescriptor methodDescriptor/;
 
 # ----------------------------------------------------------------
 # What role MarpaX::Java::ClassFile::Common::InnerGrammar requires
 # ----------------------------------------------------------------
-sub grammar   { $_grammar }
+sub grammar   { $_grammar    }
 sub callbacks { \%_CALLBACKS }
 
 # ------------
 # Our thingies
 # ------------
-has classFiles      => ( is => 'ro', isa => HashRef[InstanceOf['MarpaX::Java::ClassFile']], default => sub { {} } );
-has majorVersion    => ( is => 'ro', isa => PositiveOrZeroInt, required => 1);
-has minorVersion    => ( is => 'ro', isa => PositiveOrZeroInt, required => 1);
 has _lastTag        => ( is => 'rw', isa => PositiveOrZeroInt, default => sub { 0 });  # Tag with value 0 does not exist -;
 has _skipNextEntry  => ( is => 'rw', isa => Bool,              default => sub { 0 });
 
@@ -65,18 +60,18 @@ sub _utf8LengthCallback {
   my ($self) = @_;
 
   my $utf8Length = $self->literalU2;
-  my $utf8String = $utf8Length ? substr($self->input, $self->pos, $utf8Length) : undef;
+  my $utf8String = $utf8Length ? substr(${$self->inputRef}, $self->pos, $utf8Length) : undef;
   $self->tracef('Modified UTF-8: %s', $utf8String);
   $self->lexeme_read('MANAGED', $utf8Length, $utf8String);  # Note: this lexeme_read() handles case of length 0
 }
 
 sub _cpInfoCallback {
   my ($self) = @_;
-  $self->_nbDone($self->_nbDone + 1);
-  $self->max($self->pos) if ($self->_nbDone >= $self->size); # Set the max position so that parsing end
+  $self->nbDone($self->nbDone + 1);
+  $self->max($self->pos) if ($self->nbDone >= $self->size); # Set the max position so that parsing end
   if ($self->_skipNextEntry) {
     $self->_skipNextEntry(0);
-    if ($self->_nbDone < $self->size) {
+    if ($self->nbDone < $self->size) {
       $self->debugf('Pushing undef as next entry');
       $self->lexeme_read('MANAGED', 0, undef);               # This will retrigger cpInfo$ event
     }
@@ -476,15 +471,6 @@ sub _checkConstantPoolItem {
   $item
 }
 
-sub _cpInfoArray {
-  my ($self, @cpInfo) = @_;
-
-  my ($minIndex, $maxIndex) = (1, scalar(@cpInfo));
-  my @commonArgs = (\@cpInfo, 1, scalar(@cpInfo));
-
-  [ map { $self->_checkConstantPoolItem(undef, \@cpInfo, $_, minIndex => $minIndex, maxIndex => $maxIndex) } ($minIndex..$maxIndex) ]
-}
-
 sub _MethodDescriptor {
   my ($self, $ParameterDescriptors, $ReturnDescriptor) = @_;
 
@@ -533,7 +519,7 @@ event 'utf8Length$'  = completed utf8Length
 event '^longBytes'   = predicted longBytes
 event '^doubleBytes' = predicted doubleBytes
 
-cpInfoArray ::= cpInfo*       action => _cpInfoArray
+cpInfoArray ::= cpInfo*       action => [values]
 cpInfo ::=
     constantClassInfo
   | constantFieldrefInfo

@@ -44,9 +44,9 @@ sub _attributesCountCallback {
 
 sub _methodInfoCallback {
   my ($self) = @_;
-  $self->_nbDone($self->_nbDone + 1);
+  $self->nbDone($self->nbDone + 1);
   $self->debugf('Completed');
-  $self->max($self->pos) if ($self->_nbDone >= $self->size);
+  $self->max($self->pos) if ($self->nbDone >= $self->size);
 }
 
 # --------------------
