@@ -184,103 +184,42 @@ This will be visible under the key "computed_value" into the hash containing the
 
 =cut
 
-# --------------------
-# Our grammar actions
-# --------------------
-sub _accessFlags {
-  my ($self, $u2) = @_;
-
-  my @accessFlags = ();
-
-  my $allbits = 0;
-  my %hasFlag = ();
-  foreach (keys %_ACCESSFLAGS) {
-    my ($mask, $value) = @{$_ACCESSFLAGS{$_}};
-    $hasFlag{$_} = (($u2 & $mask) == $mask) ? 1 : 0;
-    push(@accessFlags, $value) if ($hasFlag{$_});
-    $allbits |= $mask;
-  }
-  #
-  # Check what the spec says about access flags contraints
-  #
-  if ($hasFlag{ACC_INTERFACE}) {
-    #
-    # If the ACC_INTERFACE flag is set, the ACC_ABSTRACT flag must also be set,
-    # and the ACC_FINAL, ACC_SUPER, and ACC_ENUM flags set must not be set.
-    #
-    $self->errorf('ACC_ABSTRACT flag must be set') unless ($hasFlag{ACC_ABSTRACT});
-    $self->errorf('ACC_FINAL flag must not be set')    if ($hasFlag{ACC_FINAL});
-    $self->errorf('ACC_SUPER flag must not be set')    if ($hasFlag{ACC_SUPER});
-    $self->errorf('ACC_ENUM flag must not be set')     if ($hasFlag{ACC_ENUM});
-  } else {
-    #
-    # If the ACC_INTERFACE flag is not set, any of the other flags in (...) may be set
-    # except ACC_ANNOTATION.
-    #
-    $self->errorf('ACC_ANNOTATION flag must not be set') if ($hasFlag{ACC_ANNOTATION});
-    #
-    # However, such a class file must not have both its ACC_FINAL and ACC_ABSTRACT flags set
-    #
-    $self->errorf('ACC_FINAL and ACC_ABSTRACT flags must not be both set') if ($hasFlag{ACC_FINAL} && $hasFlag{ACC_ABSTRACT});
-  }
-  #
-  # If the ACC_ANNOTATION flag is set, the ACC_INTERFACE flag must also be set.
-  #
-  $self->errorf('ACC_INTERFACE flag must be set') if ($hasFlag{ACC_ANNOTATION} && ! $hasFlag{ACC_INTERFACE});
-
-  bless({ u2 => $u2, computed_value =>\@accessFlags }, 'access_flags')
-}
-
-sub _thisClass {
-  my ($self, $u2) = @_;
-
-  my $thisClass = undef;
-  #
-  # The value of the this_class item must be a valid index into the constant_pool table.
-  #
-  my $constantPoolArray = $self->constantPoolArray;
-  if ($u2 > scalar(@{$constantPoolArray})) {
-    $self->warnf('this_class item must be a valid index into the constant_pool table, got %d > %d', $u2, scalar(@{$constantPoolArray}))
-  } else {
-    my $constantPoolItem = $constantPoolArray->[$u2 - 1];
-    #
-    # The constant_pool entry at that index must be a CONSTANT_Class_info structure (...)
-    # representing the class or interface defined by this class file.
-    #
-    my $blessed = blessed($constantPoolItem) // '';
-    if ($blessed ne 'CONSTANT_Class_info') {
-      $self->warnf('The constant_pool entry at index %d must be a CONSTANT_Class_info structure, got %s', $u2, $blessed)
-    } else {
-      my $name_index = $constantPoolItem->{name_index};
-      $thisClass = $constantPoolArray->[$name_index - 1]->{computed_value};
-    }
-  }
-
-  $thisClass
-}
-
 sub _ClassFile {
-    my $i = 0;
-    bless(
-        {   magic             => $_[ ++$i ],
-            minorVersion      => $_[ ++$i ],
-            majorVersion      => $_[ ++$i ],
-            constantPoolCount => $_[ ++$i ],
-            constantPoolArray => $_[ ++$i ],
-            accessFlags       => $_[ ++$i ],
-            thisClass         => $_[ ++$i ],
-            superClass        => $_[ ++$i ],
-            interfacesCount   => $_[ ++$i ],
-            interfacesArray   => $_[ ++$i ],
-            fieldsCount       => $_[ ++$i ],
-            fieldsArray       => $_[ ++$i ],
-            methodsCount      => $_[ ++$i ],
-            methods           => $_[ ++$i ],
-            attributesCount   => $_[ ++$i ],
-            attributes        => $_[ ++$i ]
-        },
-        'ClassFile'
-    );
+  my ($self,
+      $magic,
+      $minorVersion,
+      $majorVersion,
+      $constantPoolCount,
+      $constantPoolArray,
+      $accessFlags,
+      $thisClass,
+      $superClass,
+      $interfacesCount,
+      $interfacesArray,
+      $fieldsCount,
+      $fieldsArray,
+      $methodsCount,
+      $methods,
+      $attributesCount,
+      $attributes) = @_;
+
+  bless [ bless(\$magic,             'magic'),
+          bless(\$minorVersion,      'minor_version'),
+          bless(\$majorVersion,      'major_version'),
+          bless(\$constantPoolCount, 'constant_pool_count'),
+          bless( $constantPoolArray, 'constant_pool'),
+          bless(\$accessFlags,       'access_flags'),
+          bless(\$thisClass,         'this_class'),
+          bless(\$superClass,        'super_class'),
+          bless(\$interfacesCount,   'interfaces_count'),
+          bless( $interfacesArray,   'interfaces'),
+          bless(\$fieldsCount,       'fields_count'),
+          bless( $fieldsArray,       'fields'),
+          bless(\$methodsCount,      'methods_count'),
+          bless( $methods,           'methods'),
+          bless(\$attributesCount,   'attributes_count'),
+          bless( $attributes,        'attributes')
+        ], 'ClassFile'
 }
 
 with qw/MarpaX::Java::ClassFile::Common/;
@@ -319,8 +258,8 @@ minorVersion       ::= u2
 majorVersion       ::= u2
 constantPoolCount  ::= u2
 constantPoolArray  ::= managed
-accessFlags        ::= u2           action => _accessFlags
-thisClass          ::= u2           action => _thisClass
+accessFlags        ::= u2
+thisClass          ::= u2
 superClass         ::= u2
 interfacesCount    ::= u2
 interfacesArray    ::= managed
