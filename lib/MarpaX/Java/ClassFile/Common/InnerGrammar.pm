@@ -19,6 +19,8 @@ has array     => ( is => 'rw', isa => ArrayRef[Object], default => sub { [] });
 has size      => ( is => 'ro', isa => PositiveOrZeroInt, required => 1);
 has nbDone    => ( is => 'rw', isa => PositiveOrZeroInt, default => sub { 0 });
 
+sub first { $_[0]->array->[0] }
+
 with qw/MarpaX::Java::ClassFile::Common/;
 
 # ------------------
