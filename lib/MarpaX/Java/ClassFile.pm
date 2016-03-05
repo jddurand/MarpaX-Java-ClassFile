@@ -69,11 +69,50 @@ my %_CALLBACKS = (
                   # For constant pool indexes start at 1, c.f. constraints on *_index.
                   # The final action on Constant pool will insert a fake undef entry at position 0
                   #
-                  'constantPoolCount$' => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::ConstantPoolArray', 'array', size => $_[0]->literalU2 - 1 ) },
-                  'interfacesCount$'   => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::InterfacesArray',   'array', size => $_[0]->literalU2     ) },
-                  'fieldsCount$'       => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::FieldsArray',       'array', size => $_[0]->literalU2     ) },
-                  'methodsCount$'      => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::MethodsArray',      'array', size => $_[0]->literalU2     ) },
-                  'attributesCount$'   => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::AttributesArray',   'array', size => $_[0]->literalU2     ) }
+                  'constantPoolCount$' => sub {
+                    $_[0]->_set_constant_pool(
+                                              $_[0]->executeInnerGrammar(
+                                                                         'MarpaX::Java::ClassFile::ConstantPoolArray',
+                                                                         'array',
+                                                                         size => $_[0]->_set_constant_pool_count($_[0]->literalU2) - 1
+                                                                        )
+                                             )
+                  },
+                  'interfacesCount$'   => sub {
+                    $_[0]->_set_interfaces(
+                                           $_[0]->executeInnerGrammar(
+                                                                      'MarpaX::Java::ClassFile::InterfacesArray',
+                                                                      'array',
+                                                                      size => $_[0]->_set_interfaces_count($_[0]->literalU2)
+                                                                     )
+                                          )
+                  },
+                  'fieldsCount$'       => sub {
+                    $_[0]->_set_fields(
+                                       $_[0]->executeInnerGrammar(
+                                                                  'MarpaX::Java::ClassFile::FieldsArray',
+                                                                  'array',
+                                                                  size => $_[0]->_set_fields_count($_[0]->literalU2)
+                                                                 )
+                                      )
+                  },
+                  'methodsCount$'      => sub {
+                    $_[0]->_set_methods(
+                                        $_[0]->executeInnerGrammar(
+                                                                   'MarpaX::Java::ClassFile::MethodsArray',
+                                                                   'array',
+                                                                   size => $_[0]->_set_methods_count($_[0]->literalU2)
+                                                                  )
+                                       )
+                  },
+                  'attributesCount$'   => sub {
+                    $_[0]->_set_attributes($_[0]->executeInnerGrammar(
+                                                                      'MarpaX::Java::ClassFile::AttributesArray',
+                                                                      'array',
+                                                                      size => $_[0]->_set_attributes_count($_[0]->literalU2)
+                                                                     )
+                                          )
+                  }
                  );
 
 # ---------------------------
@@ -157,19 +196,19 @@ sub _ClassFile {
   $self->_set_magic              ($magic);
   $self->_set_minor_version      ($minor_version);
   $self->_set_major_version      ($major_version);
-  $self->_set_constant_pool_count($constant_pool_count);
-  $self->_set_constant_pool      ($constant_pool);
+  # $self->_set_constant_pool_count($constant_pool_count);
+  # $self->_set_constant_pool      ($constant_pool);
   $self->_set_access_flags       ($access_flags);
   $self->_set_this_class         ($this_class);
   $self->_set_super_class        ($super_class);
-  $self->_set_interfaces_count   ($interfaces_count);
-  $self->_set_interfaces         ($interfaces);
-  $self->_set_fields_count       ($fields_count);
-  $self->_set_fields             ($fields);
-  $self->_set_methods_count      ($methods_count);
-  $self->_set_methods            ($methods);
-  $self->_set_attributes_count   ($attributes_count);
-  $self->_set_attributes         ($attributes);
+  # $self->_set_interfaces_count   ($interfaces_count);
+  # $self->_set_interfaces         ($interfaces);
+  # $self->_set_fields_count       ($fields_count);
+  # $self->_set_fields             ($fields);
+  # $self->_set_methods_count      ($methods_count);
+  # $self->_set_methods            ($methods);
+  # $self->_set_attributes_count   ($attributes_count);
+  # $self->_set_attributes         ($attributes);
 
 }
 
