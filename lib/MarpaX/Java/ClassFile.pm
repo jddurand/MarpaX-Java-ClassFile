@@ -27,18 +27,18 @@ has magic               => ( is => 'rwp', isa => PositiveOrZeroInt);
 has minor_version       => ( is => 'rwp', isa => PositiveOrZeroInt);
 has major_version       => ( is => 'rwp', isa => PositiveOrZeroInt);
 has constant_pool_count => ( is => 'rwp', isa => PositiveOrZeroInt);
-has constant_pool       => ( is => 'rwp', isa => ArrayRef[InstanceOf['MarpaX::Java::ClassFile::ConstantPool']]);
+has constant_pool       => ( is => 'rwp', isa => ArrayRef[InstanceOf['MarpaX::Java::ClassFile::ConstantPool']|Undef]);
 has access_flags        => ( is => 'rwp', isa => PositiveOrZeroInt);
 has this_class          => ( is => 'rwp', isa => PositiveOrZeroInt);
 has super_class         => ( is => 'rwp', isa => PositiveOrZeroInt);
 has interfaces_count    => ( is => 'rwp', isa => PositiveOrZeroInt);
-has interfaces          => ( is => 'rwp', isa => ArrayRef[Object]); # InstanceOf['MarpaX::Java::ClassFile::InterfacesArray']);
+has interfaces          => ( is => 'rwp', isa => ArrayRef[InstanceOf['MarpaX::Java::ClassFile::Interface']]);
 has fields_count        => ( is => 'rwp', isa => PositiveOrZeroInt);
-has fields              => ( is => 'rwp', isa => ArrayRef[Object]); # InstanceOf['MarpaX::Java::ClassFile::FieldsArray']);
+has fields              => ( is => 'rwp', isa => ArrayRef[InstanceOf['MarpaX::Java::ClassFile::Field']]);
 has methods_count       => ( is => 'rwp', isa => PositiveOrZeroInt);
-has methods             => ( is => 'rwp', isa => ArrayRef[Object]); # InstanceOf['MarpaX::Java::ClassFile::MethodsArray']);
+has methods             => ( is => 'rwp', isa => ArrayRef[InstanceOf['MarpaX::Java::ClassFile::Method']]);
 has attributes_count    => ( is => 'rwp', isa => PositiveOrZeroInt);
-has attributes          => ( is => 'rwp', isa => ArrayRef[Object]); # InstanceOf['MarpaX::Java::ClassFile::AttributesArray']);
+has attributes          => ( is => 'rwp', isa => ArrayRef[InstanceOf['MarpaX::Java::ClassFile::Attribute']]);
 
 =head1 DESCRIPTION
 
@@ -65,12 +65,16 @@ A scalar hosting a reference to a .class file content. It is the responsibility 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
 my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_data) } );
 my %_CALLBACKS = (
-    'constantPoolCount$' => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::ConstantPoolArray', 'array', size => $_[0]->literalU2 - 1 ) },
-    'interfacesCount$'   => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::InterfacesArray',   'array', size => $_[0]->literalU2 )     },
-    'fieldsCount$'       => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::FieldsArray',       'array', size => $_[0]->literalU2 )     },
-    'methodsCount$'      => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::MethodsArray',      'array', size => $_[0]->literalU2 )     },
-    'attributesCount$'   => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::AttributesArray',   'array', size => $_[0]->literalU2 )     }
-);
+                  #
+                  # For constant pool indexes start at 1, c.f. constraints on *_index.
+                  # The final action on Constant pool will insert a fake undef entry at position 0
+                  #
+                  'constantPoolCount$' => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::ConstantPoolArray', 'array', size => $_[0]->literalU2 - 1 ) },
+                  'interfacesCount$'   => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::InterfacesArray',   'array', size => $_[0]->literalU2     ) },
+                  'fieldsCount$'       => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::FieldsArray',       'array', size => $_[0]->literalU2     ) },
+                  'methodsCount$'      => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::MethodsArray',      'array', size => $_[0]->literalU2     ) },
+                  'attributesCount$'   => sub { $_[0]->executeInnerGrammar('MarpaX::Java::ClassFile::AttributesArray',   'array', size => $_[0]->literalU2     ) }
+                 );
 
 # ---------------------------
 # Constructor argument helper

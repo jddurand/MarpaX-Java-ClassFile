@@ -81,6 +81,7 @@ sub _utf8LengthCallback {
 
 sub _cpInfoCallback {
   my ($self) = @_;
+
   $self->nbDone($self->nbDone + 1);
   $self->max($self->pos) if ($self->nbDone >= $self->size); # Set the max position so that parsing end
   if ($self->_skipNextEntry) {
@@ -145,6 +146,12 @@ sub _constantUtf8Info               { $_[0]->_arg2hash('Utf8',               @_[
 sub _constantMethodHandleInfo       { $_[0]->_arg2hash('MethodHandle',       @_[1..$#_]) }
 sub _constantMethodType             { $_[0]->_arg2hash('MethodType',         @_[1..$#_]) }
 sub _constantInvokeDynamic          { $_[0]->_arg2hash('InvokeDynamic',      @_[1..$#_]) }
+
+sub _cpInfoArray {
+  my ($self, @cpInfo) = @_;
+
+  [ undef, @cpInfo ]     # Indexes start at 1 in constant pool
+}
 
 #
 # Take care: index means indice-1
@@ -524,17 +531,19 @@ sub _VoidDescriptor {
 
 with qw/MarpaX::Java::ClassFile::Common::InnerGrammar/;
 
+has '+array' => (is => 'rw', isa => ArrayRef[Object|Undef], default => sub { [] });  # Some indexes are valid but unusable
+
 1;
 
 __DATA__
 __[ bnf ]__
 :default ::= action => ::first
-event 'cpInfo$'      = completed cpInfo
-event 'utf8Length$'  = completed utf8Length
-event '^longBytes'   = predicted longBytes
-event '^doubleBytes' = predicted doubleBytes
+event 'cpInfo$'            = completed cpInfo
+event 'utf8Length$'        = completed utf8Length
+event '^longBytes'         = predicted longBytes
+event '^doubleBytes'       = predicted doubleBytes
 
-cpInfoArray ::= cpInfo*       action => [values]
+cpInfoArray ::= cpInfo*     action => _cpInfoArray
 cpInfo ::=
     constantClassInfo
   | constantFieldrefInfo

@@ -13,6 +13,7 @@ use Moo;
 
 use Data::Section -setup;
 use Marpa::R2;
+use MarpaX::Java::ClassFile::Interface;
 use MarpaX::Java::ClassFile::Common::BNF qw/bnf/;
 
 =head1 DESCRIPTION
@@ -23,7 +24,7 @@ MarpaX::Java::ClassFile::InterfacesArray is an internal class used by L<MarpaX::
 
 my $_data      = ${__PACKAGE__->section_data('bnf')};
 my $_grammar   = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf($_data)});
-my %_CALLBACKS = ('u2$' => \&_u2Callback);
+my %_CALLBACKS = ('interfacesArray$' => \&_interfacesArrayCallback);
 
 # ----------------------------------------------------------------
 # What role MarpaX::Java::ClassFile::Common::InnerGrammar requires
@@ -31,14 +32,23 @@ my %_CALLBACKS = ('u2$' => \&_u2Callback);
 sub grammar   { $_grammar }
 sub callbacks { \%_CALLBACKS }
 
-# ---------------
-# Callback callbacks
-# ---------------
-sub _u2Callback {
+# ---------
+# Callbacks
+# ---------
+sub _interfacesArrayCallback {
   my ($self) = @_;
-  $self->_nbDone($self->_nbDone + 1);
+  $self->nbDone($self->nbDone + 1);
   $self->debugf('Completed');
-  $self->max($self->pos) if ($self->_nbDone >= $self->size);
+  $self->max($self->pos) if ($self->nbDone >= $self->size);
+}
+
+# ---------------
+# Grammar actions
+# ---------------
+sub interfacesArray {
+  my ($self, @u2) = @_;
+
+  [ map { MarpaX::Java::ClassFile::Interface->new(u2 => $_) } @u2 ]
 }
 
 with qw/MarpaX::Java::ClassFile::Common::InnerGrammar/;
@@ -48,6 +58,6 @@ with qw/MarpaX::Java::ClassFile::Common::InnerGrammar/;
 __DATA__
 __[ bnf ]__
 :default ::= action => ::first
-event 'u2$' = completed u2
+event 'interfacesArray$' = completed interfacesArray
 
-interfacesArray ::= u2*  action => [values]
+interfacesArray ::= u2*  action => interfacesArray

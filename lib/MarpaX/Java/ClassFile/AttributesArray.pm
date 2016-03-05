@@ -14,6 +14,7 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Common::BNF qw/bnf/;
+use MarpaX::Java::ClassFile::Attribute;
 
 =head1 DESCRIPTION
 
@@ -56,11 +57,11 @@ sub _attributeInfoEvent {
 # Our grammar actions
 # --------------------
 sub _attributeInfo {
-  bless({
-         attributeNameIndex => $_[1],
-         attributeLength    => $_[2],
-         info               => $_[3]
-        }, 'attribute_info')
+  my ($self, $attributeNameIndex, $attributeLength, $info) = @_;
+
+  MarpaX::Java::ClassFile::Attribute->new(attribute_name_index => $attributeNameIndex,
+                                          attribute_length     => $attributeLength,
+                                          info                 => $info)
 }
 
 with qw/MarpaX::Java::ClassFile::Common::InnerGrammar/;

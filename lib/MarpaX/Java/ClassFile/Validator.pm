@@ -38,6 +38,8 @@ sub validate {
   foreach (@{$self->classFiles}) {
     $self->_validateClassFile($_);
   }
+
+  $self
 }
 
 sub _validateClassFile {

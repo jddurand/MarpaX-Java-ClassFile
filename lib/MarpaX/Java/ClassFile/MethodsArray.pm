@@ -14,6 +14,7 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::AttributesArray;
+use MarpaX::Java::ClassFile::Method;
 use MarpaX::Java::ClassFile::Common::BNF qw/bnf/;
 
 =head1 DESCRIPTION
@@ -53,13 +54,14 @@ sub _methodInfoCallback {
 # Our grammar actions
 # --------------------
 sub _methodInfo {
-  bless({
-         access_flags     => $_[1],
-         name_index       => $_[2],
-         descriptor_index => $_[3],
-         attributes_count => $_[4],
-         attributes       => $_[5]
-        }, 'method_info')
+  my ($self, $accessFlags, $nameIndex, $descriptorIndex, $attributesCount, $attributes) = @_;
+
+  MarpaX::Java::ClassFile::Method->new(access_flags     => $accessFlags,
+                                       name_index       => $nameIndex,
+                                       descriptor_index => $descriptorIndex,
+                                       attributes_count => $attributesCount,
+                                       attributes       => $attributes
+                                     )
 }
 
 with qw/MarpaX::Java::ClassFile::Common::InnerGrammar/;
