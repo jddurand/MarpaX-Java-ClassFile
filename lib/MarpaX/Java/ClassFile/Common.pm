@@ -259,8 +259,10 @@ sub executeInnerGrammar {
   $_[0]->debugf('Asking for %s', $whoisit);
   my $inner = $_[1]->new(inputRef => $_[0]->inputRef, pos => $_[0]->pos, level => $_[0]->level + 1, @_[3..$#_]);
   my $innerGrammarValueMethod = $_[2];
-  $_[0]->lexeme_read('MANAGED', $inner->pos - $_[0]->pos, $inner->$innerGrammarValueMethod);
+  my $innerGrammarValue = $inner->$innerGrammarValueMethod;
+  $_[0]->lexeme_read('MANAGED', $inner->pos - $_[0]->pos, $innerGrammarValue);
   $_[0]->debugf('%s over', $whoisit);
+  $innerGrammarValue
 }
 
 #
