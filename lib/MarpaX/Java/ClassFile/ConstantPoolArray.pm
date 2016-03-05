@@ -129,7 +129,7 @@ sub _arg2hash {
   my $descArrayRef = $_ARG2HASH{$struct};
   my %hash = map { $descArrayRef->[$_] => $args[$_] } 0..$#args;
   my $class = "MarpaX::Java::ClassFile::ConstantPool::$struct";
-  $class->new(%hash)
+  $class->new(%hash, classFile => $self->classFile)
 }
 
 sub _constantClassInfo              { $_[0]->_arg2hash('Class',              @_[1..$#_]) }

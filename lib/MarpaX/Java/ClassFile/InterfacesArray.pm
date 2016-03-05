@@ -48,7 +48,7 @@ sub _interfacesArrayCallback {
 sub interfacesArray {
   my ($self, @u2) = @_;
 
-  [ map { MarpaX::Java::ClassFile::Interface->new(u2 => $_) } @u2 ]
+  [ map { MarpaX::Java::ClassFile::Interface->new(classFile => $self->classFile, u2 => $_) } @u2 ]
 }
 
 with qw/MarpaX::Java::ClassFile::Common::InnerGrammar/;

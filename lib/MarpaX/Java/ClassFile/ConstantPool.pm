@@ -10,8 +10,9 @@ package MarpaX::Java::ClassFile::ConstantPool;
 # AUTHORITY
 
 use Moo;
-use Types::Standard qw/Any/;
+use Types::Standard qw/Any InstanceOf/;
 
-has tag => ( is => 'ro', isa => Any, required => 1 );
+has classFile => ( is => 'ro', isa => InstanceOf['MarpaX::Java::ClassFile'], required => 1, weak_ref => 1 ); # weak ref
+has tag       => ( is => 'ro', isa => Any, required => 1 );
 
 1;

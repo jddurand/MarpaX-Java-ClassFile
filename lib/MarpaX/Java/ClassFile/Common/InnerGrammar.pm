@@ -14,9 +14,10 @@ use Moo::Role;
 use Types::Common::Numeric -all;
 use Types::Standard -all;
 
-has array  => (is => 'rw', isa => ArrayRef[Object], default => sub { [] });
-has size   => (is => 'ro', isa => PositiveOrZeroInt, required => 1);
-has nbDone => (is => 'rw', isa => PositiveOrZeroInt, default => sub { 0 });
+has classFile => ( is => 'ro', isa => InstanceOf['MarpaX::Java::ClassFile'], required => 1, weak_ref => 1 ); # weak ref
+has array     => ( is => 'rw', isa => ArrayRef[Object], default => sub { [] });
+has size      => ( is => 'ro', isa => PositiveOrZeroInt, required => 1);
+has nbDone    => ( is => 'rw', isa => PositiveOrZeroInt, default => sub { 0 });
 
 with qw/MarpaX::Java::ClassFile::Common/;
 

@@ -74,6 +74,7 @@ my %_CALLBACKS = (
                                               $_[0]->executeInnerGrammar(
                                                                          'MarpaX::Java::ClassFile::ConstantPoolArray',
                                                                          'array',
+                                                                         classFile => $_[0],
                                                                          size => $_[0]->_set_constant_pool_count($_[0]->literalU2) - 1
                                                                         )
                                              )
@@ -83,6 +84,7 @@ my %_CALLBACKS = (
                                            $_[0]->executeInnerGrammar(
                                                                       'MarpaX::Java::ClassFile::InterfacesArray',
                                                                       'array',
+                                                                      classFile => $_[0],
                                                                       size => $_[0]->_set_interfaces_count($_[0]->literalU2)
                                                                      )
                                           )
@@ -92,6 +94,7 @@ my %_CALLBACKS = (
                                        $_[0]->executeInnerGrammar(
                                                                   'MarpaX::Java::ClassFile::FieldsArray',
                                                                   'array',
+                                                                  classFile => $_[0],
                                                                   size => $_[0]->_set_fields_count($_[0]->literalU2)
                                                                  )
                                       )
@@ -101,6 +104,7 @@ my %_CALLBACKS = (
                                         $_[0]->executeInnerGrammar(
                                                                    'MarpaX::Java::ClassFile::MethodsArray',
                                                                    'array',
+                                                                   classFile => $_[0],
                                                                    size => $_[0]->_set_methods_count($_[0]->literalU2)
                                                                   )
                                        )
@@ -109,6 +113,7 @@ my %_CALLBACKS = (
                     $_[0]->_set_attributes($_[0]->executeInnerGrammar(
                                                                       'MarpaX::Java::ClassFile::AttributesArray',
                                                                       'array',
+                                                                      classFile => $_[0],
                                                                       size => $_[0]->_set_attributes_count($_[0]->literalU2)
                                                                      )
                                           )

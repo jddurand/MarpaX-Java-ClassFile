@@ -13,6 +13,7 @@ use Moo;
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
 use Types::Standard qw/ArrayRef InstanceOf/;
 
+has classFile        => ( is => 'ro', isa => InstanceOf['MarpaX::Java::ClassFile'], required => 1, weak_ref => 1 ); # weak ref
 has access_flags     => ( is => 'ro', isa => PositiveOrZeroInt,                                          required => 1 );
 has name_index       => ( is => 'ro', isa => PositiveOrZeroInt,                                          required => 1 );
 has descriptor_index => ( is => 'ro', isa => PositiveOrZeroInt,                                          required => 1 );

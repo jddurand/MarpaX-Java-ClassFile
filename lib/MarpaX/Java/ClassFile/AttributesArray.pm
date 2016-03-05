@@ -59,7 +59,8 @@ sub _attributeInfoEvent {
 sub _attributeInfo {
   my ($self, $attributeNameIndex, $attributeLength, $info) = @_;
 
-  MarpaX::Java::ClassFile::Attribute->new(attribute_name_index => $attributeNameIndex,
+  MarpaX::Java::ClassFile::Attribute->new(classFile            => $self->classFile,
+                                          attribute_name_index => $attributeNameIndex,
                                           attribute_length     => $attributeLength,
                                           info                 => $info)
 }
