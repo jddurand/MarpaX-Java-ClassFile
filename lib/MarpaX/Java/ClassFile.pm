@@ -56,7 +56,7 @@ MarpaX::Java::ClassFile is doing a parsing of a Java .class file, trying to stan
 
 =head2 inputRef
 
-A scalar hosting a reference to a .class file content. It is the responsibility of the user to make sure that this scalar contain only bytes, please refer to the SYNOPSIS section.
+A scalar hosting a reference to a .class file content. It is the responsibility of the user to make sure that this scalar contain only bytes, please refer to the SYNOPSIS section. Alternatively, specifying a single option will be considered as path to the .class file, and the constructor will do the read in binary mode automatically.
 
 =head1 SUBROUTINES/METHODS
 
@@ -86,6 +86,7 @@ sub BUILDARGS {
     open(my $fh, '<', $args[0]) || croak "Cannot open $args[0], $!";
     binmode($fh);
     @args = ( inputRef => \do { local $/; <$fh>} );
+    close($fh) || warn "Cannot close $args[0], $!";
   }
 
   return { @args }
