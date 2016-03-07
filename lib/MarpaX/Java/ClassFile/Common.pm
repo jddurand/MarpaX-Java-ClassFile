@@ -131,7 +131,7 @@ sub ast {
 sub _read {
   # my ($self) = @_;
 
-  $_[0]->tracef('read($inputRef, pos=%s)', $_[0]->pos);
+  $_[0]->tracef('read($inputRef, %s)', $_[0]->pos);
   eval {
     $_[0]->_set_pos($_[0]->_r->read($_[0]->inputRef, $_[0]->pos))
   };
@@ -176,7 +176,7 @@ sub _value {
 sub _resume {
   # my ($self) = @_;
 
-  $_[0]->tracef('resume(%d)', $_[0]->pos);
+  $_[0]->tracef('resume(%s)', $_[0]->pos);
   eval { $_[0]->_set_pos($_[0]->_r->resume($_[0]->pos)) };
   $_[0]->_croak($@) if ($@);
   $_[0]->_manageEvents
@@ -248,6 +248,13 @@ sub literalManaged {
   $_[0]->_literal('managed')
 }
 
+sub activate {
+  # my ($self, $eventName, $status) = @_;
+
+  $_[0]->tracef('activate(\'%s\', %s)', $_[1], $_[2]);
+  $_[0]->_r->activate($_[1], $_[2])
+}
+
 #
 # An inner grammar is an opaque thing, so associated
 # lexeme must be MANAGED.
@@ -259,6 +266,7 @@ sub executeInnerGrammar {
   $_[0]->debugf('Asking for %s', $whoisit);
   my $inner = $_[1]->new(inputRef => $_[0]->inputRef, pos => $_[0]->pos, level => $_[0]->level + 1, @_[3..$#_]);
   my $innerGrammarValueMethod = $_[2];
+  $_[0]->debugf('Asking for %s->%s', $whoisit, $innerGrammarValueMethod);
   my $innerGrammarValue = $inner->$innerGrammarValueMethod;
   $_[0]->lexeme_read('MANAGED', $inner->pos - $_[0]->pos, $innerGrammarValue);
   $_[0]->debugf('%s over', $whoisit);

@@ -1,7 +1,7 @@
 #!perl
 use strict;
 use warnings FATAL => 'all';
-use MarpaX::Java::ClassFile;
+use MarpaX::Java::ClassFileArray;
 use Data::Scan::Printer;
 use POSIX qw/EXIT_SUCCESS EXIT_FAILURE/;
 use Log::Log4perl qw/:easy/;
@@ -11,7 +11,7 @@ use Log::Any qw/$log/;
 # Init log
 #
 our $defaultLog4perlConf = '
-log4perl.rootLogger              = WARN, Screen
+log4perl.rootLogger              = TRACE, Screen
 log4perl.appender.Screen         = Log::Log4perl::Appender::Screen
 log4perl.appender.Screen.stderr  = 0
 log4perl.appender.Screen.layout  = PatternLayout
@@ -33,10 +33,12 @@ if (! $file) {
   print STDERR "Usage: $0 classFile\n";
   exit(EXIT_FAILURE);
 }
-open(my $fh, '<', $file) || die "Cannot open $file, $!";
-binmode($fh);
-my $input = do { local $/; <$fh>};
-close($fh) || warn "Cannot close $file, $!";
-dspp(MarpaX::Java::ClassFile->new(input => $input)->ast);
+use Data::Dumper::GUI;
+# dspp
+print Dumper
+  (
+MarpaX::Java::ClassFileArray->new($file)->ast
+)
+;
 
 exit(EXIT_SUCCESS);

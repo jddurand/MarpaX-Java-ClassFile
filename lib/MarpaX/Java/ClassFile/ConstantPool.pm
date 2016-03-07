@@ -12,7 +12,7 @@ package MarpaX::Java::ClassFile::ConstantPool;
 use Moo;
 use Types::Standard qw/Any InstanceOf/;
 
-has classFile => ( is => 'ro', isa => InstanceOf['MarpaX::Java::ClassFile'], required => 1, weak_ref => 1 ); # weak ref
+has classFile => ( is => 'ro', isa => InstanceOf['MarpaX::Java::ClassFileArray'], required => 1, weak_ref => 1 ); # weak ref
 has tag       => ( is => 'ro', isa => Any, required => 1 );
 
 1;
