@@ -1,0 +1,44 @@
+#!perl
+use strict;
+use warnings FATAL => 'all';
+use MarpaX::Java::ClassFile;
+use Data::Scan::Printer;
+use POSIX qw/EXIT_SUCCESS EXIT_FAILURE/;
+use Log::Log4perl qw/:easy/;
+use Log::Any::Adapter;
+use Log::Any qw/$log/;
+#
+# Init log
+#
+our $defaultLog4perlConf = '
+log4perl.rootLogger              = TRACE, Screen
+log4perl.appender.Screen         = Log::Log4perl::Appender::Screen
+log4perl.appender.Screen.stderr  = 0
+log4perl.appender.Screen.layout  = PatternLayout
+log4perl.appender.Screen.layout.ConversionPattern = %d %-5p %6P %m{chomp}%n
+';
+Log::Log4perl::init(\$defaultLog4perlConf);
+Log::Any::Adapter->set('Log4perl');
+
+# PODNAME: javapp
+
+# ABSTRACT: javap writen in perl
+
+# VERSION
+
+# AUTHORITY
+
+my $file = shift || '';
+if (! $file) {
+  print STDERR "Usage: $0 classFile\n";
+  exit(EXIT_FAILURE);
+}
+# use Data::Dumper::GUI;
+dspp
+# print Dumper
+  (
+MarpaX::Java::ClassFile->parse($file)
+)
+;
+
+exit(EXIT_SUCCESS);

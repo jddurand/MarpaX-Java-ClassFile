@@ -1,0 +1,19 @@
+use strict;
+use warnings FATAL => 'all';
+
+package MarpaX::Java::ClassFile::Attribute::ConstantValue;
+
+# ABSTRACT: Java .class's ConstantValue attribute object
+
+# VERSION
+
+# AUTHORITY
+
+use Moo;
+use Types::Common::Numeric qw/PositiveInt/;
+
+extends 'MarpaX::Java::ClassFile::Attribute';
+
+has constantvalue_index => ( is => 'ro', isa => PositiveInt, required => 1 );
+
+1;

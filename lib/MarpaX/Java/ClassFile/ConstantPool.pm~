@@ -1,0 +1,68 @@
+use strict;
+use warnings FATAL => 'all';
+
+package MarpaX::Java::ClassFile::ConstantPool;
+use Moo;
+
+use Marpa::R2;
+use Types::Standard -all;
+
+extends 'MarpaX::Java::ClassFile::BNF';
+
+my $G         = Marpa::R2::Scanless::G->new({source => \__PACKAGE__->bnf(do { local $/; <DATA> })});
+my %CALLBACKS = ('constant_pool_count$' => \&_constant_pool_count);
+
+has grammar   => (is => 'ro', isa => InstanceOf['Marpa::R2::Scanless::G'], default => sub { $G });
+has callbacks => (is => 'ro', isa => HashRef[CodeRef], default => sub { \%CALLBACKS });
+
+sub _constant_pool_count {
+  my ($self, $r, $pos, $max, $reloopRef) = @_;
+
+  my $count = $self->u1($r, $pos, $max, 'constant_pool_count');
+  my $imax = $count - 1;
+  my @managed = ();
+  my $i = 0;
+  while (++$i <= $imax) {
+    push(@managed, MarpaX::Java::ClassFile::ConstantPool->new($self->input)->parse);
+    if ($managed[-1]->{tag} == 0000000000) {
+      # JDD
+    }
+  }
+
+}
+
+with 'MarpaX::Java::ClassFile::Common';
+
+1;
+
+__DATA__
+cp_info ::=
+    CONSTANT_Class_info
+  | CONSTANT_Fieldref
+  | CONSTANT_Methodref
+  | CONSTANT_InterfaceMethodref
+  | CONSTANT_String
+  | CONSTANT_Integer
+  | CONSTANT_Float
+  | CONSTANT_Long
+  | CONSTANT_Double
+  | CONSTANT_NameAndType
+  | CONSTANT_Utf8
+  | CONSTANT_MethodHandle
+  | CONSTANT_MethodType
+  | CONSTANT_InvokeDynamic
+
+CONSTANT_Class_info              ::= tag name_index
+CONSTANT_Fieldref_info           ::= tag class_index                 name_and_type_index
+CONSTANT_Methodref_info          ::= tag class_index                 name_and_type_index
+CONSTANT_InterfaceMethodref_info ::= tag class_index                 name_and_type_index
+CONSTANT_String_info             ::= tag string_index
+CONSTANT_Integer_info            ::= tag bytes
+CONSTANT_Float_info              ::= tag bytes
+CONSTANT_Long_info               ::= tag high_bytes                  low_bytes
+CONSTANT_Double_info             ::= tag high_bytes                  low_bytes
+CONSTANT_NameAndType_info        ::= tag name_index                  descriptor_index
+CONSTANT_Utf8_info               ::= tag length                      bytes
+CONSTANT_MethodHandle_info       ::= tag reference_kind              reference_index
+CONSTANT_MethodType_info         ::= tag descriptor_index
+CONSTANT_InvokeDynamic_info      ::= tag bootstrap_method_attr_index name_and_type_index

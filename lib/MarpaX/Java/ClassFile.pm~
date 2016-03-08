@@ -1,0 +1,10 @@
+use strict;
+use warnings FATAL => 'all';
+
+package MarpaX::Java::ClassFile;
+use MarpaX::Java::ClassFile::Common;
+use Moo;
+use Marpa::R2;
+
+my $BNF = do { local $/; <DATA> } . 
+my $G = Marpa::R2::Scanless::G->new({source => do \{local $/; 
