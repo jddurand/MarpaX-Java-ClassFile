@@ -12,6 +12,16 @@ use Moo;
 
 use Data::Section -setup;
 use Marpa::R2;
+use MarpaX::Java::ClassFile::BNF::ConstantUtf8Info;
+use MarpaX::Java::ClassFile::BNF::ConstantIntegerInfo;
+use MarpaX::Java::ClassFile::BNF::ConstantLongInfo;
+use MarpaX::Java::ClassFile::BNF::ConstantDoubleInfo;
+use MarpaX::Java::ClassFile::BNF::ConstantClassInfo;
+use MarpaX::Java::ClassFile::BNF::ConstantStringInfo;
+use MarpaX::Java::ClassFile::BNF::ConstantFieldrefInfo;
+use MarpaX::Java::ClassFile::BNF::ConstantMethodrefInfo;
+use MarpaX::Java::ClassFile::BNF::ConstantInterfaceMethodrefInfo;
+use MarpaX::Java::ClassFile::BNF::ConstantNameAndTypeInfo;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
 use Types::Standard -all;
 
@@ -49,8 +59,8 @@ sub callbacks {
             if    ($tag == CONSTANT_Utf8)               { $_[0]->inner('ConstantUtf8Info') }
             elsif ($tag == CONSTANT_Integer)            { $_[0]->inner('ConstantIntegerInfo') }
             elsif ($tag == CONSTANT_Float)              { $_[0]->inner('ConstantFloatInfo') }
-            elsif ($tag == CONSTANT_Long)               { $_[0]->inner('ConstantLongInfo') }
-            elsif ($tag == CONSTANT_Double)             { $_[0]->inner('ConstantDoubleInfo') }
+            elsif ($tag == CONSTANT_Long)               { $_[0]->inner('ConstantLongInfo'), $_[0]->inc_nbDone }
+            elsif ($tag == CONSTANT_Double)             { $_[0]->inner('ConstantDoubleInfo'), $_[0]->inc_nbDone }
             elsif ($tag == CONSTANT_Class)              { $_[0]->inner('ConstantClassInfo') }
             elsif ($tag == CONSTANT_String)             { $_[0]->inner('ConstantStringInfo') }
             elsif ($tag == CONSTANT_Fieldref)           { $_[0]->inner('ConstantFieldrefInfo') }

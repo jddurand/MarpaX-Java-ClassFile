@@ -37,12 +37,11 @@ sub callbacks {
 sub _ConstantUtf8Info {
   my ($self, $length, $managed) = @_;
 
-  my @u1 = defined($managed) ? map { $self->u1($_) } split('', $managed) : [];
   my $value = $self->utf8($managed);
   MarpaX::Java::ClassFile::Struct::ConstantUtf8Info->new(
                                                          tag    => 1,
                                                          length => $length,
-                                                         bytes  => \@u1,
+                                                         bytes  => $self->toU1ArrayRef($managed),
                                                          _value => $value
                                                         )
 }

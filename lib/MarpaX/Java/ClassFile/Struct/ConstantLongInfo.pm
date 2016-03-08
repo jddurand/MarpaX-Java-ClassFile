@@ -14,7 +14,8 @@ use MarpaX::Java::ClassFile::Struct::_Types -all;
 use Types::Standard -all;
 
 has tag          => ( is => 'ro', isa => U1 );
-has high_bytes   => ( is => 'ro', isa => U4 );
-has low_bytes    => ( is => 'ro', isa => U4 );
+has high_bytes   => ( is => 'ro', isa => ArrayRef[U1] );
+has low_bytes    => ( is => 'ro', isa => ArrayRef[U1] );
+has _value       => ( is => 'ro', isa => Int );
 
 1;

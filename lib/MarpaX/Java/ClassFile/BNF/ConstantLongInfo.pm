@@ -1,10 +1,10 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::BNF::ConstantDoubleInfo;
+package MarpaX::Java::ClassFile::BNF::ConstantLongInfo;
 use Moo;
 
-# ABSTRACT: Parsing of a CONSTANT_Double_info
+# ABSTRACT: Parsing of a CONSTANT_Long_info
 
 # VERSION
 
@@ -13,7 +13,7 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
-use MarpaX::Java::ClassFile::Struct::ConstantDoubleInfo;
+use MarpaX::Java::ClassFile::Struct::ConstantLongInfo;
 use Types::Standard -all;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
@@ -28,17 +28,17 @@ sub callbacks { return { "'exhausted" => sub { $_[0]->exhausted } } }
 # ---------------
 # Grammar actions
 # ---------------
-sub _ConstantDoubleInfo {
+sub _ConstantLongInfo {
   my ($self, $high_bytes, $low_bytes) = @_;
 
   my $value = $self->long($high_bytes, $low_bytes);
   $self->tracef('%s', "$value");
-  MarpaX::Java::ClassFile::Struct::ConstantDoubleInfo->new(
-                                                           tag        => 6,
-                                                           high_bytes => $high_bytes,
-                                                           low_bytes  => $low_bytes,
-                                                           _value     => $value
-                                                          )
+  MarpaX::Java::ClassFile::Struct::ConstantLongInfo->new(
+                                                         tag        => 5,
+                                                         high_bytes => $self->toU1ArrayRef($high_bytes),
+                                                         low_bytes  => $self->toU1ArrayRef($low_bytes),
+                                                         _value     => $value
+                                                        )
 }
 
 with qw/MarpaX::Java::ClassFile::Role::Parser/;
@@ -49,7 +49,7 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-ConstantDoubleInfo ::=
-             u4      # high_bytes
-             u4      # low_bytes
-  action => _ConstantDoubleInfo
+ConstantLongInfo ::=
+             U4      # high_bytes
+             U4      # low_bytes
+  action => _ConstantLongInfo

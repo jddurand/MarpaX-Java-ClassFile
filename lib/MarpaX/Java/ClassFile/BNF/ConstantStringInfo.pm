@@ -1,10 +1,10 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::BNF::ConstantDoubleInfo;
+package MarpaX::Java::ClassFile::BNF::ConstantStringInfo;
 use Moo;
 
-# ABSTRACT: Parsing of a CONSTANT_Double_info
+# ABSTRACT: Parsing of a CONSTANT_NameAndType_info
 
 # VERSION
 
@@ -13,7 +13,7 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
-use MarpaX::Java::ClassFile::Struct::ConstantDoubleInfo;
+use MarpaX::Java::ClassFile::Struct::ConstantStringInfo;
 use Types::Standard -all;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
@@ -28,16 +28,12 @@ sub callbacks { return { "'exhausted" => sub { $_[0]->exhausted } } }
 # ---------------
 # Grammar actions
 # ---------------
-sub _ConstantDoubleInfo {
-  my ($self, $high_bytes, $low_bytes) = @_;
+sub _ConstantStringInfo {
+  my ($self, $string_index) = @_;
 
-  my $value = $self->long($high_bytes, $low_bytes);
-  $self->tracef('%s', "$value");
-  MarpaX::Java::ClassFile::Struct::ConstantDoubleInfo->new(
-                                                           tag        => 6,
-                                                           high_bytes => $high_bytes,
-                                                           low_bytes  => $low_bytes,
-                                                           _value     => $value
+  MarpaX::Java::ClassFile::Struct::ConstantStringInfo->new(
+                                                           tag              => 8,
+                                                           string_index     => $string_index,
                                                           )
 }
 
@@ -49,7 +45,6 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-ConstantDoubleInfo ::=
-             u4      # high_bytes
-             u4      # low_bytes
-  action => _ConstantDoubleInfo
+ConstantStringInfo ::=
+             u2      # string_index
+  action => _ConstantStringInfo

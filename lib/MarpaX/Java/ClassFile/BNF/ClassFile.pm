@@ -12,6 +12,7 @@ use Moo;
 
 use Data::Section -setup;
 use Marpa::R2;
+use MarpaX::Java::ClassFile::BNF::ConstantPoolArray;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
 use MarpaX::Java::ClassFile::Struct::_Types -all;
 use MarpaX::Java::ClassFile::Struct::ClassFile;
@@ -30,12 +31,15 @@ sub callbacks {
           # For constant pool indexes start at 1:
           # - The final action on Constant pool will insert a fake undef entry at position 0
           #
-          '!constant_pool_count' => sub { $_[0]->constant_pool
-                                            (
-                                             $_[0]->inner('ConstantPoolArray', size => $_[0]->literalU2 - 1)
-                                            )
-                                          },
-          '!interfaces_count'    => sub { $_[0]->inner('InterfacesArray', size => $_[0]->literalU2) },
+          '!constant_pool_count' => sub {
+            $_[0]->constant_pool
+              (
+               $_[0]->inner('ConstantPoolArray', size => $_[0]->literalU2 - 1)
+              )
+            },
+          '!interfaces_count'    => sub {
+            $_[0]->inner('InterfacesArray', size => $_[0]->literalU2)
+          },
           '!fields_count'        => sub { $_[0]->inner('FieldsArray',     size => $_[0]->literalU2) },
           '!methods_count'       => sub { $_[0]->inner('MethodsArray',    size => $_[0]->literalU2) },
           '!attributes_count'    => sub { $_[0]->inner('AttributesArray', size => $_[0]->literalU2) }

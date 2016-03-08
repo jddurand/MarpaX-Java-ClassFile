@@ -16,7 +16,6 @@ use Moo::Role;
 # you are not interested in micro-optimizations)
 #
 use Carp qw/croak/;
-use Class::Load qw/load_class/;
 use MarpaX::Java::ClassFile::Struct::_Types -all;
 use MarpaX::Java::ClassFile::Util::MarpaTrace;
 use Data::Section -setup;
@@ -266,6 +265,10 @@ sub literalManaged {
   $_[0]->_literal('managed')
 }
 
+sub toU1ArrayRef {
+  [ map { $_[0]->u1($_) } split('', $_[1] // '') ]
+}
+
 sub activate {
   # my ($self, $eventName, $status) = @_;
 
@@ -281,7 +284,6 @@ sub inner {
   # my ($self, $innerGrammarClass, %args) = @_;
 
   my $innerClass = "MarpaX::Java::ClassFile::BNF::$_[1]";
-  load_class($innerClass);
   my $inner = $innerClass->new(parent => $_[0],
                                constant_pool => $_[0]->constant_pool,
                                inputRef => $_[0]->inputRef,
