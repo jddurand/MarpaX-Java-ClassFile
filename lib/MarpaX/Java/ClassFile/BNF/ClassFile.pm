@@ -32,8 +32,6 @@ sub callbacks {
           # - The final action on Constant pool will insert a fake undef entry at position 0
           #
           '!constant_pool_count' => sub {
-            use Data::Scan::Printer;
-            exit dspp($_[0]->inner('ConstantPoolArray', size => $_[0]->literalU2 - 1));
             $_[0]->constant_pool
               (
                $_[0]->inner('ConstantPoolArray', size => $_[0]->literalU2 - 1)
