@@ -13,8 +13,8 @@ use Moo;
 use MarpaX::Java::ClassFile::Struct::_Types -all;
 use Types::Standard -all;
 
-has tag             => ( is => 'ro', isa => U1 );
-has reference_kind  => ( is => 'ro', isa => U1 );
-has reference_index => ( is => 'ro', isa => U2 );
+has tag             => ( is => 'ro', required => 1, isa => U1 );
+has reference_kind  => ( is => 'ro', required => 1, isa => U1 );
+has reference_index => ( is => 'ro', required => 1, isa => U2 );
 
 1;

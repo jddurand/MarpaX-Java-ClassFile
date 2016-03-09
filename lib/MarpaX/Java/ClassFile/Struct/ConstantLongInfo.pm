@@ -14,9 +14,9 @@ use MarpaX::Java::ClassFile::Struct::_Types -all;
 use Types::Standard -all;
 use Types::Encodings qw/Bytes/;
 
-has tag          => ( is => 'ro', isa => U1 );
-has high_bytes   => ( is => 'ro', isa => Bytes );
-has low_bytes    => ( is => 'ro', isa => Bytes );
-has _value       => ( is => 'ro', isa => Int );
+has tag          => ( is => 'ro', required => 1, isa => U1 );
+has high_bytes   => ( is => 'ro', required => 1, isa => Bytes );
+has low_bytes    => ( is => 'ro', required => 1, isa => Bytes );
+has _value       => ( is => 'ro', required => 1, isa => Int );
 
 1;

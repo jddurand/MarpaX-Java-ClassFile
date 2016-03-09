@@ -13,8 +13,8 @@ use Moo;
 use MarpaX::Java::ClassFile::Struct::_Types -all;
 use Types::Standard -all;
 
-has tag                         => ( is => 'ro', isa => U1 );
-has bootstrap_method_attr_index => ( is => 'ro', isa => U2 );
-has name_and_type_index         => ( is => 'ro', isa => U2 );
+has tag                         => ( is => 'ro', required => 1, isa => U1 );
+has bootstrap_method_attr_index => ( is => 'ro', required => 1, isa => U2 );
+has name_and_type_index         => ( is => 'ro', required => 1, isa => U2 );
 
 1;

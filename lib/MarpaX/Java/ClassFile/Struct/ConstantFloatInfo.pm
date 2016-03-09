@@ -14,8 +14,8 @@ use MarpaX::Java::ClassFile::Struct::_Types -all;
 use Types::Encodings qw/Bytes/;
 use Types::Standard -all;
 
-has tag          => ( is => 'ro', isa => U1 );
-has bytes        => ( is => 'ro', isa => Bytes );
-has _value       => ( is => 'ro', isa => InstanceOf['Math::BigFloat'] );
+has tag          => ( is => 'ro', required => 1, isa => U1 );
+has bytes        => ( is => 'ro', required => 1, isa => Bytes );
+has _value       => ( is => 'ro', required => 1, isa => InstanceOf['Math::BigFloat'] );
 
 1;
