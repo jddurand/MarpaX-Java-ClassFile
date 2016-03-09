@@ -42,11 +42,12 @@ inaccessible is ok by default
 __[ bnf_bottom ]__
 ###################################################
 # Prevent Marpa saying that a lexeme is unreachable
+# External BNF's are not supposed to use these
 ###################################################
-u1      ::= U1
-u2      ::= U2
-u4      ::= U4
-managed ::= MANAGED
+u1_internal      ::= U1
+u2_internal      ::= U2
+u4_internal      ::= U4
+managed_internal ::= MANAGED
 
 ########################################
 #          Common lexemes              #
