@@ -18,6 +18,11 @@ use Types::Standard -all;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
 my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_data) } );
+my %_signatures = (
+                   'class'  => Marpa::R2::Scanless::G->new( { source => \do { ${__PACKAGE__->section_data('signature_class_bnf')}  . ${__PACKAGE__->section_data('signature_common_bnf')} } } ),
+                   'method' => Marpa::R2::Scanless::G->new( { source => \do { ${__PACKAGE__->section_data('signature_method_bnf')} . ${__PACKAGE__->section_data('signature_common_bnf')} } } ),
+                   'field'  => Marpa::R2::Scanless::G->new( { source => \do { ${__PACKAGE__->section_data('signature_field_bnf')}  . ${__PACKAGE__->section_data('signature_common_bnf')} } } )
+                  );
 
 # --------------------------------------------------------
 # What role MarpaX::Java::ClassFile::Role::Parser requires
@@ -69,3 +74,68 @@ Signature_attribute ::=
 attribute_name_index ::= U2 action => u2
 attribute_length     ::= U4 action => u4
 signature_index      ::= U2 action => u2
+
+__[ signature_common_bnf ]__
+Identifier               ::= [.;\[/<>:]+
+JavaTypeSignature        ::= ReferenceTypeSignature
+                           | BaseType
+BaseType                 ::= [BCDFIJSZ]
+ReferenceTypeSignature   ::= ClassTypeSignature
+                           | TypeVariableSignature
+                           | ArrayTypeSignature
+ClassTypeSignature       ::= 'L' PackageSpecifierMaybe SimpleClassTypeSignature ClassTypeSignatureSuffixAny ';'
+PackageSpecifierUnit     ::= Identifier '/'
+PackageSpecifier         ::= PackageSpecifierUnit+
+SimpleClassTypeSignature ::= Identifier TypeArgumentsMaybe
+TypeArguments            ::= '<' TypeArgument TypeArgumentAny '>'
+TypeArgument             ::= WildcardIndicatorMaybe ReferenceTypeSignature
+                           | '*'
+WildcardIndicator        ::= [+-]
+ClassTypeSignatureSuffix ::= '.' SimpleClassTypeSignature
+TypeVariableSignature    ::= 'T' Identifier ';'
+ArrayTypeSignature       ::= '[' JavaTypeSignature
+
+PackageSpecifierMaybe       ::= PackageSpecifier
+PackageSpecifierMaybe       ::=
+ClassTypeSignatureSuffixAny ::= ClassTypeSignatureSuffix*
+TypeArgumentsMaybe          ::= TypeArguments
+TypeArgumentsMaybe          ::=
+TypeArgumentAny             ::= TypeArgument*
+WildcardIndicatorMaybe      ::= WildcardIndicator
+WildcardIndicatorMaybe      ::=
+
+TypeParameters          ::= '<' TypeParameter TypeParameterAny '>'
+TypeParameter           ::= Identifier ClassBound InterfaceBoundAny
+ClassBound              ::= ':' ReferenceTypeSignatureMaybe
+InterfaceBound          ::= ':' ReferenceTypeSignature
+SuperclassSignature     ::= ClassTypeSignature
+SuperinterfaceSignature ::= ClassTypeSignature
+
+TypeParametersMaybe         ::= TypeParameters
+TypeParametersMaybe         ::=
+TypeParameterAny            ::= TypeParameter*
+ReferenceTypeSignatureMaybe ::= ReferenceTypeSignature
+ReferenceTypeSignatureMaybe ::=
+SuperinterfaceSignatureAny  ::= SuperinterfaceSignature*
+InterfaceBoundAny           ::= InterfaceBound*
+
+Result               ::= JavaTypeSignature
+                       | VoidDescriptor
+ThrowsSignature      ::= '^' ClassTypeSignature
+                       | '^' TypeVariableSignature
+VoidDescriptor       ::= 'V'
+
+JavaTypeSignatureAny ::= JavaTypeSignature*
+ThrowsSignatureAny   ::= ThrowsSignature*
+
+__[ signature_class_bnf ]__
+inaccessible is ok by default
+ClassSignature          ::= TypeParametersMaybe SuperclassSignature SuperinterfaceSignatureAny
+
+__[ signature_method_bnf ]__
+inaccessible is ok by default
+MethodSignature         ::= TypeParametersMaybe '(' JavaTypeSignatureAny ')' Result ThrowsSignatureAny
+
+__[ signature_field_bnf ]__
+inaccessible is ok by default
+FieldSignature          ::= ReferenceTypeSignature
