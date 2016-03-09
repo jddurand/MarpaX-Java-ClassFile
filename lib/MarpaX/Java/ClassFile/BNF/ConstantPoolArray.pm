@@ -106,5 +106,5 @@ __[ bnf ]__
 event 'cpInfo$' = completed cpInfo
 
 cpInfoArray ::= cpInfo*
-cpInfo ::= (U1)
+cpInfo ::= U1
          | MANAGED          action => ::first

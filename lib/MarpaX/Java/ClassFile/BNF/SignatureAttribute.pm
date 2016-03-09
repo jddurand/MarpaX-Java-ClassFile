@@ -1,10 +1,10 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::BNF::ConstantClassInfo;
+package MarpaX::Java::ClassFile::BNF::SignatureAttribute;
 use Moo;
 
-# ABSTRACT: Parsing of a CONSTANT_Class_info
+# ABSTRACT: Parsing of a Signature_attribute
 
 # VERSION
 
@@ -13,7 +13,7 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
-use MarpaX::Java::ClassFile::Struct::ConstantClassInfo;
+use MarpaX::Java::ClassFile::Struct::SignatureAttribute;
 use Types::Standard -all;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
@@ -28,12 +28,13 @@ sub callbacks { return { "'exhausted" => sub { $_[0]->exhausted } } }
 # ---------------
 # Grammar actions
 # ---------------
-sub _ConstantClassInfo {
-  # my ($self, $tag, $name_index) = @_;
+sub _Signature_attribute {
+  # my ($self, $attribute_name_index, $attribute_length, $signature_index) = @_;
 
-  MarpaX::Java::ClassFile::Struct::ConstantClassInfo->new(
-                                                          tag        => $_[1],
-                                                          name_index => $_[2]
+  MarpaX::Java::ClassFile::Struct::SignatureAttribute->new(
+                                                           attribute_name_index => $_[1],
+                                                           attribute_length     => $_[2],
+                                                           signature_index      => $_[3]
                                                           )
 }
 
@@ -45,6 +46,12 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-ConstantClassInfo ::= tag name_index action => _ConstantClassInfo
-tag               ::= [\x{07}]       action => u1
-name_index        ::= U2             action => u2
+Signature_attribute ::=
+    attribute_name_index
+    attribute_length
+    signature_index
+  action => _Signature_attribute
+
+attribute_name_index ::= U2 action => u2
+attribute_length     ::= U4 action => u4
+signature_index      ::= U2 action => u2

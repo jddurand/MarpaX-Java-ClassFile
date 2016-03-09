@@ -32,9 +32,9 @@ sub _ConstantNameAndTypeInfo {
   # my ($self, $tag, $name_index, $descriptor_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantNameAndTypeInfo->new(
-                                                                tag              => $_[0]->u1($_[1]),
-                                                                name_index       => $_[0]->u2($_[2]),
-                                                                descriptor_index => $_[0]->u2($_[3])
+                                                                tag              => $_[1],
+                                                                name_index       => $_[2],
+                                                                descriptor_index => $_[3]
                                                                )
 }
 
@@ -46,8 +46,7 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-ConstantNameAndTypeInfo ::=
-             [\x{0c}] # tag
-             U2       # name_index
-             U2       # descriptor_index
-  action => _ConstantNameAndTypeInfo
+ConstantNameAndTypeInfo ::= tag name_index descriptor_index action => _ConstantNameAndTypeInfo
+tag                     ::= [\x{0c}]                        action => u1
+name_index              ::= U2                              action => u2
+descriptor_index        ::= U2                              action => u2

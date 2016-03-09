@@ -188,32 +188,32 @@ class_type RuntimeInvisibleTypeAnnotationsAttribute,      { class => 'MarpaX::Ja
 class_type AnnotationDefaultAttribute,                    { class => 'MarpaX::Java::ClassFile::Struct::AnnotationDefaultAttribute' };
 class_type BootstrapMethodsAttribute,                     { class => 'MarpaX::Java::ClassFile::Struct::BootstrapMethodsAttribute' };
 class_type MethodParametersAttribute,                     { class => 'MarpaX::Java::ClassFile::Struct::MethodParametersAttribute' };
-declare AttributeInfo, as Enum[
-                               UnmanagedAttribute,
-                               ConstantValueAttribute,
-                               CodeAttribute,
-                               StackMapTableAttribute,
-                               ExceptionsAttribute,
-                               InnerClassesAttribute,
-                               EnclosingMethodAttribute,
-                               SyntheticAttribute,
-                               SignatureAttribute,
-                               SourceFileAttribute,
-                               SourceDebugExtensionAttribute,
-                               LineNumberTableAttribute,
-                               LocalVariableTableAttribute,
-                               LocalVariableTypeTableAttribute,
-                               DeprecatedAttribute,
-                               RuntimeVisibleAnnotationsAttribute,
-                               RuntimeInvisibleAnnotationsAttribute,
-                               RuntimeVisibleParameterAnnotationsAttribute,
-                               RuntimeInvisibleParameterAnnotationsAttribute,
-                               RuntimeVisibleTypeAnnotationsAttribute,
-                               RuntimeInvisibleTypeAnnotationsAttribute,
-                               AnnotationDefaultAttribute,
-                               BootstrapMethodsAttribute,
-                               MethodParametersAttribute
-                              ];
+declare AttributeInfo, as
+  UnmanagedAttribute                           |
+  ConstantValueAttribute                       |
+  CodeAttribute                                |
+  StackMapTableAttribute                       |
+  ExceptionsAttribute                          |
+  InnerClassesAttribute                        |
+  EnclosingMethodAttribute                     |
+  SyntheticAttribute                           |
+  SignatureAttribute                           |
+  SourceFileAttribute                          |
+  SourceDebugExtensionAttribute                |
+  LineNumberTableAttribute                     |
+  LocalVariableTableAttribute                  |
+  LocalVariableTypeTableAttribute              |
+  DeprecatedAttribute                          |
+  RuntimeVisibleAnnotationsAttribute           |
+  RuntimeInvisibleAnnotationsAttribute         |
+  RuntimeVisibleParameterAnnotationsAttribute  |
+  RuntimeInvisibleParameterAnnotationsAttribute|
+  RuntimeVisibleTypeAnnotationsAttribute       |
+  RuntimeInvisibleTypeAnnotationsAttribute     |
+  AnnotationDefaultAttribute                   |
+  BootstrapMethodsAttribute                    |
+  MethodParametersAttribute
+  ;
 
 
 class_type ExceptionTable,  { class => 'MarpaX::Java::ClassFile::Struct::ExceptionTable' };
@@ -268,13 +268,13 @@ class_type EnumConstValue,     { class => 'MarpaX::Java::ClassFile::Struct::Enum
 class_type ClassInfoIndex,     { class => 'MarpaX::Java::ClassFile::Struct::ClassInfoIndex' };
 class_type ArrayValue,         { class => 'MarpaX::Java::ClassFile::Struct::ArrayValue' };
 class_type ElementValuePair,   { class => 'MarpaX::Java::ClassFile::Struct::ElementValuePair' };
-declare ElementValue, as Enum[
-                              ConstValueIndex,
-                              EnumConstValue,
-                              ClassInfoIndex,
-                              Annotation,
-                              ArrayValue
-                             ];
+declare ElementValue, as
+  ConstValueIndex|
+  EnumConstValue |
+  ClassInfoIndex |
+  Annotation     |
+  ArrayValue
+;
 
 
 class_type ParameterAnnotation,   { class => 'MarpaX::Java::ClassFile::Struct::ParameterAnnotation' };
@@ -289,18 +289,18 @@ class_type LocalvarTarget,           { class => 'MarpaX::Java::ClassFile::Struct
 class_type CatchTarget,              { class => 'MarpaX::Java::ClassFile::Struct::CatchTarget' };
 class_type OffsetTarget,             { class => 'MarpaX::Java::ClassFile::Struct::OffsetTarget' };
 class_type TypeArgumentTarget,       { class => 'MarpaX::Java::ClassFile::Struct::TypeArgumentTarget' };
-declare TargetInfo, as Enum[
-                            TypeParameterTarget,
-                            SupertypeTarget,
-                            TypeParameterBoundTarget,
-                            EmptyTarget,
-                            FormalParameterTarget,
-                            ThrowsTarget,
-                            LocalvarTarget,
-                            CatchTarget,
-                            OffsetTarget,
-                            TypeArgumentTarget
-                           ];
+declare TargetInfo, as
+  TypeParameterTarget     |
+  SupertypeTarget         |
+  TypeParameterBoundTarget|
+  EmptyTarget             |
+  FormalParameterTarget   |
+  ThrowsTarget            |
+  LocalvarTarget          |
+  CatchTarget             |
+  OffsetTarget            |
+  TypeArgumentTarget
+;
 
 class_type Table, { class => 'MarpaX::Java::ClassFile::Struct::Table' };
 

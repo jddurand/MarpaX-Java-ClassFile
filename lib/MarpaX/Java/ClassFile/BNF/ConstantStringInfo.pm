@@ -32,8 +32,8 @@ sub _ConstantStringInfo {
   # my ($self, $tag, $string_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantStringInfo->new(
-                                                           tag              => $_[0]->u1($_[1]),
-                                                           string_index     => $_[0]->u2($_[2])
+                                                           tag              => $_[1],
+                                                           string_index     => $_[2]
                                                           )
 }
 
@@ -45,7 +45,6 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-ConstantStringInfo ::=
-             [\x{08}] # tag
-             U2       # string_index
-  action => _ConstantStringInfo
+ConstantStringInfo ::= tag string_index action => _ConstantStringInfo
+tag                ::= [\x{08}]         action => u1
+string_index       ::= U2               action => u2

@@ -32,9 +32,9 @@ sub _ConstantInvokeDynamicInfo {
   # my ($self, $tag, $class_index, $name_and_type_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantInvokeDynamicInfo->new(
-                                                              tag                         => $_[0]->u1($_[1]),
-                                                              bootstrap_method_attr_index => $_[0]->u2($_[2]),
-                                                              name_and_type_index         => $_[0]->u2($_[3])
+                                                              tag                         => $_[1],
+                                                              bootstrap_method_attr_index => $_[2],
+                                                              name_and_type_index         => $_[3]
                                                              )
 }
 
@@ -46,8 +46,7 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-ConstantInvokeDynamicInfo ::=
-             [\x{12}] # tag
-             U2       # bootstrap_method_attr_index
-             U2       # name_and_type_index
-  action => _ConstantInvokeDynamicInfo
+ConstantInvokeDynamicInfo   ::= tag bootstrap_method_attr_index name_and_type_index action => _ConstantInvokeDynamicInfo
+tag                         ::= [\x{12}]                                            action => u1
+bootstrap_method_attr_index ::= U2                                                  action => u2
+name_and_type_index         ::= U2                                                  action => u2

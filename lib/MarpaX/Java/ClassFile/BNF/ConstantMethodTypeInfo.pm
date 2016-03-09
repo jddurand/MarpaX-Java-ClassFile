@@ -32,8 +32,8 @@ sub _ConstantMethodTypeInfo {
   # my ($self, $tag, $descriptor_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantMethodTypeInfo->new(
-                                                              tag                 => $_[0]->u1($_[1]),
-                                                              descriptor_index    => $_[0]->u2($_[2])
+                                                              tag              => $_[1],
+                                                              descriptor_index => $_[2]
                                                              )
 }
 
@@ -45,7 +45,6 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-ConstantMethodTypeInfo ::=
-             [\x{0a}] # tag
-             U2       # descriptor_index
-  action => _ConstantMethodTypeInfo
+ConstantMethodTypeInfo ::= tag descriptor_index action => _ConstantMethodTypeInfo
+tag                    ::= [\x{0a}]             action => u1
+descriptor_index       ::= U2                   action => u2

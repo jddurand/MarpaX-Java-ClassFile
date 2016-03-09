@@ -32,9 +32,9 @@ sub _ConstantMethodHandleInfo {
   # my ($self, $tag, $reference_kind, $reference_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantMethodHandleInfo->new(
-                                                                 tag             => $_[0]->u1($_[1]),
-                                                                 reference_kind  => $_[0]->u1($_[2]),
-                                                                 reference_index => $_[0]->u2($_[3])
+                                                                 tag             => $_[1],
+                                                                 reference_kind  => $_[2],
+                                                                 reference_index => $_[3]
                                                              )
 }
 
@@ -46,8 +46,7 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-ConstantMethodHandleInfo ::=
-             [\x{0f}] # tag
-             U1       # reference_kind
-             U2       # reference_index
-  action => _ConstantMethodHandleInfo
+ConstantMethodHandleInfo ::= tag reference_kind reference_index action => _ConstantMethodHandleInfo
+tag                      ::= [\x{0f}]                           action => u1
+reference_kind           ::= U1                                 action => u1
+reference_index          ::= U2                                 action => u2
