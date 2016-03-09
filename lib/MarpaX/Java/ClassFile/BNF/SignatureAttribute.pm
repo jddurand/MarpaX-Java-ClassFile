@@ -23,7 +23,19 @@ my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_da
 # What role MarpaX::Java::ClassFile::Role::Parser requires
 # --------------------------------------------------------
 sub grammar   { $_grammar    }
-sub callbacks { return { "'exhausted" => sub { $_[0]->exhausted } } }
+sub callbacks { return {
+                        "'exhausted"        => sub { $_[0]->exhausted },
+                        'attribute_length$' => sub {
+                          my $attribute_length = $_[0]->literalU4('attribute_length');
+                          $_[0]->fatalf('attribute_length is %d instead of 2', $attribute_length) unless ($attribute_length == 2)
+                        },
+                        'signature_index$' => sub {
+                          my $signature_index = $_[0]->literalU2('signature_index');
+                          my $signature = $_[0]->getAndCheckCpInfo($signature_index, 'ConstantUtf8Info','_value');
+                          $_[0]->tracef('Signature is %s', $signature)
+                        }
+                       }
+              }
 
 # ---------------
 # Grammar actions
@@ -46,6 +58,8 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
+event 'attribute_length$' = completed attribute_length
+event 'signature_index$' = completed signature_index
 Signature_attribute ::=
     attribute_name_index
     attribute_length

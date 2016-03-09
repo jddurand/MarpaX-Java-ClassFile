@@ -31,18 +31,13 @@ sub callbacks {
            "'exhausted" => sub { $_[0]->exhausted },
           'attribute_info$' => sub { $_[0]->inc_nbDone },
           '^U2' => sub {
-            my $attribute_name_index = $_[0]->pauseU2;
-            #
-            # $attribute_name_index must be a CONSTANT_Utf8_info object in the constant pool
-            #
-            my $cpInfo = $_[0]->constant_pool->[$attribute_name_index];
-            my $blessed = blessed($cpInfo) // '';
-            $_[0]->fatalf('Invalid attribute_name_index %d', $attribute_name_index) unless ($blessed eq 'MarpaX::Java::ClassFile::Struct::ConstantUtf8Info');
-            my $attribute_name = $cpInfo->_value;
-            $_[0]->fatalf('String is undef in constant pool No %d', $attribute_name_index) unless (defined($attribute_name));
-
+            my $attribute_name = $_[0]->getAndCheckCpInfo($_[0]->pauseU2, 'ConstantUtf8Info', '_value');
+            $_[0]->tracef('Attribute name is %s', $attribute_name);
             if ($attribute_name eq 'Signature') { $_[0]->inner('SignatureAttribute') }
-            else { $_[0]->inner('UnmanagedAttribute') }
+            else {
+              $_[0]->warnf('Unmanaged attribute name %s', $attribute_name);
+              $_[0]->inner('UnmanagedAttribute')
+            }
           }
          }
 }

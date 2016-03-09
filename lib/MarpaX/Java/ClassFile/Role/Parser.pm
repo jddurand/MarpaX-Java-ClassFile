@@ -303,6 +303,24 @@ sub toU1ArrayRef {
   [ map { $_[0]->u1($_) } split('', $_[1] // '') ]
 }
 
+sub getAndCheckCpInfo {
+  # my ($self, $index, $baseBlessed, $valueMethod) = @_;
+
+  my $rc = $_[0]->constant_pool->[$_[1]];
+
+  if ($_[2]) {
+    my $blessed = blessed($rc) // '';
+    $_[0]->fatalf('Invalid index %d', $_[1]) unless ($blessed eq "MarpaX::Java::ClassFile::Struct::$_[2]");
+  }
+  if ($_[3]) {
+    my $valueMethod = $_[3];
+    $rc = $rc->$valueMethod;
+    $_[0]->fatalf('%s returned undef in constant pool No %d', $valueMethod, $_[1]) unless (defined($rc));
+  }
+
+  $rc
+}
+
 sub activate {
   # my ($self, $eventName, $status) = @_;
 
