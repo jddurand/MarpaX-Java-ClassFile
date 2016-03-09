@@ -32,18 +32,16 @@ sub callbacks {
           # For constant pool indexes start at 1:
           # - The final action on Constant pool will insert a fake undef entry at position 0
           #
-          '!constant_pool_count' => sub {
+          'constant_pool_count$' => sub {
             $_[0]->constant_pool
               (
-               $_[0]->inner('ConstantPoolArray', size => $_[0]->literalU2 - 1)
+               $_[0]->inner('ConstantPoolArray', size => $_[0]->literalU2('constant_pool_count') - 1)
               )
             },
-          '!interfaces_count'    => sub {
-            $_[0]->inner('InterfacesArray', size => $_[0]->literalU2)
-          },
-          '!fields_count'        => sub { $_[0]->inner('FieldsArray',     size => $_[0]->literalU2) },
-          '!methods_count'       => sub { $_[0]->inner('MethodsArray',    size => $_[0]->literalU2) },
-          '!attributes_count'    => sub { $_[0]->inner('AttributesArray', size => $_[0]->literalU2) }
+          'interfaces_count$'    => sub { $_[0]->inner('InterfacesArray', size => $_[0]->literalU2('interfaces_count')) },
+          'fields_count$'        => sub { $_[0]->inner('FieldsArray',     size => $_[0]->literalU2('fields_count')) },
+          'methods_count$'       => sub { $_[0]->inner('MethodsArray',    size => $_[0]->literalU2('methods_count')) },
+          'attributes_count$'    => sub { $_[0]->inner('AttributesArray', size => $_[0]->literalU2('attributes_count')) }
          }
 }
 
@@ -101,32 +99,43 @@ has '+constant_pool' => ( is => 'rw', isa => ArrayRef[CpInfo], default => sub { 
 __DATA__
 __[ bnf ]__
 :default ::= action => ::first
-event '!constant_pool_count' = nulled constant_pool_count
-event '!interfaces_count'    = nulled interfaces_count
-event '!fields_count'        = nulled fields_count
-event '!methods_count'       = nulled methods_count
-event '!attributes_count'    = nulled attributes_count
+event 'constant_pool_count$' = completed constant_pool_count
+event 'interfaces_count$'    = completed interfaces_count
+event 'fields_count$'        = completed fields_count
+event 'methods_count$'       = completed methods_count
+event 'attributes_count$'    = completed attributes_count
 ClassFile ::=
-             u4      # magic
-             u2      # minor_version
-             u2      # major_version
-             u2      (constant_pool_count)
-             managed # constant_pool
-             u2      # access_flags
-             u2      # this_class
-             u2      # super_class
-             u2      (interfaces_count)
-             managed # interfaces
-             u2      (fields_count)
-             managed # fields
-             u2      (methods_count)
-             managed # methods
-             u2      (attributes_count)
-             managed # attributes
+             magic
+             minor_version
+             major_version
+             constant_pool_count
+             constant_pool
+             access_flags
+             this_class
+             super_class
+             interfaces_count
+             interfaces
+             fields_count
+             fields
+             methods_count
+             methods
+             attributes_count
+             attributes
   action => _ClassFile
 
-constant_pool_count  ::=
-interfaces_count     ::=
-fields_count         ::=
-methods_count        ::=
-attributes_count     ::=
+magic                ::= U4          action => u4
+minor_version        ::= U2          action => u2
+major_version        ::= U2          action => u2
+constant_pool_count  ::= U2          action => u2
+constant_pool        ::= MANAGED     action => ::first
+access_flags         ::= U2          action => u2
+this_class           ::= U2          action => u2
+super_class          ::= U2          action => u2
+interfaces_count     ::= U2          action => u2
+interfaces           ::= MANAGED     action => ::first
+fields_count         ::= U2          action => u2
+fields               ::= MANAGED     action => ::first
+methods_count        ::= U2          action => u2
+methods              ::= MANAGED     action => ::first
+attributes_count     ::= U2          action => u2
+attributes           ::= MANAGED     action => ::first
