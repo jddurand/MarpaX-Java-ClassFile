@@ -27,7 +27,7 @@ with qw/MarpaX::Java::ClassFile::Role::Parser/;
 # ------------------
 # Role modifications
 # ------------------
-has '+ast'        => ( is => 'ro',  isa => ArrayRef[Object],  lazy => 1, builder => 1);
+has '+ast'        => ( is => 'ro',  isa => ArrayRef[Any], lazy => 1, builder => 1);
 
 around ast => sub {
   my ($orig, $self) = @_;

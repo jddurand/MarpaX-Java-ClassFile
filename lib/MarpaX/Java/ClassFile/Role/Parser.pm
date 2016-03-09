@@ -37,7 +37,7 @@ has constant_pool => (is => 'ro',  isa => ArrayRef[CpInfo],  default => sub { []
 has max           => (is => 'rwp', isa => PositiveOrZeroInt, lazy => 1, builder => 1);
 has pos           => (is => 'rwp', isa => PositiveOrZeroInt, default => sub { 0 });
 has whoami        => (is => 'ro',  isa => Str,               lazy => 1, builder => 1);
-has ast           => (is => 'ro',  isa => Object,            lazy => 1, builder => 1);
+has ast           => (is => 'ro',  isa => Any,               lazy => 1, builder => 1);
 has exhaustion    => (is => 'ro',  isa => Str,               default => sub { 'fatal' });
 has _r            => (is => 'rw',  isa => InstanceOf['Marpa::R2::Scanless::R'], lazy => 1, builder => 1, predicate => 1, clearer => 1);
 
@@ -193,6 +193,16 @@ sub _literal {
   $_[0]->_r->literal(@span)
 }
 
+sub _pause {
+  # my ($self, $symbol) = @_;
+
+  $_[0]->tracef('pause_span()');
+  my @span = $_[0]->_r->pause_span();
+  $_[0]->_croak('No pause span') if (! @span);
+  $_[0]->tracef('literal(%s, %s)', $span[0], $span[1]);
+  $_[0]->_r->literal(@span)
+}
+
 #
 # Helper to read a MANAGED lexeme
 #
@@ -233,6 +243,30 @@ sub lexeme_read {
   };
   $_[0]->_croak($@) if ($@);
   $_[0]->manageEvents unless ($_[4])
+}
+
+sub pauseU1 {
+  # my ($self, $symbol) = @_;
+
+  my $u1 = $_[0]->u1($_[0]->_pause);
+  $_[0]->tracef('Got u1=%s', $u1);
+  $u1
+}
+
+sub pauseU2 {
+  # my ($self, $symbol) = @_;
+
+  my $u2 = $_[0]->u2($_[0]->_pause);
+  $_[0]->tracef('Got u2=%s', $u2);
+  $u2
+}
+
+sub pauseU4 {
+  # my ($self, $symbol) = @_;
+
+  my $u4 = $_[0]->u4($_[0]->_pause);
+  $_[0]->tracef('Got u4=%s', $u4);
+  $u4
 }
 
 sub literalU1 {

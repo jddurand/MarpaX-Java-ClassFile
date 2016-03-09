@@ -1,7 +1,7 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::BNF::ConstantStringInfo;
+package MarpaX::Java::ClassFile::BNF::ConstantFloatInfo;
 use Moo;
 
 # ABSTRACT: Parsing of a CONSTANT_NameAndType_info
@@ -13,7 +13,7 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
-use MarpaX::Java::ClassFile::Struct::ConstantStringInfo;
+use MarpaX::Java::ClassFile::Struct::ConstantFloatInfo;
 use Types::Standard -all;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
@@ -28,12 +28,13 @@ sub callbacks { return { "'exhausted" => sub { $_[0]->exhausted } } }
 # ---------------
 # Grammar actions
 # ---------------
-sub _ConstantStringInfo {
-  # my ($self, $tag, $string_index) = @_;
+sub _ConstantFloatInfo {
+  # my ($self, $tag, $bytes) = @_;
 
-  MarpaX::Java::ClassFile::Struct::ConstantStringInfo->new(
-                                                           tag              => $_[0]->u1($_[1]),
-                                                           string_index     => $_[0]->u2($_[2])
+  MarpaX::Java::ClassFile::Struct::ConstantFloatInfo->new(
+                                                            tag     => $_[0]->u1($_[1]),
+                                                            bytes   => $_[2],
+                                                            _value  => $_[0]->float($_[2])
                                                           )
 }
 
@@ -45,7 +46,7 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-ConstantStringInfo ::=
-             [\x{08}] # tag
-             U2       # string_index
-  action => _ConstantStringInfo
+ConstantFloatInfo ::=
+             [\x{04}] # tag
+             U4       # bytes
+  action => _ConstantFloatInfo

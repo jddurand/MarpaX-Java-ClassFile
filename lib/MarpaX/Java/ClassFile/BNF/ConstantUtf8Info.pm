@@ -27,7 +27,7 @@ sub grammar   { $_grammar    }
 sub callbacks {
   return {
           "'exhausted" => sub { $_[0]->exhausted },
-          'u2$'        => sub { $_[0]->lexeme_read_managed($_[0]->literalU2) }
+          'U2$'        => sub { $_[0]->lexeme_read_managed($_[0]->pauseU2) }
          }
 }
 
@@ -35,14 +35,13 @@ sub callbacks {
 # Grammar actions
 # ---------------
 sub _ConstantUtf8Info {
-  my ($self, $length, $managed) = @_;
+  # my ($self, $U1, $U2, $MANAGED) = @_;
 
-  my $value = $self->utf8($managed);
   MarpaX::Java::ClassFile::Struct::ConstantUtf8Info->new(
-                                                         tag    => 1,
-                                                         length => $length,
-                                                         bytes  => $self->toU1ArrayRef($managed),
-                                                         _value => $value
+                                                         tag    => $_[0]->u1($_[1]),
+                                                         length => $_[0]->u2($_[2]),
+                                                         bytes  => $_[3],
+                                                         _value => $_[0]->utf8($_[3])
                                                         )
 }
 
@@ -54,8 +53,10 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-event 'u2$' = completed u2
+:lexeme ~ <U2> pause => after event => 'U2$'
+
 ConstantUtf8Info ::=
-             u2      # length
-             managed # bytes
+             [\x{01}] # tag
+             U2       # length
+             MANAGED  # bytes
   action => _ConstantUtf8Info

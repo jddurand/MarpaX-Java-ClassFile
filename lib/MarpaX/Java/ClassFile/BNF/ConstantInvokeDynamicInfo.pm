@@ -1,10 +1,10 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::BNF::ConstantFieldrefInfo;
+package MarpaX::Java::ClassFile::BNF::ConstantInvokeDynamicInfo;
 use Moo;
 
-# ABSTRACT: Parsing of a CONSTANT_Fieldref_info
+# ABSTRACT: Parsing of a CONSTANT_InvokeDynamic_info
 
 # VERSION
 
@@ -13,7 +13,7 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
-use MarpaX::Java::ClassFile::Struct::ConstantFieldrefInfo;
+use MarpaX::Java::ClassFile::Struct::ConstantInvokeDynamicInfo;
 use Types::Standard -all;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
@@ -28,14 +28,14 @@ sub callbacks { return { "'exhausted" => sub { $_[0]->exhausted } } }
 # ---------------
 # Grammar actions
 # ---------------
-sub _ConstantFieldrefInfo {
+sub _ConstantInvokeDynamicInfo {
   # my ($self, $tag, $class_index, $name_and_type_index) = @_;
 
-  MarpaX::Java::ClassFile::Struct::ConstantFieldrefInfo->new(
-                                                             tag                 => $_[0]->u1($_[1]),
-                                                             class_index         => $_[0]->u2($_[2]),
-                                                             name_and_type_index => $_[0]->u2($_[3])
-                                                            )
+  MarpaX::Java::ClassFile::Struct::ConstantInvokeDynamicInfo->new(
+                                                              tag                         => $_[0]->u1($_[1]),
+                                                              bootstrap_method_attr_index => $_[0]->u2($_[2]),
+                                                              name_and_type_index         => $_[0]->u2($_[3])
+                                                             )
 }
 
 with qw/MarpaX::Java::ClassFile::Role::Parser/;
@@ -46,8 +46,8 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-ConstantFieldrefInfo ::=
-             [\x{09}] # tag
-             U2       # class_index
+ConstantInvokeDynamicInfo ::=
+             [\x{12}] # tag
+             U2       # bootstrap_method_attr_index
              U2       # name_and_type_index
-  action => _ConstantFieldrefInfo
+  action => _ConstantInvokeDynamicInfo

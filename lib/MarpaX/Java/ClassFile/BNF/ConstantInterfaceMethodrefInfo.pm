@@ -29,13 +29,13 @@ sub callbacks { return { "'exhausted" => sub { $_[0]->exhausted } } }
 # Grammar actions
 # ---------------
 sub _ConstantInterfaceMethodrefInfo {
-  my ($self, $class_index, $name_and_type_index) = @_;
+  # my ($self, $tag, $class_index, $name_and_type_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantInterfaceMethodrefInfo->new(
-                                                              tag                 => 11,
-                                                              class_index         => $class_index,
-                                                              name_and_type_index => $name_and_type_index
-                                                             )
+                                                             tag                 => $_[0]->u1($_[1]),
+                                                             class_index         => $_[0]->u2($_[2]),
+                                                             name_and_type_index => $_[0]->u2($_[3])
+                                                            )
 }
 
 with qw/MarpaX::Java::ClassFile::Role::Parser/;
@@ -47,6 +47,7 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 __DATA__
 __[ bnf ]__
 ConstantInterfaceMethodrefInfo ::=
-             u2      # class_index
-             u2      # name_and_type_index
+             [\x{0b}] # tag
+             U2       # class_index
+             U2       # name_and_type_index
   action => _ConstantInterfaceMethodrefInfo

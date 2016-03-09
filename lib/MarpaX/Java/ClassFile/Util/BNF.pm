@@ -40,25 +40,22 @@ lexeme default = latm => 1
 inaccessible is ok by default
 
 __[ bnf_bottom ]__
-########################################
-#           Common rules               #
-########################################
-u1      ::= U1                 action => u1
-u2      ::= U2                 action => u2
-u4      ::= U4                 action => u4
-managed ::= MANAGED            action => ::first
+###################################################
+# Prevent Marpa saying that a lexeme is unreachable
+###################################################
+u1      ::= U1
+u2      ::= U2
+u4      ::= U4
+managed ::= MANAGED
 
-# ----------------
-# Internal Lexemes
-# ----------------
+########################################
+#          Common lexemes              #
+########################################
 _U1      ~ [\s\S]
 _U2      ~ _U1 _U1
 _U4      ~ _U2 _U2
 _MANAGED ~ [^\s\S]
 
-########################################
-#          Common lexemes              #
-########################################
 U1      ~ _U1
 U2      ~ _U2
 U4      ~ _U4

@@ -30,7 +30,6 @@ use Type::Library
                   ConstantMethodHandleInfo
                   ConstantMethodTypeInfo
                   ConstantInvokeDynamicInfo
-                  ConstantUnmanagedInfo
                   CpInfo
 
                   FieldInfo
@@ -144,7 +143,6 @@ class_type ConstantUtf8Info,               { class => 'MarpaX::Java::ClassFile::
 class_type ConstantMethodHandleInfo,       { class => 'MarpaX::Java::ClassFile::Struct::ConstantMethodHandleInfo' };
 class_type ConstantMethodTypeInfo,         { class => 'MarpaX::Java::ClassFile::Struct::ConstantMethodTypeInfo' };
 class_type ConstantInvokeDynamicInfo,      { class => 'MarpaX::Java::ClassFile::Struct::ConstantInvokeDynamicInfo' };
-class_type ConstantUnmanagedInfo,          { class => 'MarpaX::Java::ClassFile::Struct::ConstantUnmanagedInfo' };
 declare CpInfo, as
   ConstantClassInfo             |
   ConstantFieldrefInfo          |
@@ -160,7 +158,6 @@ declare CpInfo, as
   ConstantMethodHandleInfo      |
   ConstantMethodTypeInfo        |
   ConstantInvokeDynamicInfo     |
-  ConstantUnmanagedInfo         |
   Undef                                       # Because an index in constant_pool can be valid but unusable
 ;
 

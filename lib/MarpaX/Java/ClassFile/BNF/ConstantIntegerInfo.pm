@@ -29,12 +29,12 @@ sub callbacks { return { "'exhausted" => sub { $_[0]->exhausted } } }
 # Grammar actions
 # ---------------
 sub _ConstantIntegerInfo {
-  my ($self, $U4) = @_;
+  # my ($self, $tag, $bytes) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantIntegerInfo->new(
-                                                            tag     => 3,
-                                                            bytes   => $self->toU1ArrayRef($U4),
-                                                            _value  => $self->integer($U4)
+                                                            tag     => $_[0]->u1($_[1]),
+                                                            bytes   => $_[2],
+                                                            _value  => $_[0]->integer($_[2])
                                                           )
 }
 
@@ -47,5 +47,6 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 __DATA__
 __[ bnf ]__
 ConstantIntegerInfo ::=
-             U4      # bytes
+             [\x{03}] # tag
+             U4       # bytes
   action => _ConstantIntegerInfo

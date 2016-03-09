@@ -1,10 +1,10 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::Struct::ConstantUnmanagedInfo;
+package MarpaX::Java::ClassFile::Struct::ConstantInvokeDynamicInfo;
 use Moo;
 
-# ABSTRACT: unmanaged constant pool entry
+# ABSTRACT: CONSTANT_InvokeDynamic_info entry
 
 # VERSION
 
@@ -13,7 +13,8 @@ use Moo;
 use MarpaX::Java::ClassFile::Struct::_Types -all;
 use Types::Standard -all;
 
-has tag  => ( is => 'ro', isa => U1 );
-has info => ( is => 'ro', isa => ArrayRef[U1] );
+has tag                         => ( is => 'ro', isa => U1 );
+has bootstrap_method_attr_index => ( is => 'ro', isa => U2 );
+has name_and_type_index         => ( is => 'ro', isa => U2 );
 
 1;

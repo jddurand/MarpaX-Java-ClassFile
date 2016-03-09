@@ -29,15 +29,13 @@ sub callbacks { return { "'exhausted" => sub { $_[0]->exhausted } } }
 # Grammar actions
 # ---------------
 sub _ConstantDoubleInfo {
-  my ($self, $high_bytes, $low_bytes) = @_;
+  # my ($self, $tag, $high_bytes, $low_bytes) = @_;
 
-  my $value = $self->long($high_bytes, $low_bytes);
-  $self->tracef('%s', "$value");
   MarpaX::Java::ClassFile::Struct::ConstantDoubleInfo->new(
-                                                           tag        => 6,
-                                                           high_bytes => $high_bytes,
-                                                           low_bytes  => $low_bytes,
-                                                           _value     => $value
+                                                           tag        => $_[0]->u1($_[1]),
+                                                           high_bytes => $_[2],
+                                                           low_bytes  => $_[3],
+                                                           _value     => $_[0]->long($_[2], $_[3])
                                                           )
 }
 
@@ -50,6 +48,7 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 __DATA__
 __[ bnf ]__
 ConstantDoubleInfo ::=
-             u4      # high_bytes
-             u4      # low_bytes
+             [\x{06}] # tag
+             U4       # high_bytes
+             U4       # low_bytes
   action => _ConstantDoubleInfo

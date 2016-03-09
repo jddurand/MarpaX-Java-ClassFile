@@ -12,9 +12,10 @@ use Moo;
 
 use MarpaX::Java::ClassFile::Struct::_Types -all;
 use Types::Standard -all;
+use Types::Encodings qw/Bytes/;
 
 has tag          => ( is => 'ro', isa => U1 );
-has bytes        => ( is => 'ro', isa => ArrayRef[U1] );
+has bytes        => ( is => 'ro', isa => Bytes );
 has _value       => ( is => 'ro', isa => Int );
 
 1;

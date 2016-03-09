@@ -14,6 +14,7 @@ use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::BNF::ConstantUtf8Info;
 use MarpaX::Java::ClassFile::BNF::ConstantIntegerInfo;
+use MarpaX::Java::ClassFile::BNF::ConstantFloatInfo;
 use MarpaX::Java::ClassFile::BNF::ConstantLongInfo;
 use MarpaX::Java::ClassFile::BNF::ConstantDoubleInfo;
 use MarpaX::Java::ClassFile::BNF::ConstantClassInfo;
@@ -22,6 +23,9 @@ use MarpaX::Java::ClassFile::BNF::ConstantFieldrefInfo;
 use MarpaX::Java::ClassFile::BNF::ConstantMethodrefInfo;
 use MarpaX::Java::ClassFile::BNF::ConstantInterfaceMethodrefInfo;
 use MarpaX::Java::ClassFile::BNF::ConstantNameAndTypeInfo;
+use MarpaX::Java::ClassFile::BNF::ConstantMethodHandleInfo;
+use MarpaX::Java::ClassFile::BNF::ConstantMethodTypeInfo;
+use MarpaX::Java::ClassFile::BNF::ConstantInvokeDynamicInfo;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
 use Types::Standard -all;
 
@@ -53,14 +57,28 @@ sub callbacks {
   return {
            "'exhausted" => sub { $_[0]->exhausted },
           'cpInfo$'     => sub { $_[0]->inc_nbDone },
-          '!tag' => sub {
-            my $tag = $_[0]->literalU1;
+          '^U1' => sub {
+            my $tag = $_[0]->pauseU1;
+            #
+            # Inject a fake entry at position 0
+            #
+            $_[0]->lexeme_read_managed(0, 1) if (! $_[0]->nbDone);  # Last argument means ignore events => no increase on nbDone
 
             if    ($tag == CONSTANT_Utf8)               { $_[0]->inner('ConstantUtf8Info') }
             elsif ($tag == CONSTANT_Integer)            { $_[0]->inner('ConstantIntegerInfo') }
             elsif ($tag == CONSTANT_Float)              { $_[0]->inner('ConstantFloatInfo') }
-            elsif ($tag == CONSTANT_Long)               { $_[0]->inner('ConstantLongInfo'), $_[0]->inc_nbDone }
-            elsif ($tag == CONSTANT_Double)             { $_[0]->inner('ConstantDoubleInfo'), $_[0]->inc_nbDone }
+            elsif ($tag == CONSTANT_Long)               { $_[0]->inner('ConstantLongInfo');
+                                                          #
+                                                          # Inject an unusable entry if this is not the last one
+                                                          #
+                                                          $_[0]->lexeme_read_managed if ($_[0]->nbDone < $_[0]->size)
+                                                        }
+            elsif ($tag == CONSTANT_Double)             { $_[0]->inner('ConstantDoubleInfo');
+                                                          #
+                                                          # Inject an unusable entry if this is not the last one
+                                                          #
+                                                          $_[0]->lexeme_read_managed if ($_[0]->nbDone < $_[0]->size)
+                                                        }
             elsif ($tag == CONSTANT_Class)              { $_[0]->inner('ConstantClassInfo') }
             elsif ($tag == CONSTANT_String)             { $_[0]->inner('ConstantStringInfo') }
             elsif ($tag == CONSTANT_Fieldref)           { $_[0]->inner('ConstantFieldrefInfo') }
@@ -70,7 +88,7 @@ sub callbacks {
             elsif ($tag == CONSTANT_MethodHandle)       { $_[0]->inner('ConstantMethodHandleInfo') }
             elsif ($tag == CONSTANT_MethodType)         { $_[0]->inner('ConstantMethodTypeInfo') }
             elsif ($tag == CONSTANT_InvokeDynamic)      { $_[0]->inner('ConstantInvokeDynamicInfo') }
-            else                                        { $_[0]->inner('ConstantUnmanagedInfo') }
+            else                                        { $_[0]->fatalf('Unmanaged constant pool entry, tag=%d', $tag) }
           }
          }
 }
@@ -84,10 +102,9 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 __DATA__
 __[ bnf ]__
 :default ::= action => [values]
-event '!tag'    = nulled tag
+:lexeme ~ <U1> pause => before event => '^U1'
 event 'cpInfo$' = completed cpInfo
 
 cpInfoArray ::= cpInfo*
-cpInfo ::= (u1) (tag)                          # tag is reinjected in managed
-           managed        action => ::first    # Every managed is returning an object
-tag ::=
+cpInfo ::= (U1)
+         | MANAGED          action => ::first

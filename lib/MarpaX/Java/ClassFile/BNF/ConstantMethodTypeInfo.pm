@@ -1,10 +1,10 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::BNF::ConstantStringInfo;
+package MarpaX::Java::ClassFile::BNF::ConstantMethodTypeInfo;
 use Moo;
 
-# ABSTRACT: Parsing of a CONSTANT_NameAndType_info
+# ABSTRACT: Parsing of a CONSTANT_MethodType_info
 
 # VERSION
 
@@ -13,7 +13,7 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
-use MarpaX::Java::ClassFile::Struct::ConstantStringInfo;
+use MarpaX::Java::ClassFile::Struct::ConstantMethodTypeInfo;
 use Types::Standard -all;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
@@ -28,13 +28,13 @@ sub callbacks { return { "'exhausted" => sub { $_[0]->exhausted } } }
 # ---------------
 # Grammar actions
 # ---------------
-sub _ConstantStringInfo {
-  # my ($self, $tag, $string_index) = @_;
+sub _ConstantMethodTypeInfo {
+  # my ($self, $tag, $descriptor_index) = @_;
 
-  MarpaX::Java::ClassFile::Struct::ConstantStringInfo->new(
-                                                           tag              => $_[0]->u1($_[1]),
-                                                           string_index     => $_[0]->u2($_[2])
-                                                          )
+  MarpaX::Java::ClassFile::Struct::ConstantMethodTypeInfo->new(
+                                                              tag                 => $_[0]->u1($_[1]),
+                                                              descriptor_index    => $_[0]->u2($_[2])
+                                                             )
 }
 
 with qw/MarpaX::Java::ClassFile::Role::Parser/;
@@ -45,7 +45,7 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-ConstantStringInfo ::=
-             [\x{08}] # tag
-             U2       # string_index
-  action => _ConstantStringInfo
+ConstantMethodTypeInfo ::=
+             [\x{0a}] # tag
+             U2       # descriptor_index
+  action => _ConstantMethodTypeInfo

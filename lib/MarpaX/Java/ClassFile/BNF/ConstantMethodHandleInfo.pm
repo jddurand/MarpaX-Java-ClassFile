@@ -1,10 +1,10 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::BNF::ConstantMethodrefInfo;
+package MarpaX::Java::ClassFile::BNF::ConstantMethodHandleInfo;
 use Moo;
 
-# ABSTRACT: Parsing of a CONSTANT_Methodref_info
+# ABSTRACT: Parsing of a CONSTANT_MethodHandle_info
 
 # VERSION
 
@@ -13,7 +13,7 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
-use MarpaX::Java::ClassFile::Struct::ConstantMethodrefInfo;
+use MarpaX::Java::ClassFile::Struct::ConstantMethodHandleInfo;
 use Types::Standard -all;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
@@ -28,13 +28,13 @@ sub callbacks { return { "'exhausted" => sub { $_[0]->exhausted } } }
 # ---------------
 # Grammar actions
 # ---------------
-sub _ConstantMethodrefInfo {
-  # my ($self, $tag, $class_index, $name_and_type_index) = @_;
+sub _ConstantMethodHandleInfo {
+  # my ($self, $tag, $reference_kind, $reference_index) = @_;
 
-  MarpaX::Java::ClassFile::Struct::ConstantMethodrefInfo->new(
-                                                              tag                 => $_[0]->u1($_[1]),
-                                                              class_index         => $_[0]->u2($_[2]),
-                                                              name_and_type_index => $_[0]->u2($_[3])
+  MarpaX::Java::ClassFile::Struct::ConstantMethodHandleInfo->new(
+                                                                 tag             => $_[0]->u1($_[1]),
+                                                                 reference_kind  => $_[0]->u1($_[2]),
+                                                                 reference_index => $_[0]->u2($_[3])
                                                              )
 }
 
@@ -46,8 +46,8 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-ConstantMethodrefInfo ::=
-             [\x{0a}] # tag
-             U2       # class_index
-             U2       # name_and_type_index
-  action => _ConstantMethodrefInfo
+ConstantMethodHandleInfo ::=
+             [\x{0f}] # tag
+             U1       # reference_kind
+             U2       # reference_index
+  action => _ConstantMethodHandleInfo

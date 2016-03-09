@@ -29,11 +29,11 @@ sub callbacks { return { "'exhausted" => sub { $_[0]->exhausted } } }
 # Grammar actions
 # ---------------
 sub _ConstantClassInfo {
-  my ($self, $name_index) = @_;
+  # my ($self, $tag, $name_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantClassInfo->new(
-                                                          tag        => 7,
-                                                          name_index => $name_index
+                                                          tag        => $_[0]->u1($_[1]),
+                                                          name_index => $_[0]->u2($_[2]),
                                                           )
 }
 
@@ -46,5 +46,6 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 __DATA__
 __[ bnf ]__
 ConstantClassInfo ::=
-             u2      # name_index
+             [\x{07}] # tag
+             U2       # name_index
   action => _ConstantClassInfo
