@@ -126,19 +126,18 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-:default ::= action => [values]
+:default ::= action => ::first
 event 'verification_type_info$' = completed verification_type_info
-VerificationTypeInfoArray ::= verification_type_info*
-verification_type_info ::= Top_variable_info
-                         | Integer_variable_info
-                         | Float_variable_info
-                         | Null_variable_info
-                         | UninitializedThis_variable_info
-                         | Object_variable_info
-                         | Uninitialized_variable_info
-                         | Long_variable_info
-                         | Double_variable_info
-                                                 action => ::first
+VerificationTypeInfoArray ::= verification_type_info*   action => [values]
+verification_type_info          ::= Top_variable_info
+                                  | Integer_variable_info
+                                  | Float_variable_info
+                                  | Null_variable_info
+                                  | UninitializedThis_variable_info
+                                  | Object_variable_info
+                                  | Uninitialized_variable_info
+                                  | Long_variable_info
+                                  | Double_variable_info
 Top_variable_info               ::= [\x{00}]     action => _Top_variable_info
 Integer_variable_info           ::= [\x{01}]     action => _Integer_variable_info
 Float_variable_info             ::= [\x{02}]     action => _Float_variable_info

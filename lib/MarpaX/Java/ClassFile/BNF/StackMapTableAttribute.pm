@@ -36,12 +36,12 @@ sub callbacks { return {
 sub _StackMapTable_attribute {
   # my ($self, $attribute_name_index, $attribute_length, $number_of_entries, $entries) = @_;
 
-  MarpaX::Java::ClassFile::Struct::CodeAttribute->new(
-                                                      attribute_name_index => $_[1],
-                                                      attribute_length     => $_[2],
-                                                      number_of_entries    => $_[3],
-                                                      entries              => $_[4]
-                                                     )
+  MarpaX::Java::ClassFile::Struct::StackMapTableAttribute->new(
+                                                               attribute_name_index => $_[1],
+                                                               attribute_length     => $_[2],
+                                                               number_of_entries    => $_[3],
+                                                               entries              => $_[4]
+                                                              )
 }
 
 with qw/MarpaX::Java::ClassFile::Role::Parser/;
