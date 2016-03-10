@@ -26,7 +26,7 @@ my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_da
 sub grammar   { $_grammar    }
 sub callbacks { return {
                         "'exhausted"    => sub { $_[0]->exhausted },
-                        'offset_delta$' => sub { $_[0]->inner('VerificationTypeInfoArray', size => $_[0]->literalU2('frame_type') - 251) }
+                        'offset_delta$' => sub { $_[0]->inner('VerificationTypeInfoArray', size => $_[0]->literalU2('offset_delta') - 251) }
                        }
               }
 
