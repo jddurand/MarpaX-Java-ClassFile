@@ -16,6 +16,6 @@ use Types::Standard -all;
 has attribute_name_index        => ( is => 'ro', isa => U2 );
 has attribute_length            => ( is => 'ro', isa => U4 );
 has local_variable_table_length => ( is => 'ro', isa => U2 );
-has local_variable_table        => ( is => 'ro', isa => ArrayRef[LocalVariableTable] );
+has local_variable_table        => ( is => 'ro', isa => ArrayRef[LocalVariable] );
 
 1;

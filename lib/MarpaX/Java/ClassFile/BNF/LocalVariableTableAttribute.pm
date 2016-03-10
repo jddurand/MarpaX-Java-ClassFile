@@ -14,7 +14,7 @@ use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
 use MarpaX::Java::ClassFile::Struct::LocalVariableTableAttribute;
-use MarpaX::Java::ClassFile::BNF::LocalVariableTableArray;
+use MarpaX::Java::ClassFile::BNF::LocalVariableArray;
 use Types::Standard -all;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
@@ -26,7 +26,7 @@ my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_da
 sub grammar   { $_grammar    }
 sub callbacks { return {
                         "'exhausted"                   => sub { $_[0]->exhausted },
-                        'local_variable_table_length$' => sub { $_[0]->inner('LocalVariableTableArray', size => $_[0]->literalU2('local_variable_table_length')) }
+                        'local_variable_table_length$' => sub { $_[0]->inner('LocalVariableArray', size => $_[0]->literalU2('local_variable_table_length')) }
                        }
               }
 

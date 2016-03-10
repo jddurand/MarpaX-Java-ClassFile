@@ -83,9 +83,8 @@ use Type::Library
                   DoubleVariableInfo
                   VerificationTypeInfo
 
-                  Classes
-                  LineNumberTable
-                  LocalVariableTable
+                  LineNumber
+                  LocalVariable
                   LocalVariableType
                   Annotation
 
@@ -257,11 +256,12 @@ declare VerificationTypeInfo, as
 ;
 
 
-class_type Classes,            { class => 'MarpaX::Java::ClassFile::Struct::Classes' };
-class_type LineNumberTable,    { class => 'MarpaX::Java::ClassFile::Struct::LineNumberTable' };
-class_type LocalVariableTable, { class => 'MarpaX::Java::ClassFile::Struct::LocalVariableTable' };
-class_type LocalVariableType,  { class => 'MarpaX::Java::ClassFile::Struct::LocalVariableType' };
-class_type Annotation,         { class => 'MarpaX::Java::ClassFile::Struct::Annotation' };
+# Class is a reserved word
+# class_type Class,             { class => 'MarpaX::Java::ClassFile::Struct::Class' };
+class_type LineNumber,        { class => 'MarpaX::Java::ClassFile::Struct::LineNumber' };
+class_type LocalVariable,     { class => 'MarpaX::Java::ClassFile::Struct::LocalVariable' };
+class_type LocalVariableType, { class => 'MarpaX::Java::ClassFile::Struct::LocalVariableType' };
+class_type Annotation,        { class => 'MarpaX::Java::ClassFile::Struct::Annotation' };
 
 class_type ConstValueIndex,    { class => 'MarpaX::Java::ClassFile::Struct::ConstValueIndex' };
 class_type EnumConstValue,     { class => 'MarpaX::Java::ClassFile::Struct::EnumConstValue' };

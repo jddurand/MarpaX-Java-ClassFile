@@ -1,7 +1,7 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::BNF::LineNumberTableArray;
+package MarpaX::Java::ClassFile::BNF::LineNumberArray;
 use Moo;
 
 # ABSTRACT: Parsing an array of class
@@ -13,7 +13,7 @@ use Moo;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
-use MarpaX::Java::ClassFile::Struct::LineNumberTable;
+use MarpaX::Java::ClassFile::Struct::LineNumber;
 use Types::Standard -all;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
@@ -25,18 +25,18 @@ my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_da
 sub grammar   { $_grammar    }
 sub callbacks {
   return {
-           "'exhausted"        => sub { $_[0]->exhausted },
-          'line_number_table$' => sub { $_[0]->inc_nbDone }
+           "'exhausted"  => sub { $_[0]->exhausted },
+          'line_number$' => sub { $_[0]->inc_nbDone }
          }
 }
 
-sub _line_number_table {
+sub _line_number {
   # my ($self, $start_pc, $line_number) = @_;
 
-  MarpaX::Java::ClassFile::Struct::LineNumberTable->new(
-                                                        start_pc    => $_[1],
-                                                        line_number => $_[2]
-                                                       )
+  MarpaX::Java::ClassFile::Struct::LineNumber->new(
+                                                   start_pc    => $_[1],
+                                                   line_number => $_[2]
+                                                  )
 }
 
 with qw/MarpaX::Java::ClassFile::Role::Parser::InnerGrammar/;
@@ -48,9 +48,9 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 __DATA__
 __[ bnf ]__
 :default ::= action => [values]
-event 'line_number_table$' = completed line_number_table
+event 'line_number$' = completed line_number
 
-lineNumberTableArray ::= line_number_table*
-line_number_table    ::= start_pc line_number action => _line_number_table
-start_pc             ::= U2 action => u2
-line_number          ::= U2 action => u2
+lineNumberArray ::= line_number*
+line_number    ::= start_pc line_number action => _line_number
+start_pc       ::= U2 action => u2
+line_number    ::= U2 action => u2

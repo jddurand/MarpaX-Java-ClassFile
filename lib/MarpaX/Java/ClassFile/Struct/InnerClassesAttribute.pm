@@ -16,6 +16,6 @@ use Types::Standard -all;
 has attribute_name_index   => ( is => 'ro', required => 1, isa => U2 );
 has attribute_length       => ( is => 'ro', required => 1, isa => U4 );
 has number_of_classes      => ( is => 'ro', required => 1, isa => U2 );
-has classes                => ( is => 'ro', required => 1, isa => ArrayRef[Classes] );
+has classes                => ( is => 'ro', required => 1, isa => ArrayRef[InstanceOf['MarpaX::Java::ClassFile::Struct::Class']] );
 
 1;

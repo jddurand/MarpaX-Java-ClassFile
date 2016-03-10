@@ -1,7 +1,7 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::Struct::LocalVariableTable;
+package MarpaX::Java::ClassFile::Struct::LocalVariable;
 use Moo;
 
 # ABSTRACT: local variable
