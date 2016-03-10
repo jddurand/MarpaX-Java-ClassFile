@@ -60,6 +60,6 @@ Exceptions_attribute ::= attribute_name_index attribute_length number_of_excepti
 attribute_name_index    ::= U2                                                        action => u2
 attribute_length        ::= U4                                                        action => u4
 number_of_exceptions    ::= U2                                                        action => u2
-exception_index_table   ::= exception_index                                           action => [values]
+exception_index_table   ::= exception_index*                                          action => [values]
 exception_index         ::= U2                                                        action => u2
 end                     ::= MANAGED                                                   # Used to trigger the exhaustion event

@@ -31,14 +31,14 @@ sub callbacks {
 }
 
 sub _local_variable_type {
-  # my ($self, $start_pc, $length, $name_index, $descriptor_index, $index) = @_;
+  # my ($self, $start_pc, $length, $name_index, $signature_index, $index) = @_;
 
   MarpaX::Java::ClassFile::Struct::LocalVariableType->new(
-                                                          start_pc         => $_[1],
-                                                          length           => $_[2],
-                                                          name_index       => $_[3],
-                                                          descriptor_index => $_[4],
-                                                          index            => $_[5]
+                                                          start_pc        => $_[1],
+                                                          length          => $_[2],
+                                                          name_index      => $_[3],
+                                                          signature_index => $_[4],
+                                                          index           => $_[5]
                                                          )
 }
 
@@ -54,9 +54,9 @@ __[ bnf ]__
 event 'local_variable_type$' = completed local_variable_type
 
 localVariableTypeArray ::= local_variable_type*
-local_variable_type     ::= start_pc length name_index descriptor_index index action => _local_variable_type
-start_pc                ::= U2                                                action => u2
-length                  ::= U2                                                action => u2
-name_index              ::= U2                                                action => u2
-descriptor_index        ::= U2                                                action => u2
-index                   ::= U2                                                action => u2
+local_variable_type     ::= start_pc length name_index signature_index index action => _local_variable_type
+start_pc                ::= U2                                               action => u2
+length                  ::= U2                                               action => u2
+name_index              ::= U2                                               action => u2
+signature_index         ::= U2                                               action => u2
+index                   ::= U2                                               action => u2

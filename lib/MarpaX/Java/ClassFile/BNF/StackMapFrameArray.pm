@@ -37,13 +37,13 @@ sub callbacks {
           'stack_map_frame$' => sub { $_[0]->inc_nbDone },
           '^U1' => sub {
             my $tag = $_[0]->pauseU1;
-            if    ($tag >=  0  && $tag <=  63) { $_[0]->inner('SameFrame') }
-            elsif ($tag >= 64  && $tag <= 127) { $_[0]->inner('SameLocals1StackItemFrame') }
-            elsif (               $tag == 247) { $_[0]->inner('SameLocals1StackItemFrameExtended') }
-            elsif ($tag >= 248 && $tag <= 250) { $_[0]->inner('ChopFrame') }
-            elsif (               $tag == 251) { $_[0]->inner('SameFrameExtended') }
-            elsif ($tag >= 252 && $tag <= 254) { $_[0]->inner('AppendFrame') }
-            elsif (               $tag == 255) { $_[0]->inner('FullFrame') }
+            if    ($tag >=  0  && $tag <=  63) { $_[0]->inner('SameFrame', preloaded_frame_type => $tag) }
+            elsif ($tag >= 64  && $tag <= 127) { $_[0]->inner('SameLocals1StackItemFrame', preloaded_frame_type => $tag) }
+            elsif (               $tag == 247) { $_[0]->inner('SameLocals1StackItemFrameExtended', preloaded_frame_type => $tag) }
+            elsif ($tag >= 248 && $tag <= 250) { $_[0]->inner('ChopFrame', preloaded_frame_type => $tag) }
+            elsif (               $tag == 251) { $_[0]->inner('SameFrameExtended', preloaded_frame_type => $tag) }
+            elsif ($tag >= 252 && $tag <= 254) { $_[0]->inner('AppendFrame', preloaded_frame_type => $tag) }
+            elsif (               $tag == 255) { $_[0]->inner('FullFrame', preloaded_frame_type => $tag) }
             else                               { $_[0]->fatalf('Unmanaged frame type %s', $tag) }
           }
          }
