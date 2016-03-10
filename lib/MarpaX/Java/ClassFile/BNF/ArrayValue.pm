@@ -40,7 +40,7 @@ sub _ArrayValue {
                                                   )
 }
 
-with qw/MarpaX::Java::ClassFile::Role::Parser::InnerGrammar/;
+with qw/MarpaX::Java::ClassFile::Role::Parser/;
 
 has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 

@@ -14,6 +14,6 @@ use MarpaX::Java::ClassFile::Struct::_Types -all;
 use Types::Standard -all;
 
 has num_values => ( is => 'ro', required => 1, isa => U2 );
-has values     => ( is => 'ro', required => 1, isa => ArrayRef[ElementValuePair] );
+has values     => ( is => 'ro', required => 1, isa => ArrayRef[ElementValue] );
 
 1;
