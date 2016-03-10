@@ -14,6 +14,7 @@ use Carp qw/croak/;
 use Data::Section -setup;
 use Marpa::R2;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
+use MarpaX::Java::ClassFile::BNF::CodeAttribute;
 use MarpaX::Java::ClassFile::BNF::ConstantValueAttribute;
 use MarpaX::Java::ClassFile::BNF::SignatureAttribute;
 use MarpaX::Java::ClassFile::BNF::UnmanagedAttribute;
@@ -35,6 +36,7 @@ sub callbacks {
             my $attribute_name = $_[0]->getAndCheckCpInfo($_[0]->pauseU2, 'ConstantUtf8Info', '_value');
             $_[0]->tracef('Attribute name is %s', $attribute_name);
             if    ($attribute_name eq 'ConstantValue') { $_[0]->inner('ConstantValueAttribute') }
+            elsif ($attribute_name eq 'Code')          { $_[0]->inner('CodeAttribute') }
             elsif ($attribute_name eq 'Signature')     { $_[0]->inner('SignatureAttribute') }
             else {
               $_[0]->warnf('Unmanaged attribute %s', $attribute_name);
