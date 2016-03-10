@@ -13,7 +13,7 @@ use Moo;
 use MarpaX::Java::ClassFile::Struct::_Types -all;
 use Types::Standard -all;
 
-has element_name_index => ( is => 'ro', isa => U2 );
-has value              => ( is => 'ro', isa => ElementValue );
+has element_name_index => ( is => 'ro', required => 1, isa => U2 );
+has value              => ( is => 'ro', required => 1, isa => ElementValue );
 
 1;

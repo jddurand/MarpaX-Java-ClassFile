@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::BNF::LocalVariableArray;
 use Moo;
 
-# ABSTRACT: Parsing an array of class
+# ABSTRACT: Parsing an array of local variable
 
 # VERSION
 

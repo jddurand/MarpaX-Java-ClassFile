@@ -44,7 +44,7 @@ sub callbacks { return {
 # ---------------
 # Grammar actions
 # ---------------
-sub __Top_variable_info {
+sub _Top_variable_info {
   # my ($self, $tag) = @_;
 
   MarpaX::Java::ClassFile::Struct::TopVariableInfo->new(

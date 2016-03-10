@@ -134,7 +134,12 @@ sub _read {
 
   $_[0]->tracef('read($inputRef, %s)', $_[0]->pos);
   eval {
-    $_[0]->_set_pos($_[0]->_r->read($_[0]->inputRef, $_[0]->pos))
+    my $pos = $_[0]->_r->read($_[0]->inputRef, $_[0]->pos);
+    #
+    # read() MAY return zero. This happen if there is an event at
+    # the very beginning of the grammar
+    #
+    $_[0]->_set_pos($pos) if ($pos)
   };
   $_[0]->_croak($@) if ($@);
   $_[0]->manageEvents
@@ -258,6 +263,8 @@ sub lexeme_read {
     $pos = $_[0]->_r->lexeme_read($_[1], $_lexeme_pos, $_lexeme_length, $_[3]) || croak sprintf('lexeme_read failure for symbol %s at position %s, length %s', $_[1], $_lexeme_pos, $_lexeme_length);
     #
     # And commit its return position unless length is 0
+    # It is illegal to do a lexeme_read with a length <= 0, so it is guaranteed here
+    # that position has moved
     #
     $_[0]->_set_pos($pos) if ($_[2])
   };
@@ -356,10 +363,11 @@ sub inner {
   # my ($self, $innerGrammarClass, %args) = @_;
 
   my $innerClass = "MarpaX::Java::ClassFile::BNF::$_[1]";
-  my $inner = $innerClass->new(parent => $_[0],
+  $_[0]->tracef('Starting inner grammar %s at position %s', $innerClass, $_[0]->pos);
+  my $inner = $innerClass->new(parent        => $_[0],
                                constant_pool => $_[0]->constant_pool,
-                               inputRef => $_[0]->inputRef,
-                               pos => $_[0]->pos,
+                               inputRef      => $_[0]->inputRef,
+                               pos           => $_[0]->pos,
                                @_[2..$#_]);
   my $innerGrammarValue = $inner->ast;
   $_[0]->lexeme_read('MANAGED', $inner->pos - $_[0]->pos, $innerGrammarValue);

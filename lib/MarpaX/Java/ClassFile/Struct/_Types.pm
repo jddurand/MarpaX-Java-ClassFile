@@ -268,14 +268,7 @@ class_type EnumConstValue,     { class => 'MarpaX::Java::ClassFile::Struct::Enum
 class_type ClassInfoIndex,     { class => 'MarpaX::Java::ClassFile::Struct::ClassInfoIndex' };
 class_type ArrayValue,         { class => 'MarpaX::Java::ClassFile::Struct::ArrayValue' };
 class_type ElementValuePair,   { class => 'MarpaX::Java::ClassFile::Struct::ElementValuePair' };
-declare ElementValue, as
-  ConstValueIndex|
-  EnumConstValue |
-  ClassInfoIndex |
-  Annotation     |
-  ArrayValue
-;
-
+class_type ElementValue,       { class => 'MarpaX::Java::ClassFile::Struct::ElementValue' };
 
 class_type ParameterAnnotation,   { class => 'MarpaX::Java::ClassFile::Struct::ParameterAnnotation' };
 
