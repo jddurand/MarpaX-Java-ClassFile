@@ -13,7 +13,7 @@ use Moo;
 use MarpaX::Java::ClassFile::Struct::_Types -all;
 use Types::Standard -all;
 
-has tag    => ( is => 'ro', isa => U1 );
-has offset => ( is => 'ro', isa => U2 );
+has tag    => ( is => 'ro', required => 1, isa => U1 );
+has offset => ( is => 'ro', required => 1, isa => U2 );
 
 1;

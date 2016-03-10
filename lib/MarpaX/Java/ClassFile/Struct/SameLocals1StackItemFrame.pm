@@ -13,7 +13,7 @@ use Moo;
 use MarpaX::Java::ClassFile::Struct::_Types -all;
 use Types::Standard -all;
 
-has frame_type             => ( is => 'ro', isa => U1 );
-has verification_type_info => ( is => 'ro', isa => ArrayRef[U1] );
+has frame_type => ( is => 'ro', required => 1, isa => U1 );
+has stack      => ( is => 'ro', required => 1, isa => ArrayRef[VerificationTypeInfo] );
 
 1;

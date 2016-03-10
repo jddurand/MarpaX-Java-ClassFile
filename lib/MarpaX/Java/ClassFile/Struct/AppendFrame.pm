@@ -1,7 +1,7 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::Struct::AppendFrame ;
+package MarpaX::Java::ClassFile::Struct::AppendFrame;
 use Moo;
 
 # ABSTRACT: append_frame
