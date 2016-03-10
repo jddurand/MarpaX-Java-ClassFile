@@ -15,6 +15,8 @@ use Marpa::R2;
 use MarpaX::Java::ClassFile::BNF::ConstantPoolArray;
 use MarpaX::Java::ClassFile::BNF::FieldsArray;
 use MarpaX::Java::ClassFile::BNF::InterfacesArray;
+use MarpaX::Java::ClassFile::BNF::MethodsArray;
+use MarpaX::Java::ClassFile::BNF::AttributesArray;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
 use MarpaX::Java::ClassFile::Struct::_Types -all;
 use MarpaX::Java::ClassFile::Struct::ClassFile;

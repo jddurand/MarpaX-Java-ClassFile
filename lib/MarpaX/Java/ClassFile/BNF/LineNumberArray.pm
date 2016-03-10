@@ -30,7 +30,7 @@ sub callbacks {
          }
 }
 
-sub _line_number {
+sub _lineNumber {
   # my ($self, $start_pc, $line_number) = @_;
 
   MarpaX::Java::ClassFile::Struct::LineNumber->new(
@@ -50,7 +50,7 @@ __[ bnf ]__
 :default ::= action => [values]
 event 'line_number$' = completed line_number
 
-lineNumberArray ::= line_number*
-line_number    ::= start_pc line_number action => _line_number
-start_pc       ::= U2 action => u2
-line_number    ::= U2 action => u2
+lineNumberArray ::= lineNumber*
+lineNumber      ::= start_pc line_number action => _lineNumber
+start_pc        ::= U2                   action => u2
+line_number     ::= U2                   action => u2

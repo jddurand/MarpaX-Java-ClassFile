@@ -27,7 +27,7 @@ my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_da
 sub grammar   { $_grammar    }
 sub callbacks { return {
                         "'exhausted"              => sub { $_[0]->exhausted },
-                        'code_length$'            => sub { $_[0]->lexeme_read_managed($_[0]->literalU4) },
+                        'code_length$'            => sub { $_[0]->lexeme_read_managed($_[0]->literalU4('code_length')) },
                         'exception_table_length$' => sub { $_[0]->inner('ExceptionTableArray', size => $_[0]->literalU2('exception_table_length')) },
                         'attributes_count$'       => sub { $_[0]->inner('AttributesArray', size => $_[0]->literalU2('attributes_count')) }
                        }
@@ -40,9 +40,16 @@ sub _Code_attribute {
   # my ($self, $attribute_name_index, $attribute_length, $max_stack, $max_locals, $code_length, $code, $exception_table_length, $exception_table, $attributes_count, $attributes) = @_;
 
   MarpaX::Java::ClassFile::Struct::CodeAttribute->new(
-                                                      attribute_name_index => $_[1],
-                                                      attribute_length     => $_[2],
-                                                      constantvalue_index  => $_[3]
+                                                      attribute_name_index    => $_[ 1],
+                                                      attribute_length        => $_[ 2],
+                                                      max_stack               => $_[ 3],
+                                                      max_locals              => $_[ 4],
+                                                      code_length             => $_[ 5],
+                                                      code                    => $_[ 6],
+                                                      exception_table_length  => $_[ 7],
+                                                      exception_table         => $_[ 8],
+                                                      attributes_count        => $_[ 9],
+                                                      attributes              => $_[10]
                                                      )
 }
 

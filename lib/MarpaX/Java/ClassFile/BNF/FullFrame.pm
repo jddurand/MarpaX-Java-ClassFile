@@ -26,8 +26,8 @@ my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_da
 sub grammar   { $_grammar    }
 sub callbacks { return {
                         "'exhausted"             => sub { $_[0]->exhausted },
-                        'number_of_locals$'      => sub { inner('VerificationTypeInfoArray', size => $_[0]->literalU2('number_of_locals')) },
-                        'number_of_stack_items$' => sub { inner('VerificationTypeInfoArray', size => $_[0]->literalU2('number_of_stack_items')) }
+                        'number_of_locals$'      => sub { $_[0]->inner('VerificationTypeInfoArray', size => $_[0]->literalU2('number_of_locals')) },
+                        'number_of_stack_items$' => sub { $_[0]->inner('VerificationTypeInfoArray', size => $_[0]->literalU2('number_of_stack_items')) }
                        }
               }
 

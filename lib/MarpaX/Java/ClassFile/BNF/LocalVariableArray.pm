@@ -25,8 +25,8 @@ my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_da
 sub grammar   { $_grammar    }
 sub callbacks {
   return {
-           "'exhausted"     => sub { $_[0]->exhausted },
-          'local_variable$' => { $_[0]->inc_nbDone }
+           "'exhausted"     => sub { $_[0]->exhausted  },
+          'local_variable$' => sub { $_[0]->inc_nbDone }
          }
 }
 

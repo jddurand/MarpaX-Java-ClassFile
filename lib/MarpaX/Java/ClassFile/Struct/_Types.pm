@@ -122,9 +122,9 @@ use Type::Library
 use Type::Utils -all;
 use Types::Standard -types;
 
-declare U1, as Int, where { $_ >= 0 && $_ <= 255   },      inline_as { my $varname = $_[1]; "$varname >= 0 && $varname < 255"   };
-declare U2, as Int, where { $_ >= 0 && $_ <= 65535 },      inline_as { my $varname = $_[1]; "$varname >= 0 && $varname < 65535" };
-declare U4, as Int, where { $_ >= 0 && $_ <= 4294967295 }, inline_as { my $varname = $_[1]; "$varname >= 0 && $varname < 4294967295" };
+declare U1, as Int, where { ($_ >= 0) && ($_ <= 255)   },      inline_as { my $varname = $_[1]; "($varname >= 0) && ($varname <= 255)"   };
+declare U2, as Int, where { ($_ >= 0) && ($_ <= 65535) },      inline_as { my $varname = $_[1]; "($varname >= 0) && ($varname <= 65535)" };
+declare U4, as Int, where { ($_ >= 0) && ($_ <= 4294967295) }, inline_as { my $varname = $_[1]; "($varname >= 0) && ($varname <= 4294967295)" };
 
 class_type ClassFile,                      { class => 'MarpaX::Java::ClassFile::Struct::ClassFile' };
 

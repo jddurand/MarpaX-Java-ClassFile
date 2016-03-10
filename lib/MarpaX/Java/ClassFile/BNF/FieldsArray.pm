@@ -58,16 +58,9 @@ event 'field_info$' = completed field_info
 
 fieldsArray ::= field_info*
 
-field_info ::=
-  access_flags
-  name_index
-  descriptor_index
-  attributes_count
-  attributes
-  action => _field_info
-
-access_flags     ::= U2           action => u2
-name_index       ::= U2           action => u2
-descriptor_index ::= U2           action => u2
-attributes_count ::= U2           action => u2
-attributes       ::= MANAGED      action => ::first
+field_info ::= access_flags name_index descriptor_index attributes_count attributes action => _field_info
+access_flags     ::= U2                                                             action => u2
+name_index       ::= U2                                                             action => u2
+descriptor_index ::= U2                                                             action => u2
+attributes_count ::= U2                                                             action => u2
+attributes       ::= MANAGED                                                        action => ::first
