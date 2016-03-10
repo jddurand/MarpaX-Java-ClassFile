@@ -84,8 +84,8 @@ use Type::Library
                   VerificationTypeInfo
 
                   Classes
-                  LineNumber
-                  LocalVariable
+                  LineNumberTable
+                  LocalVariableTable
                   LocalVariableType
                   Annotation
 
@@ -258,8 +258,8 @@ declare VerificationTypeInfo, as
 
 
 class_type Classes,            { class => 'MarpaX::Java::ClassFile::Struct::Classes' };
-class_type LineNumber,         { class => 'MarpaX::Java::ClassFile::Struct::LineNumber' };
-class_type LocalVariable,      { class => 'MarpaX::Java::ClassFile::Struct::LocalVariable' };
+class_type LineNumberTable,    { class => 'MarpaX::Java::ClassFile::Struct::LineNumberTable' };
+class_type LocalVariableTable, { class => 'MarpaX::Java::ClassFile::Struct::LocalVariableTable' };
 class_type LocalVariableType,  { class => 'MarpaX::Java::ClassFile::Struct::LocalVariableType' };
 class_type Annotation,         { class => 'MarpaX::Java::ClassFile::Struct::Annotation' };
 

@@ -204,20 +204,40 @@ sub _pause {
 }
 
 #
-# Helper to read a MANAGED lexeme
+# Helpers to read a U1/U2/U4/MANAGED lexemes
 #
-sub lexeme_read_managed {
-  # my ($self, $lexeme_length, $ignoreEvents) = @_;
+sub _lexeme_read_helper {
+  # my ($self, $lexeme_name, $lexeme_length, $ignoreEvents) = @_;
 
   my $rc;
-  if ($_[1]) {
-    $_[0]->fatalf('Not enough bytes') if ($_[1] + $_[0]->pos >= $_[0]->max);
-    my $bytes = substr(${$_[0]->inputRef}, $_[0]->pos, $_[1]);
-    $_[0]->lexeme_read('MANAGED', $_[1], $bytes, $_[2])
+  if ($_[2]) {
+    $_[0]->fatalf('Not enough bytes') if ($_[2] + $_[0]->pos >= $_[0]->max);
+    my $bytes = substr(${$_[0]->inputRef}, $_[0]->pos, $_[2]);
+    $_[0]->lexeme_read($_[1], $_[2], $bytes, $_[3])
   } else {
-    $_[0]->lexeme_read('MANAGED', 0, undef, $_[2])
+    $_[0]->lexeme_read($_[1], 0, undef, $_[3])
   }
 }
+
+sub lexeme_read_u1 {
+  # my ($self, $ignoreEvents) = @_;
+   $_[0]->_lexeme_read_helper('U1', 1, $_[1])
+ }
+
+sub lexeme_read_u2 {
+  # my ($self, $ignoreEvents) = @_;
+   $_[0]->_lexeme_read_helper('U2', 2, $_[1])
+ }
+
+sub lexeme_read_u4 {
+  # my ($self, $ignoreEvents) = @_;
+   $_[0]->_lexeme_read_helper('U4', 2, $_[1])
+ }
+
+sub lexeme_read_managed {
+  # my ($self, $lexeme_length, $ignoreEvents) = @_;
+   $_[0]->_lexeme_read_helper('MANAGED', $_[1], $_[2])
+ }
 
 sub lexeme_read {
   # my ($self, $lexeme_name, $lexeme_length, $lexeme_value, $ignoreEvents) = @_;

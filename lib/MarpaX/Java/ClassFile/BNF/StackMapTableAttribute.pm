@@ -52,9 +52,9 @@ has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 __DATA__
 __[ bnf ]__
-event 'number_of_entries$'      = completed number_of_entries
+event 'number_of_entries$' = completed number_of_entries
 StackMapTable_attribute ::= attribute_name_index attribute_length number_of_entries entries action => _StackMapTable_attribute
-attribute_name_index    ::= U2      action => u2
-attribute_length        ::= U4      action => u4
-number_of_entries       ::= U2      action => u2
-entries                 ::= MANAGED action => ::first
+attribute_name_index    ::= U2                                                              action => u2
+attribute_length        ::= U4                                                              action => u4
+number_of_entries       ::= U2                                                              action => u2
+entries                 ::= MANAGED                                                         action => ::first

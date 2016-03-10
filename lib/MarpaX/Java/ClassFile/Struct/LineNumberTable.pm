@@ -13,7 +13,7 @@ use Moo;
 use MarpaX::Java::ClassFile::Struct::_Types -all;
 use Types::Standard -all;
 
-has start_pc    => ( is => 'ro', isa => U2 );
-has line_number => ( is => 'ro', isa => U4 );
+has start_pc    => ( is => 'ro', required => 1, isa => U2 );
+has line_number => ( is => 'ro', required => 1, isa => U4 );
 
 1;

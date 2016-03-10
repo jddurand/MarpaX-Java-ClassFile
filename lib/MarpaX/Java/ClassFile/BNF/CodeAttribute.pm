@@ -57,26 +57,15 @@ __[ bnf ]__
 event 'code_length$'            = completed code_length
 event 'exception_table_length$' = completed exception_table_length
 event 'attributes_count$'       = completed attributes_count
-Code_attribute ::=
-    attribute_name_index
-    attribute_length
-    max_stack
-    max_locals
-    code_length
-    code
-    exception_table_length
-    exception_table
-    attributes_count
-    attributes
-  action => _Code_attribute
 
-attribute_name_index   ::= U2      action => u2
-attribute_length       ::= U4      action => u4
-max_stack              ::= U2      action => u2
-max_locals             ::= U2      action => u2
-code_length            ::= U4      action => u4
-code                   ::= MANAGED action => ::first
-exception_table_length ::= U2      action => u2
-exception_table        ::= MANAGED action => ::first
-attributes_count       ::= U2      action => u2
-attributes             ::= MANAGED action => ::first
+Code_attribute         ::= attribute_name_index attribute_length max_stack max_locals code_length code exception_table_length exception_table attributes_count attributes action => _Code_attribute
+attribute_name_index   ::= U2                                                                                                                                             action => u2
+attribute_length       ::= U4                                                                                                                                             action => u4
+max_stack              ::= U2                                                                                                                                             action => u2
+max_locals             ::= U2                                                                                                                                             action => u2
+code_length            ::= U4                                                                                                                                             action => u4
+code                   ::= MANAGED                                                                                                                                        action => ::first
+exception_table_length ::= U2                                                                                                                                             action => u2
+exception_table        ::= MANAGED                                                                                                                                        action => ::first
+attributes_count       ::= U2                                                                                                                                             action => u2
+attributes             ::= MANAGED                                                                                                                                        action => ::first

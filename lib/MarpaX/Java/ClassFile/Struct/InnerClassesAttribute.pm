@@ -1,10 +1,10 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::Struct::ExceptionsAttribute;
+package MarpaX::Java::ClassFile::Struct::InnerClassesAttribute;
 use Moo;
 
-# ABSTRACT: Exceptions_attribute
+# ABSTRACT: InnerClasses_attribute
 
 # VERSION
 
@@ -15,7 +15,7 @@ use Types::Standard -all;
 
 has attribute_name_index   => ( is => 'ro', required => 1, isa => U2 );
 has attribute_length       => ( is => 'ro', required => 1, isa => U4 );
-has number_of_exceptions   => ( is => 'ro', required => 1, isa => U2 );
-has exception_index_table  => ( is => 'ro', required => 1, isa => ArrayRef[U2] );
+has number_of_classes      => ( is => 'ro', required => 1, isa => U2 );
+has classes                => ( is => 'ro', required => 1, isa => ArrayRef[Classes] );
 
 1;
