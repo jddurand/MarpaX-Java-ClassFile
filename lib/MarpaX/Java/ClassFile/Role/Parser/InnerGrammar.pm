@@ -14,8 +14,13 @@ use Moo::Role;
 use MarpaX::Java::ClassFile::Struct::_Types -all;
 use Types::Common::Numeric -all;
 use Types::Standard -all;
-
-has size          => ( is => 'ro',  isa => PositiveOrZeroInt, default => sub {  0 } );
+#
+# size have this meaning:
+#   0 none    output will always be []
+# < 0 unknown (then caller should set max)
+# > 0 fixed
+#
+has size          => ( is => 'ro',  isa => Int, default => sub {  0 } );
 has nbDone        => ( is => 'rwp', isa => PositiveOrZeroInt, default => sub {  0 } );
 
 sub inc_nbDone {
@@ -32,14 +37,14 @@ has '+ast'        => ( is => 'ro',  isa => ArrayRef[Any], lazy => 1, builder => 
 around ast => sub {
   my ($orig, $self) = @_;
 
-  $self->size ? $self->$orig : []
+  (($self->size > 0) || (($self->size < 0) && ($self->max > $self->pos))) ? $self->$orig : []
 };
 
 around manageEvents => sub {
   my ($orig, $self) = @_;
 
   $self->$orig;
-  $self->_set_max($self->pos) if ($self->nbDone >= $self->size)
+  $self->_set_max($self->pos) if (($self->size > 0) && ($self->nbDone >= $self->size))
 };
 
 around whoami => sub {
