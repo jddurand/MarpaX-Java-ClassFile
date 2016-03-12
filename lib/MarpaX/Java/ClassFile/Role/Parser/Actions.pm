@@ -32,30 +32,31 @@ MarpaX::Java::ClassFile::ClassFile::Common::Actions is an internal class used by
 
 =cut
 
-sub u1      { unpack('C', $_[1]) }
-sub u2      { unpack('n', $_[1]) }
-sub u4      { $_[0]->_quadraToVector($_[1], 1)->to_Dec }  # Ask for an unsigned value explicitely
-sub integer { $_[0]->_quadraToVector($_[1],  )->to_Dec }
 #
-# quadratic: Use Bit::Vector for portability
+# Note: we use Bit::Vector for portability, some steps could have been replaced with unpack
 #
-sub _quadraToVector {
-  my @u1 = map { $_[0]->u1($_) } split('', $_[1]);
-  my $bits = 32;
+sub _bytesToVector {
+  my @u1 = map { unpack('C', $_) } split('', $_[1]);
+  my $bits = 8 x scalar(@u1);
   #
   # Increase bit numbers by 1 ensure to_Dec() returns the unsigned version
   # Default is to no increase of bit number
   #
   ++$bits if ($_[2]);   # Default is undef
-  my $vector = Bit::Vector->new_Dec($bits, $u1[0]);
-  $vector->Move_Left(8);
-  $vector->Or($vector, Bit::Vector->new_Dec($bits, $u1[1]));
-  $vector->Move_Left(8);
-  $vector->Or($vector, Bit::Vector->new_Dec($bits, $u1[2]));
-  $vector->Move_Left(8);
-  $vector->Or($vector, Bit::Vector->new_Dec($bits, $u1[3]));
+  my $vector = Bit::Vector->new_Dec($bits, shift(@u1));
+  while (@u1) {
+    $vector->Move_Left(8),
+    $vector->Or($vector, Bit::Vector->new_Dec($bits, shift(@u1)))
+  }
   $vector
 }
+
+sub u1       { $_[0]->_bytesToVector($_[1], 1)->to_Dec }  # Ask for an unsigned value explicitely
+sub signedU1 { $_[0]->_bytesToVector($_[1]   )->to_Dec }
+sub u2       { $_[0]->_bytesToVector($_[1], 1)->to_Dec }  # Ask for an unsigned value explicitely
+sub signedU2 { $_[0]->_bytesToVector($_[1]   )->to_Dec }
+sub u4       { $_[0]->_bytesToVector($_[1], 1)->to_Dec }  # Ask for an unsigned value explicitely
+sub signedU4 { $_[0]->_bytesToVector($_[1],  )->to_Dec }
 
 my @bitsForFloatCmp =
   (
@@ -80,7 +81,7 @@ my @mathForFloat =
 
 sub floatToString { $_[0]->double($_[1], $_[2])->bstr() }
 sub float {
-  my $vector = $_[0]->_quadraToVector($_[1]);
+  my $vector = $_[0]->_bytesToVector($_[1]);
 
   my $value;
   if ($vector->equal($bitsForFloatCmp[0])) {
@@ -147,8 +148,8 @@ sub float {
 }
 
 sub long {
-  my $vhigh = $_[0]->_quadraToVector($_[1]);
-  my $vlow  = $_[0]->_quadraToVector($_[2]);
+  my $vhigh = $_[0]->_bytesToVector($_[1]);
+  my $vlow  = $_[0]->_bytesToVector($_[2]);
   #
   # ((long) high_bytes << 32) + low_bytes
   #
@@ -177,8 +178,8 @@ my @mathForDouble =
 
 sub doubleToString { $_[0]->double($_[1], $_[2])->bstr() }
 sub double {
-  my $vhigh = $_[0]->_quadraToVector($_[1]);
-  my $vlow  = $_[0]->_quadraToVector($_[2]);
+  my $vhigh = $_[0]->_bytesToVector($_[1]);
+  my $vlow  = $_[0]->_bytesToVector($_[2]);
   #
   # ((long) high_bytes << 32) + low_bytes
   #
