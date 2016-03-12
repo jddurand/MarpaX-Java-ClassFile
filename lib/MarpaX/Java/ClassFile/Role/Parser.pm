@@ -110,6 +110,8 @@ sub _build_ast {
   #
   no warnings 'once';
   local $MarpaX::Java::ClassFile::Role::Parser::SELF = $_[0];
+  local $MarpaX::Java::ClassFile::Role::Parser::G = $_[0]->grammar;
+  local $MarpaX::Java::ClassFile::Role::Parser::R = $_[0]->_r;
   #
   # It is far quicker to maintain ourself booleans for trace and debug mode
   # rather than letting logger's tracef() and debugf() handle the request
@@ -280,12 +282,28 @@ sub pauseU1 {
   $u1
 }
 
+sub pauseSignedU1 {
+  # my ($self, $symbol) = @_;
+
+  my $signedU1 = $_[0]->signedU1($_[0]->_pause);
+  $_[0]->tracef('Got signedU1=%s', $signedU1);
+  $signedU1
+}
+
 sub pauseU2 {
   # my ($self, $symbol) = @_;
 
   my $u2 = $_[0]->u2($_[0]->_pause);
   $_[0]->tracef('Got u2=%s', $u2);
   $u2
+}
+
+sub pauseSignedU2 {
+  # my ($self, $symbol) = @_;
+
+  my $signedU2 = $_[0]->signedU2($_[0]->_pause);
+  $_[0]->tracef('Got signedU2=%s', $signedU2);
+  $signedU2
 }
 
 sub pauseU4 {
@@ -296,12 +314,28 @@ sub pauseU4 {
   $u4
 }
 
+sub pauseSignedU4 {
+  # my ($self, $symbol) = @_;
+
+  my $signedU4 = $_[0]->signedU4($_[0]->_pause);
+  $_[0]->tracef('Got signedU4=%s', $signedU4);
+  $signedU4
+}
+
 sub literalU1 {
   # my ($self, $symbol) = @_;
 
   my $u1 = $_[0]->u1($_[0]->_literal($_[1]));
   $_[0]->tracef('Got u1=%s', $u1);
   $u1
+}
+
+sub literalSignedU1 {
+  # my ($self, $symbol) = @_;
+
+  my $signedU1 = $_[0]->signedU1($_[0]->_literal($_[1]));
+  $_[0]->tracef('Got signedU1=%s', $signedU1);
+  $signedU1
 }
 
 sub literalU2 {
@@ -312,12 +346,28 @@ sub literalU2 {
   $u2
 }
 
+sub literalSignedU2 {
+  # my ($self, $symbol) = @_;
+
+  my $signedU2 = $_[0]->signedU2($_[0]->_literal($_[1]));
+  $_[0]->tracef('Got signedU2=%s', $signedU2);
+  $signedU2
+}
+
 sub literalU4 {
   # my ($self, $symbol) = @_;
 
   my $u4 = $_[0]->u4($_[0]->_literal($_[1]));
   $_[0]->tracef('Got u4=%s', $u4);
   $u4
+}
+
+sub literalSignedU4 {
+  # my ($self, $symbol) = @_;
+
+  my $signedU4 = $_[0]->signedU4($_[0]->_literal($_[1]));
+  $_[0]->tracef('Got signedU4=%s', $signedU4);
+  $signedU4
 }
 
 sub literal {
@@ -363,7 +413,7 @@ sub inner {
   # my ($self, $innerGrammarClass, %args) = @_;
 
   my $innerClass = "MarpaX::Java::ClassFile::BNF::$_[1]";
-  $_[0]->tracef('Starting inner grammar %s at position %s', $innerClass, $_[0]->pos);
+  $_[0]->tracef('Starting inner grammar %s at position %s, extra arguments: %s', $innerClass, $_[0]->pos, { @_[2..$#_] });
   my $inner = $innerClass->new(parent        => $_[0],
                                constant_pool => $_[0]->constant_pool,
                                inputRef      => $_[0]->inputRef,
