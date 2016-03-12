@@ -19,7 +19,7 @@ has attribute_length        => ( is => 'ro', required => 1, isa => U4 );
 has max_stack               => ( is => 'ro', required => 1, isa => U2 );
 has max_locals              => ( is => 'ro', required => 1, isa => U2 );
 has code_length             => ( is => 'ro', required => 1, isa => U4 );
-has code                    => ( is => 'ro', required => 1, isa => Bytes );
+has code                    => ( is => 'ro', required => 1, isa => ArrayRef[OpCode] );
 has exception_table_length  => ( is => 'ro', required => 1, isa => U2 );
 has exception_table         => ( is => 'ro', required => 1, isa => ArrayRef[ExceptionTable] );
 has attributes_count        => ( is => 'ro', required => 1, isa => U2 );

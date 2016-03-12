@@ -118,6 +118,8 @@ use Type::Library
 
                   BootstrapMethod
                   Parameter
+
+                  OpCode
                 /;
 use Type::Utils -all;
 use Types::Standard -types;
@@ -304,5 +306,7 @@ class_type TypePath, { class => 'MarpaX::Java::ClassFile::Struct::TypePath' };
 
 class_type BootstrapMethod, { class => 'MarpaX::Java::ClassFile::Struct::BootstrapMethod' };
 class_type Parameter, { class => 'MarpaX::Java::ClassFile::Struct::Parameter' };
+
+class_type OpCode, { class => 'MarpaX::Java::ClassFile::Struct::OpCode' };
 
 1;
