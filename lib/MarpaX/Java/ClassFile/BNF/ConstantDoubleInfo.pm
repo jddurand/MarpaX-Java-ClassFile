@@ -37,7 +37,7 @@ sub _ConstantDoubleInfo {
                                                            tag        => $_[0]->u1($_[1]),
                                                            high_bytes => $_[2],
                                                            low_bytes  => $_[3],
-                                                           _value     => $_[0]->long($_[2], $_[3])
+                                                           _value     => $_[0]->double($_[2], $_[3])
                                                           )
 }
 
