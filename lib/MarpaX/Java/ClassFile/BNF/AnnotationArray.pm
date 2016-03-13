@@ -28,8 +28,12 @@ sub grammar   { $_grammar    }
 sub callbacks {
   return {
            "'exhausted"      => sub { $_[0]->exhausted },
-          'annotationArray$' => sub { $_[0]->inc_nbDone },
-          '^annotation'      => sub { $_[0]->inner('Annotation') if ($_[0]->nbDone < $_[0]->size)}
+          '^annotationArray' => sub {
+            foreach (1..$_[0]->size) {
+              $_[0]->inner_silent('Annotation');
+              $_[0]->inc_nbDone
+            }
+          }
          }
 }
 
@@ -40,8 +44,6 @@ with qw/MarpaX::Java::ClassFile::Role::Parser::InnerGrammar/;
 __DATA__
 __[ bnf ]__
 :default ::= action => [values]
-event 'annotationArray$' = completed annotationArray
-event '^annotation' = predicted annotation
+event '^annotationArray' = predicted annotationArray
 
-annotationArray ::= annotation*
-annotation      ::= MANAGED action => ::first
+annotationArray ::= MANAGED*

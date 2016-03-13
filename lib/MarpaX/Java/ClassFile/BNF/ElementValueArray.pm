@@ -27,9 +27,13 @@ my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_da
 sub grammar   { $_grammar    }
 sub callbacks {
   return {
-           "'exhausted"      => sub { $_[0]->exhausted },
-          'elementValueArray$' => sub { $_[0]->inc_nbDone },
-          '^elementValue'      => sub { $_[0]->inner('ElementValue') if ($_[0]->nbDone < $_[0]->size) }
+          "'exhausted"         => sub { $_[0]->exhausted },
+          '^elementValueArray' => sub {
+            foreach (1..$_[0]->size) {
+              $_[0]->inner_silent('ElementValue');
+              $_[0]->inc_nbDone
+            }
+          }
          }
 }
 
@@ -40,8 +44,5 @@ with qw/MarpaX::Java::ClassFile::Role::Parser::InnerGrammar/;
 __DATA__
 __[ bnf ]__
 :default ::= action => [values]
-event 'elementValueArray$' = completed elementValueArray
-event '^elementValue' = predicted elementValue
-
-elementValueArray ::= elementValue*
-elementValue      ::= MANAGED action => ::first
+event '^elementValueArray' = predicted elementValueArray
+elementValueArray ::= MANAGED*
