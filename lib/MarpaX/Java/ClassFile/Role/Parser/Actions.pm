@@ -37,7 +37,7 @@ MarpaX::Java::ClassFile::ClassFile::Common::Actions is an internal class used by
 #
 sub _bytesToVector {
   my @u1 = map { unpack('C', $_) } split('', $_[1]);
-  my $bits = 8 x scalar(@u1);
+  my $bits = 8 * scalar(@u1);
   #
   # Increase bit numbers by 1 ensure to_Dec() returns the unsigned version
   # Default is to no increase of bit number
