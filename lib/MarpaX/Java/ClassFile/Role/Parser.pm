@@ -431,20 +431,22 @@ sub activate {
 # An inner grammar is an opaque thing, so associated
 # lexeme must be MANAGED.
 #
-sub inner {
-  # my ($self, $innerGrammarClass, %args) = @_;
+sub _inner {
+  # my ($self, $innerGrammarClass, $ignoreEvent, %args) = @_;
 
   my $innerClass = "MarpaX::Java::ClassFile::BNF::$_[1]";
-  $_[0]->tracef('Starting inner grammar %s at position %s, extra arguments: %s', $innerClass, $_[0]->pos, { @_[2..$#_] });
+  $_[0]->tracef('Starting inner grammar %s at position %s, with%s outside event, extra arguments: %s', $innerClass, $_[0]->pos, $_[2] ? 'out' : '', { @_[3..$#_] });
   my $inner = $innerClass->new(parent        => $_[0],
                                constant_pool => $_[0]->constant_pool,
                                inputRef      => $_[0]->inputRef,
                                pos           => $_[0]->pos,
-                               @_[2..$#_]);
+                               @_[3..$#_]);
   my $innerGrammarValue = $inner->ast;
-  $_[0]->lexeme_read('MANAGED', $inner->pos - $_[0]->pos, $innerGrammarValue);
+  $_[0]->lexeme_read('MANAGED', $inner->pos - $_[0]->pos, $innerGrammarValue, $_[2]);
   $innerGrammarValue
 }
+sub inner        { $_[0]->_inner($_[1], 0, @_[2..$#_]) }
+sub inner_silent { $_[0]->_inner($_[1], 1, @_[2..$#_]) }
 
 #
 # Logging/croak stuff : voluntarily not optimized
