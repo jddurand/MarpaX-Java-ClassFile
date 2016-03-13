@@ -15,7 +15,6 @@ use Types::Standard -all;
 use Types::Common::Numeric -all;
 
 has offset     => ( is => 'ro', required => 1, isa => PositiveOrZeroInt );
-has length     => ( is => 'ro', required => 1, isa => PositiveInt );
 has mnemonic   => ( is => 'ro', required => 1, isa => Str );
 has code       => ( is => 'ro', required => 1, isa => Str );
 has parameters => ( is => 'ro', required => 1, isa => ArrayRef );
