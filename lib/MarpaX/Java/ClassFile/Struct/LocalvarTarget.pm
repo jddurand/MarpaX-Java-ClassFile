@@ -10,8 +10,8 @@ use Moo;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types -all;
-use Types::Standard -all;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U2 Table/;
+use Types::Standard qw/ArrayRef/;
 
 has table_length => ( is => 'ro', isa => U2 );
 has table        => ( is => 'ro', isa => ArrayRef[Table] );

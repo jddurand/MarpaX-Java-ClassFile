@@ -10,8 +10,7 @@ use Moo;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types -all;
-use Types::Standard -all;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U2 ElementValue/;
 
 has element_name_index => ( is => 'ro', required => 1, isa => U2 );
 has value              => ( is => 'ro', required => 1, isa => ElementValue );

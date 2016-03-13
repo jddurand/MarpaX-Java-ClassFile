@@ -10,9 +10,8 @@ use Moo;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types -all;
-use Types::Standard -all;
-use Types::Encodings qw/Bytes/;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U2 U4 OpCode ExceptionTable AttributeInfo/;
+use Types::Standard qw/ArrayRef/;
 
 has attribute_name_index    => ( is => 'ro', required => 1, isa => U2 );
 has attribute_length        => ( is => 'ro', required => 1, isa => U4 );

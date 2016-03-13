@@ -11,9 +11,8 @@ package MarpaX::Java::ClassFile::Role::Parser::InnerGrammar;
 
 use Moo::Role;
 
-use MarpaX::Java::ClassFile::Struct::_Types -all;
-use Types::Common::Numeric -all;
-use Types::Standard -all;
+use Types::Common::Numeric qw/PositiveOrZeroInt/;
+use Types::Standard qw/Int ArrayRef/;
 #
 # size have this meaning:
 #   0 none    output will always be []
@@ -32,7 +31,7 @@ with qw/MarpaX::Java::ClassFile::Role::Parser/;
 # ------------------
 # Role modifications
 # ------------------
-has '+ast'        => ( is => 'ro',  isa => ArrayRef[Any], lazy => 1, builder => 1);
+has '+ast'        => ( is => 'ro',  isa => ArrayRef, lazy => 1, builder => 1);
 
 around ast => sub {
   my ($orig, $self) = @_;

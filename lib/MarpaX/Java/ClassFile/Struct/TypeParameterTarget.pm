@@ -10,8 +10,7 @@ use Moo;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types -all;
-use Types::Standard -all;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U1/;
 
 has type_parameter_index  => ( is => 'ro', isa => U1 );
 

@@ -10,9 +10,9 @@ use Moo;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types -all;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U1/;
 use Types::Encodings qw/Bytes/;
-use Types::Standard -all;
+use Types::Standard qw/InstanceOf/;
 
 has tag          => ( is => 'ro', required => 1, isa => U1 );
 has high_bytes   => ( is => 'ro', required => 1, isa => Bytes );

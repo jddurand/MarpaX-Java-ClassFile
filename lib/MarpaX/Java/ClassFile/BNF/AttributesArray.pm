@@ -12,26 +12,27 @@ use Moo;
 
 use Carp qw/croak/;
 use Data::Section -setup;
-use Marpa::R2;
-use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
-use MarpaX::Java::ClassFile::BNF::ConstantValueAttribute;
-use MarpaX::Java::ClassFile::BNF::CodeAttribute;
-use MarpaX::Java::ClassFile::BNF::StackMapTableAttribute;
-use MarpaX::Java::ClassFile::BNF::ExceptionsAttribute;
-use MarpaX::Java::ClassFile::BNF::InnerClassesAttribute;
-use MarpaX::Java::ClassFile::BNF::EnclosingMethodAttribute;
-use MarpaX::Java::ClassFile::BNF::SyntheticAttribute;
-use MarpaX::Java::ClassFile::BNF::SignatureAttribute;
-use MarpaX::Java::ClassFile::BNF::SourceFileAttribute;
-use MarpaX::Java::ClassFile::BNF::SourceDebugExtensionAttribute;
-use MarpaX::Java::ClassFile::BNF::LineNumberTableAttribute;
-use MarpaX::Java::ClassFile::BNF::LocalVariableTableAttribute;
-use MarpaX::Java::ClassFile::BNF::LocalVariableTypeTableAttribute;
-use MarpaX::Java::ClassFile::BNF::DeprecatedAttribute;
-use MarpaX::Java::ClassFile::BNF::RuntimeVisibleAnnotationsAttribute;
-use MarpaX::Java::ClassFile::BNF::UnmanagedAttribute;
-use Scalar::Util qw/blessed/;
-use Types::Standard -all;
+use MarpaX::Java::ClassFile::Util::BNF qw/bnf/;
+#
+# require because we do not import ANYTHING from these module, just require they are loaded
+#
+require Marpa::R2;
+require MarpaX::Java::ClassFile::BNF::ConstantValueAttribute;
+require MarpaX::Java::ClassFile::BNF::CodeAttribute;
+require MarpaX::Java::ClassFile::BNF::StackMapTableAttribute;
+require MarpaX::Java::ClassFile::BNF::ExceptionsAttribute;
+require MarpaX::Java::ClassFile::BNF::InnerClassesAttribute;
+require MarpaX::Java::ClassFile::BNF::EnclosingMethodAttribute;
+require MarpaX::Java::ClassFile::BNF::SyntheticAttribute;
+require MarpaX::Java::ClassFile::BNF::SignatureAttribute;
+require MarpaX::Java::ClassFile::BNF::SourceFileAttribute;
+require MarpaX::Java::ClassFile::BNF::SourceDebugExtensionAttribute;
+require MarpaX::Java::ClassFile::BNF::LineNumberTableAttribute;
+require MarpaX::Java::ClassFile::BNF::LocalVariableTableAttribute;
+require MarpaX::Java::ClassFile::BNF::LocalVariableTypeTableAttribute;
+require MarpaX::Java::ClassFile::BNF::DeprecatedAttribute;
+require MarpaX::Java::ClassFile::BNF::RuntimeVisibleAnnotationsAttribute;
+require MarpaX::Java::ClassFile::BNF::UnmanagedAttribute;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
 my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_data) } );
@@ -70,8 +71,6 @@ sub callbacks {
 }
 
 with qw/MarpaX::Java::ClassFile::Role::Parser::InnerGrammar/;
-
-has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 1;
 

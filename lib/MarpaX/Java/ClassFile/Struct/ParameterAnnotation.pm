@@ -10,8 +10,8 @@ use Moo;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types -all;
-use Types::Standard -all;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U2 Annotation/;
+use Types::Standard qw/ArrayRef/;
 
 has num_annotations => ( is => 'ro', isa => U2 );
 has annotations     => ( is => 'ro', isa => ArrayRef[Annotation] );

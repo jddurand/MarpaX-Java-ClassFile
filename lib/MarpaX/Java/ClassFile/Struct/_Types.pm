@@ -121,8 +121,8 @@ use Type::Library
 
                   OpCode
                 /;
-use Type::Utils -all;
-use Types::Standard -types;
+use Type::Utils qw/declare as where inline_as class_type/;
+use Types::Standard qw/Int Undef/;
 
 declare U1, as Int, where { ($_ >= 0) && ($_ <= 255)   },      inline_as { my $varname = $_[1]; "($varname >= 0) && ($varname <= 255)"   };
 declare U2, as Int, where { ($_ >= 0) && ($_ <= 65535) },      inline_as { my $varname = $_[1]; "($varname >= 0) && ($varname <= 65535)" };

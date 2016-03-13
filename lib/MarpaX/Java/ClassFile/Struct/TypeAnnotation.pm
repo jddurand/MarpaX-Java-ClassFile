@@ -10,8 +10,8 @@ use Moo;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types -all;
-use Types::Standard -all;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U1 U2 TargetInfo TypePath ElementValuePair/;
+use Types::Standard qw/ArrayRef/;
 
 has target_type              => ( is => 'ro', isa => U1 );
 has target_info              => ( is => 'ro', isa => TargetInfo );

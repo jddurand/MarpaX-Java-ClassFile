@@ -11,23 +11,25 @@ use Moo;
 # AUTHORITY
 
 use Data::Section -setup;
-use Marpa::R2;
-use MarpaX::Java::ClassFile::BNF::ConstantUtf8Info;
-use MarpaX::Java::ClassFile::BNF::ConstantIntegerInfo;
-use MarpaX::Java::ClassFile::BNF::ConstantFloatInfo;
-use MarpaX::Java::ClassFile::BNF::ConstantLongInfo;
-use MarpaX::Java::ClassFile::BNF::ConstantDoubleInfo;
-use MarpaX::Java::ClassFile::BNF::ConstantClassInfo;
-use MarpaX::Java::ClassFile::BNF::ConstantStringInfo;
-use MarpaX::Java::ClassFile::BNF::ConstantFieldrefInfo;
-use MarpaX::Java::ClassFile::BNF::ConstantMethodrefInfo;
-use MarpaX::Java::ClassFile::BNF::ConstantInterfaceMethodrefInfo;
-use MarpaX::Java::ClassFile::BNF::ConstantNameAndTypeInfo;
-use MarpaX::Java::ClassFile::BNF::ConstantMethodHandleInfo;
-use MarpaX::Java::ClassFile::BNF::ConstantMethodTypeInfo;
-use MarpaX::Java::ClassFile::BNF::ConstantInvokeDynamicInfo;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
-use Types::Standard -all;
+#
+# require because we do not import ANYTHING from these module, just require they are loaded
+#
+require Marpa::R2;
+require MarpaX::Java::ClassFile::BNF::ConstantUtf8Info;
+require MarpaX::Java::ClassFile::BNF::ConstantIntegerInfo;
+require MarpaX::Java::ClassFile::BNF::ConstantFloatInfo;
+require MarpaX::Java::ClassFile::BNF::ConstantLongInfo;
+require MarpaX::Java::ClassFile::BNF::ConstantDoubleInfo;
+require MarpaX::Java::ClassFile::BNF::ConstantClassInfo;
+require MarpaX::Java::ClassFile::BNF::ConstantStringInfo;
+require MarpaX::Java::ClassFile::BNF::ConstantFieldrefInfo;
+require MarpaX::Java::ClassFile::BNF::ConstantMethodrefInfo;
+require MarpaX::Java::ClassFile::BNF::ConstantInterfaceMethodrefInfo;
+require MarpaX::Java::ClassFile::BNF::ConstantNameAndTypeInfo;
+require MarpaX::Java::ClassFile::BNF::ConstantMethodHandleInfo;
+require MarpaX::Java::ClassFile::BNF::ConstantMethodTypeInfo;
+require MarpaX::Java::ClassFile::BNF::ConstantInvokeDynamicInfo;
 
 use constant {
   CONSTANT_Utf8               =>  1,
@@ -94,8 +96,6 @@ sub callbacks {
 }
 
 with qw/MarpaX::Java::ClassFile::Role::Parser::InnerGrammar/;
-
-has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 1;
 

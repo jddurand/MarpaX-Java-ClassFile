@@ -16,14 +16,13 @@ use Moo::Role;
 # you are not interested in micro-optimizations)
 #
 use Carp qw/croak/;
-use MarpaX::Java::ClassFile::Struct::_Types -all;
-use MarpaX::Java::ClassFile::Util::MarpaTrace;
+use MarpaX::Java::ClassFile::Struct::_Types qw/CpInfo/;
+use MarpaX::Java::ClassFile::Util::MarpaTrace qw//;
 use Data::Section -setup;
 use Scalar::Util qw/blessed/;
-use Types::Common::Numeric -all;
-use Types::Standard -all;
+use Types::Common::Numeric qw/PositiveOrZeroInt/;
+use Types::Standard qw/Any ScalarRef Bool ArrayRef Str Undef ConsumerOf InstanceOf/;
 use Types::Encodings qw/Bytes/;
-use Try::Tiny;
 
 =head1 DESCRIPTION
 
@@ -41,7 +40,7 @@ has inputRef       => ( is => 'ro',  isa => ScalarRef[Bytes],                   
 has marpaRecceHook => ( is => 'ro',  isa => Bool,                                                      default => sub { 1 });
 has constant_pool  => ( is => 'ro',  isa => ArrayRef[CpInfo],                                          default => sub { [] } );
 has pos            => ( is => 'rwp', isa => PositiveOrZeroInt,                                         default => sub { 0 });
-has exhaustion     => ( is => 'ro',  isa => Str,                                                       default => sub { 'fatal' });
+has exhaustion     => ( is => 'ro',  isa => Str,                                                       default => sub { 'event' });
 has parent         => ( is => 'ro',  isa => Undef|ConsumerOf['MarpaX::Java::ClassFile::Role::Parser'], default => sub { return });
 #
 # Lazy parameters

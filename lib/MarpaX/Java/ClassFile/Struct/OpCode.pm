@@ -10,9 +10,8 @@ use Moo;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types -all;
-use Types::Standard -all;
-use Types::Common::Numeric -all;
+use Types::Standard qw/Str ArrayRef/;
+use Types::Common::Numeric qw/PositiveOrZeroInt/;
 
 has offset     => ( is => 'ro', required => 1, isa => PositiveOrZeroInt );
 has mnemonic   => ( is => 'ro', required => 1, isa => Str );

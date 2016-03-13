@@ -11,16 +11,19 @@ use Moo;
 # AUTHORITY
 
 use Data::Section -setup;
-use Marpa::R2;
-use MarpaX::Java::ClassFile::BNF::ConstantPoolArray;
-use MarpaX::Java::ClassFile::BNF::FieldsArray;
-use MarpaX::Java::ClassFile::BNF::InterfacesArray;
-use MarpaX::Java::ClassFile::BNF::MethodsArray;
-use MarpaX::Java::ClassFile::BNF::AttributesArray;
-use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
-use MarpaX::Java::ClassFile::Struct::_Types -all;
-use MarpaX::Java::ClassFile::Struct::ClassFile;
-use Types::Standard -all;
+use MarpaX::Java::ClassFile::Util::BNF qw/bnf/;
+use Types::Standard qw/ArrayRef Str/;
+use MarpaX::Java::ClassFile::Struct::_Types qw/CpInfo/;
+#
+# require because we do not import ANYTHING from these module, just require they are loaded
+#
+require Marpa::R2;
+require MarpaX::Java::ClassFile::Struct::ClassFile;
+require MarpaX::Java::ClassFile::BNF::ConstantPoolArray;
+require MarpaX::Java::ClassFile::BNF::InterfacesArray;
+require MarpaX::Java::ClassFile::BNF::FieldsArray;
+require MarpaX::Java::ClassFile::BNF::MethodsArray;
+require MarpaX::Java::ClassFile::BNF::AttributesArray;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
 my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_data) } );
@@ -90,8 +93,12 @@ sub _ClassFile {
                                                  )
 }
 
-with qw/MarpaX::Java::ClassFile::Role::Parser/;
+with 'MarpaX::Java::ClassFile::Role::Parser';
 
+#
+# We want to say that exhaustion is definitely fatal
+#
+has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'fatal' });
 #
 # We want to take control over constant_pool in this class (and only here btw)
 #

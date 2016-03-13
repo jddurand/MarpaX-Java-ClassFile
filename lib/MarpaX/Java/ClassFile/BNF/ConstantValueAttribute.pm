@@ -11,10 +11,12 @@ use Moo;
 # AUTHORITY
 
 use Data::Section -setup;
-use Marpa::R2;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
-use MarpaX::Java::ClassFile::Struct::ConstantValueAttribute;
-use Types::Standard -all;
+#
+# require because we do not import ANYTHING from these module, just require they are loaded
+#
+require Marpa::R2;
+require MarpaX::Java::ClassFile::Struct::ConstantValueAttribute;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
 my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_data) } );
@@ -41,9 +43,7 @@ sub _ConstantValue_attribute {
                                                               )
 }
 
-with qw/MarpaX::Java::ClassFile::Role::Parser/;
-
-has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
+with 'MarpaX::Java::ClassFile::Role::Parser';
 
 1;
 

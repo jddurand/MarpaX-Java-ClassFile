@@ -11,12 +11,13 @@ use Moo;
 # AUTHORITY
 
 use Data::Section -setup;
-use Marpa::R2;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
-use MarpaX::Java::ClassFile::Struct::OpCode;
-use Types::Standard -all;
-use Types::Common::Numeric -all;
-use Class::Method::Modifiers qw/fresh/;
+#
+# require because we do not import ANYTHING from these module, just require they are loaded
+#
+require Marpa::R2;
+require MarpaX::Java::ClassFile::Struct::OpCode;
+use Types::Common::Numeric qw/PositiveOrZeroInt/;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
 my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_data) } );
@@ -751,8 +752,6 @@ sub wide_iinc {
 }
 
 with qw/MarpaX::Java::ClassFile::Role::Parser::InnerGrammar/;
-
-has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'event' });
 
 1;
 

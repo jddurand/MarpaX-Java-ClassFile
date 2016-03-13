@@ -10,8 +10,8 @@ use Moo;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types -all;
-use Types::Standard -all;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U2/;
+use Types::Standard qw/ArrayRef/;
 
 has bootstrap_method_ref    => ( is => 'ro', isa => U2 );
 has num_bootstrap_arguments => ( is => 'ro', isa => U2 );

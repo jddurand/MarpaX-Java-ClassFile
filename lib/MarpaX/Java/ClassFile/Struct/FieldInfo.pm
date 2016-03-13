@@ -10,8 +10,8 @@ use Moo;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types -all;
-use Types::Standard -all;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U2 AttributeInfo/;
+use Types::Standard qw/ArrayRef/;
 
 has access_flags     => ( is => 'ro', isa => U2 );
 has name_index       => ( is => 'ro', isa => U2 );

@@ -10,8 +10,8 @@ use Moo;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types -all;
-use Types::Standard -all;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U2 U4 CpInfo FieldInfo MethodInfo AttributeInfo/;
+use Types::Standard qw/ArrayRef InstanceOf/;
 
 has magic               => ( is => 'ro', required => 1, isa => U4);
 has minor_version       => ( is => 'ro', required => 1, isa => U2);

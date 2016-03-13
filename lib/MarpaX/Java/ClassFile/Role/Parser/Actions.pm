@@ -14,9 +14,9 @@ use Moo::Role;
 # This package is part of the core of the engine. So it is optimized
 # using directly the stack (i.e. no $self)
 #
-use Math::BigFloat;
+use Math::BigFloat qw//;
 use Carp qw/croak/;
-use Bit::Vector;
+use Bit::Vector qw//;
 use Scalar::Util qw/blessed/;
 use constant {
   FLOAT_POSITIVE_INF => Math::BigFloat->binf(),
