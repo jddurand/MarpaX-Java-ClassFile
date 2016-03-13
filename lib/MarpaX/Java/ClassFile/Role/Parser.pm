@@ -218,7 +218,7 @@ sub _lexeme_read_helper {
 
   my $rc;
   if ($_[2]) {
-    $_[0]->fatalf('Not enough bytes') if ($_[2] + $_[0]->pos >= $_[0]->max);
+    $_[0]->fatalf('Not enough bytes, pos=%d, max=%d, asking for %d', $_[0]->pos, $_[0]->max, $_[2]) if ($_[2] + $_[0]->pos > $_[0]->max);
     my $bytes = substr(${$_[0]->inputRef}, $_[0]->pos, $_[2]);
     $_[0]->lexeme_read($_[1], $_[2], $bytes, $_[3])
   } else {
@@ -238,7 +238,7 @@ sub lexeme_read_u2 {
 
 sub lexeme_read_u4 {
   # my ($self, $ignoreEvents) = @_;
-   $_[0]->_lexeme_read_helper('U4', 2, $_[1])
+   $_[0]->_lexeme_read_helper('U4', 4, $_[1])
  }
 
 sub lexeme_read_managed {
