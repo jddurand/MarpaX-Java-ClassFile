@@ -13,14 +13,15 @@ use Moo::Role;
 
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
 use Types::Standard qw/Int ArrayRef/;
+use MarpaX::Java::ClassFile::Util::ProductionMode qw/prod_isa/;
 #
 # size have this meaning:
 #   0 none    output will always be []
 # < 0 unknown (then caller should set max)
 # > 0 fixed
 #
-has size          => ( is => 'ro',  isa => Int, default => sub {  0 } );
-has nbDone        => ( is => 'rwp', isa => PositiveOrZeroInt, default => sub {  0 } );
+has size          => ( is => 'ro',  prod_isa(Int),               default => sub {  0 } );
+has nbDone        => ( is => 'rwp', prod_isa(PositiveOrZeroInt), default => sub {  0 } );
 
 sub inc_nbDone {
   $_[0]->_set_nbDone($_[0]->nbDone + 1)
@@ -31,7 +32,7 @@ with qw/MarpaX::Java::ClassFile::Role::Parser/;
 # ------------------
 # Role modifications
 # ------------------
-has '+ast'        => ( is => 'ro',  isa => ArrayRef, lazy => 1, builder => 1);
+has '+ast'        => ( is => 'ro',  prod_isa(ArrayRef), lazy => 1, builder => 1);
 
 around ast => sub {
   my ($orig, $self) = @_;
