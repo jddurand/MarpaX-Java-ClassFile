@@ -18,6 +18,7 @@ use Moo::Role;
 use Carp qw/croak/;
 use MarpaX::Java::ClassFile::Struct::_Types qw/CpInfo/;
 use MarpaX::Java::ClassFile::Util::MarpaTrace qw//;
+use MarpaX::Java::ClassFile::Util::ProductionMode qw/prod_isa/;
 use Data::Section -setup;
 use Scalar::Util qw/blessed/;
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
@@ -33,22 +34,21 @@ MarpaX::Java::ClassFile::Role::Parser is the parse engine role used by L<MarpaX:
 #
 # Required parameters
 #
-has inputRef       => ( is => 'ro',  isa => ScalarRef[Bytes],                                          required => 1);
+has inputRef       => ( is => 'ro',  prod_isa(ScalarRef[Bytes]),                                          required => 1);
 #
 # Parameters with a default
 #
-has marpaRecceHook => ( is => 'ro',  isa => Bool,                                                      default => sub { 1 });
-has constant_pool  => ( is => 'ro',  isa => ArrayRef[CpInfo],                                          default => sub { [] } );
-has pos            => ( is => 'rwp', isa => PositiveOrZeroInt,                                         default => sub { 0 });
-has exhaustion     => ( is => 'ro',  isa => Str,                                                       default => sub { 'event' });
-has parent         => ( is => 'ro',  isa => Undef|ConsumerOf['MarpaX::Java::ClassFile::Role::Parser'], default => sub { return });
+has marpaRecceHook => ( is => 'ro',  prod_isa(Bool),                                                      default => sub { 1 });
+has constant_pool  => ( is => 'ro',  prod_isa(ArrayRef[CpInfo]),                                          default => sub { [] } );
+has pos            => ( is => 'rwp', prod_isa(PositiveOrZeroInt),                                         default => sub { 0 });
+has exhaustion     => ( is => 'ro',  prod_isa(Str),                                                       default => sub { 'event' });
+has parent         => ( is => 'ro',  prod_isa(Undef|ConsumerOf['MarpaX::Java::ClassFile::Role::Parser']), default => sub { return });
 #
 # Lazy parameters
 #
-has max            => ( is => 'rwp', isa => PositiveOrZeroInt,                                         lazy => 1, builder => 1);
-has whoami         => ( is => 'ro',  isa => Str,                                                       lazy => 1, builder => 1);
-has ast            => ( is => 'ro',  isa => Any,                                                       lazy => 1, builder => 1);
-has _r             => ( is => 'ro',  isa => InstanceOf['Marpa::R2::Scanless::R'],                      lazy => 1, builder => 1, predicate => 1, clearer => 1);
+has max            => ( is => 'rwp', prod_isa(PositiveOrZeroInt),                                         lazy => 1, builder => 1);
+has whoami         => ( is => 'ro',  prod_isa(Str),                                                       lazy => 1, builder => 1);
+has ast            => ( is => 'ro',  prod_isa(Any),                                                       lazy => 1, builder => 1);
 
 my $MARPA_TRACE_FILE_HANDLE;
 my $MARPA_TRACE_BUFFER;
@@ -105,12 +105,6 @@ sub manageEvents {
 
 sub _build__r {
   # my ($self) = @_;
-  Marpa::R2::Scanless::R->new({
-                               trace_file_handle => $MARPA_TRACE_FILE_HANDLE,
-                               grammar           => $_[0]->grammar,
-                               exhaustion        => $_[0]->exhaustion,
-                               trace_terminals   => $_[0]->_logger->is_trace
-                              })
 }
 
 sub _build_ast {
@@ -121,7 +115,12 @@ sub _build_ast {
   no warnings 'once';
   local $MarpaX::Java::ClassFile::Role::Parser::SELF = $_[0];
   local $MarpaX::Java::ClassFile::Role::Parser::G = $_[0]->grammar;
-  local $MarpaX::Java::ClassFile::Role::Parser::R = $_[0]->_r;
+  local $MarpaX::Java::ClassFile::Role::Parser::R = Marpa::R2::Scanless::R->new({
+                                                                                 trace_file_handle => $MARPA_TRACE_FILE_HANDLE,
+                                                                                 grammar           => $_[0]->grammar,
+                                                                                 exhaustion        => $_[0]->exhaustion,
+                                                                                 trace_terminals   => $_[0]->_logger->is_trace
+                                                                                });
   #
   # It is far quicker to maintain ourself booleans for trace and debug mode
   # rather than letting logger's tracef() and debugf() handle the request
@@ -146,7 +145,7 @@ sub _read {
 
   $_[0]->tracef('read($inputRef, %s)', $_[0]->pos);
   eval {
-    my $pos = $_[0]->_r->read($_[0]->inputRef, $_[0]->pos);
+    my $pos = $MarpaX::Java::ClassFile::Role::Parser::R->read($_[0]->inputRef, $_[0]->pos);
     #
     # read() MAY return zero. This happen if there is an event at
     # the very beginning of the grammar
@@ -161,7 +160,7 @@ sub _events {
   # my ($self) = @_;
 
   $_[0]->tracef('events()');
-  my $eventsRef = eval { $_[0]->_r->events };
+  my $eventsRef = eval { $MarpaX::Java::ClassFile::Role::Parser::R->events };
   $_[0]->_croak($@) if ($@);
   $eventsRef
 }
@@ -170,7 +169,7 @@ sub _value {
   # my ($self) = @_;
 
   $_[0]->tracef('ambiguity_metric()');
-  my $ambiguity_metric = eval { $_[0]->_r->ambiguity_metric() };
+  my $ambiguity_metric = eval { $MarpaX::Java::ClassFile::Role::Parser::R->ambiguity_metric() };
   $_[0]->_croak($@) if ($@);
   $_[0]->_croak('Ambiguity metric is undefined') if (! defined($ambiguity_metric));
   $_[0]->_croak('Parse is ambiguous') if ($ambiguity_metric != 1);
@@ -180,25 +179,18 @@ sub _value {
   #
   # Registration hook ?
   #
-  if ($_[0]->marpaRecceHook) {
-    $_[0]->_r->registrations($_registrations{ref($_[0])}) if (defined($_registrations{ref($_[0])}));
-  }
-  my $valueRef = eval { $_[0]->_r->value($_[0]) };
+  my $marpaRecceHook = $_[0]->marpaRecceHook;
+  $MarpaX::Java::ClassFile::Role::Parser::R->registrations($_registrations{ref($_[0])}) if ($marpaRecceHook && defined($_registrations{ref($_[0])}));
+  my $valueRef = eval { $MarpaX::Java::ClassFile::Role::Parser::R->value($_[0]) };
   #
   # Register hooks if not already the case
   #
-  if ($_[0]->marpaRecceHook) {
-    $_registrations{ref($_[0])} = $_[0]->_r->registrations unless (defined($_registrations{ref($_[0])}));
-  }
+  $_registrations{ref($_[0])} = $MarpaX::Java::ClassFile::Role::Parser::R->registrations if ($marpaRecceHook && ! defined($_registrations{ref($_[0])}));
   $_[0]->_croak($@) if ($@);
   $_[0]->_croak('Value reference is undefined') if (! defined($valueRef));
 
   my $value = ${$valueRef};
   $_[0]->_croak('Value is undefined') if (! defined($value));
-  #
-  # We do not need the recognizer anymore
-  #
-  $_[0]->_clear_r;
 
   $value
 }
@@ -207,7 +199,7 @@ sub _resume {
   # my ($self) = @_;
 
   $_[0]->tracef('resume(%s)', $_[0]->pos);
-  eval { $_[0]->_set_pos($_[0]->_r->resume($_[0]->pos)) };
+  eval { $_[0]->_set_pos($MarpaX::Java::ClassFile::Role::Parser::R->resume($_[0]->pos)) };
   $_[0]->_croak($@) if ($@);
   $_[0]->manageEvents
 }
@@ -216,20 +208,20 @@ sub _literal {
   # my ($self, $symbol) = @_;
 
   $_[0]->tracef('last_completed_span(\'%s\')', $_[1]);
-  my @span = $_[0]->_r->last_completed_span($_[1]);
+  my @span = $MarpaX::Java::ClassFile::Role::Parser::R->last_completed_span($_[1]);
   $_[0]->_croak("No symbol instance for the symbol $_[1]") if (! @span);
   $_[0]->tracef('literal(%s, %s)', $span[0], $span[1]);
-  $_[0]->_r->literal(@span)
+  $MarpaX::Java::ClassFile::Role::Parser::R->literal(@span)
 }
 
 sub _pause {
   # my ($self, $symbol) = @_;
 
   $_[0]->tracef('pause_span()');
-  my @span = $_[0]->_r->pause_span();
+  my @span = $MarpaX::Java::ClassFile::Role::Parser::R->pause_span();
   $_[0]->_croak('No pause span') if (! @span);
   $_[0]->tracef('literal(%s, %s)', $span[0], $span[1]);
-  $_[0]->_r->literal(@span)
+  $MarpaX::Java::ClassFile::Role::Parser::R->literal(@span)
 }
 
 #
@@ -238,7 +230,6 @@ sub _pause {
 sub _lexeme_read_helper {
   # my ($self, $lexeme_name, $lexeme_length, $ignoreEvents) = @_;
 
-  my $rc;
   if ($_[2]) {
     $_[0]->fatalf('Not enough bytes, pos=%d, max=%d, asking for %d', $_[0]->pos, $_[0]->max, $_[2]) if ($_[2] + $_[0]->pos > $_[0]->max);
     my $bytes = substr(${$_[0]->inputRef}, $_[0]->pos, $_[2]);
@@ -274,7 +265,7 @@ sub lexeme_read {
   #
   # If the length is zero, force the read to be at position 0.
   # We will anyway explicitely re-set position and it works
-  # because we always do $self->_r->resume($self->pos) -;
+  # because we always do $MarpaX::Java::ClassFile::Role::Parser::R->resume($self->pos) -;
   #
   my $_lexeme_length = $_[2] || 1;
   my $_lexeme_pos    = $_[2] ? $_[0]->pos : 0;
@@ -284,7 +275,7 @@ sub lexeme_read {
     #
     # Do the lexeme_read in any case
     #
-    $pos = $_[0]->_r->lexeme_read($_[1], $_lexeme_pos, $_lexeme_length, $_[3]) || croak sprintf('lexeme_read failure for symbol %s at position %s, length %s', $_[1], $_lexeme_pos, $_lexeme_length);
+    $pos = $MarpaX::Java::ClassFile::Role::Parser::R->lexeme_read($_[1], $_lexeme_pos, $_lexeme_length, $_[3]) || croak sprintf('lexeme_read failure for symbol %s at position %s, length %s', $_[1], $_lexeme_pos, $_lexeme_length);
     #
     # And commit its return position unless length is 0
     # It is illegal to do a lexeme_read with a length <= 0, so it is guaranteed here
@@ -398,10 +389,6 @@ sub literal {
   $_[0]->_literal($_[1])
 }
 
-sub toU1ArrayRef {
-  [ map { $_[0]->u1($_) } split('', $_[1] // '') ]
-}
-
 sub getAndCheckCpInfo {
   # my ($self, $index, $baseBlessed, $valueMethod) = @_;
 
@@ -424,7 +411,7 @@ sub activate {
   # my ($self, $eventName, $status) = @_;
 
   $_[0]->tracef('activate(\'%s\', %s)', $_[1], $_[2]);
-  $_[0]->_r->activate($_[1], $_[2])
+  $MarpaX::Java::ClassFile::Role::Parser::R->activate($_[1], $_[2])
 }
 
 #
@@ -475,7 +462,7 @@ sub debugf {
   my ($self, $format, @arguments) = @_;
 
   return unless $MarpaX::Java::ClassFile::Role::Parser::IS_DEBUG;
-  $self->_dolog('debugf', $format, @arguments);
+  $self->_dolog('debugf', $format, @arguments)
 }
 
 sub infof {
@@ -489,21 +476,21 @@ sub errorf {
   my ($self, $format, @arguments) = @_;
 
   return unless $MarpaX::Java::ClassFile::Role::Parser::IS_ERROR;
-  $self->_dolog('errorf', $format, @arguments);
+  $self->_dolog('errorf', $format, @arguments)
 }
 
 sub warnf {
   my ($self, $format, @arguments) = @_;
 
   return unless $MarpaX::Java::ClassFile::Role::Parser::IS_WARN;
-  $self->_dolog('warnf', $format, @arguments);
+  $self->_dolog('warnf', $format, @arguments)
 }
 
 sub tracef {
   my ($self, $format, @arguments) = @_;
 
   return unless $MarpaX::Java::ClassFile::Role::Parser::IS_TRACE;
-  $self->_dolog('tracef', $format, @arguments);
+  $self->_dolog('tracef', $format, @arguments)
 }
 
 sub fatalf {
@@ -519,7 +506,7 @@ sub _croak {
   #
   # Should never happen that $self->_r is not set at this stage but who knows
   #
-  $msg .= "\nContext:\n" . $self->_r->show_progress if $self->_has_r;
+  $msg .= "\nContext:\n" . $MarpaX::Java::ClassFile::Role::Parser::R->show_progress if $MarpaX::Java::ClassFile::Role::Parser::R;
   croak($msg)
 }
 
@@ -567,7 +554,7 @@ sub BEGIN {
       $recce->[Marpa::R2::Internal::Recognizer::CLOSURE_BY_RULE_ID] = $hash->{CLOSURE_BY_RULE_ID};
       $recce->[Marpa::R2::Internal::Recognizer::RESOLVE_PACKAGE] = $hash->{RESOLVE_PACKAGE};
       $recce->[Marpa::R2::Internal::Recognizer::RESOLVE_PACKAGE_SOURCE] = $hash->{RESOLVE_PACKAGE_SOURCE};
-      $recce->[Marpa::R2::Internal::Recognizer::PER_PARSE_CONSTRUCTOR] = $hash->{PER_PARSE_CONSTRUCTOR};
+      $recce->[Marpa::R2::Internal::Recognizer::PER_PARSE_CONSTRUCTOR] = $hash->{PER_PARSE_CONSTRUCTOR}
     }
     return {
             NULL_VALUES => $recce->[Marpa::R2::Internal::Recognizer::NULL_VALUES],
@@ -577,14 +564,13 @@ sub BEGIN {
             RESOLVE_PACKAGE => $recce->[Marpa::R2::Internal::Recognizer::RESOLVE_PACKAGE],
             RESOLVE_PACKAGE_SOURCE => $recce->[Marpa::R2::Internal::Recognizer::RESOLVE_PACKAGE_SOURCE],
             PER_PARSE_CONSTRUCTOR => $recce->[Marpa::R2::Internal::Recognizer::PER_PARSE_CONSTRUCTOR]
-           };
+           }
   }
 
   sub Marpa::R2::Scanless::R::registrations {
     my $slr = shift;
-    my $thick_g1_recce =
-      $slr->[Marpa::R2::Internal::Scanless::R::THICK_G1_RECCE];
-    return $thick_g1_recce->registrations(@_);
+    my $thick_g1_recce = $slr->[Marpa::R2::Internal::Scanless::R::THICK_G1_RECCE];
+    $thick_g1_recce->registrations(@_)
   }
 }
 
