@@ -31,18 +31,29 @@ MarpaX::Java::ClassFile::Role::Parser is the parse engine role used by L<MarpaX:
 
 =cut
 
-has inputRef      => (is => 'ro',  isa => ScalarRef[Bytes],  required => 1);
-has parent        => ( is => 'ro', isa => Undef|ConsumerOf['MarpaX::Java::ClassFile::Role::Parser']);
-has constant_pool => (is => 'ro',  isa => ArrayRef[CpInfo],  default => sub { [] } );
-has max           => (is => 'rwp', isa => PositiveOrZeroInt, lazy => 1, builder => 1);
-has pos           => (is => 'rwp', isa => PositiveOrZeroInt, default => sub { 0 });
-has whoami        => (is => 'ro',  isa => Str,               lazy => 1, builder => 1);
-has ast           => (is => 'ro',  isa => Any,               lazy => 1, builder => 1);
-has exhaustion    => (is => 'ro',  isa => Str,               default => sub { 'fatal' });
-has _r            => (is => 'rw',  isa => InstanceOf['Marpa::R2::Scanless::R'], lazy => 1, builder => 1, predicate => 1, clearer => 1);
+#
+# Required parameters
+#
+has inputRef       => ( is => 'ro',  isa => ScalarRef[Bytes],                                          required => 1);
+#
+# Parameters with a default
+#
+has marpaRecceHook => ( is => 'ro',  isa => Bool,                                                      default => sub { 1 });
+has constant_pool  => ( is => 'ro',  isa => ArrayRef[CpInfo],                                          default => sub { [] } );
+has pos            => ( is => 'rwp', isa => PositiveOrZeroInt,                                         default => sub { 0 });
+has exhaustion     => ( is => 'ro',  isa => Str,                                                       default => sub { 'fatal' });
+has parent         => ( is => 'ro',  isa => Undef|ConsumerOf['MarpaX::Java::ClassFile::Role::Parser'], default => sub { return });
+#
+# Lazy parameters
+#
+has max            => ( is => 'rwp', isa => PositiveOrZeroInt,                                         lazy => 1, builder => 1);
+has whoami         => ( is => 'ro',  isa => Str,                                                       lazy => 1, builder => 1);
+has ast            => ( is => 'ro',  isa => Any,                                                       lazy => 1, builder => 1);
+has _r             => ( is => 'ro',  isa => InstanceOf['Marpa::R2::Scanless::R'],                      lazy => 1, builder => 1, predicate => 1, clearer => 1);
 
 my $MARPA_TRACE_FILE_HANDLE;
 my $MARPA_TRACE_BUFFER;
+my %_registrations = ();
 
 sub BEGIN {
     #
@@ -167,7 +178,19 @@ sub _value {
 
   $_[0]->tracef('value($_[0])');
   local $MarpaX::Java::ClassFile::Role::Parser::VALUE_CONTEXT = 1;
+  #
+  # Registration hook ?
+  #
+  if ($_[0]->marpaRecceHook) {
+    $_[0]->_r->registrations($_registrations{ref($_[0])}) if (defined($_registrations{ref($_[0])}));
+  }
   my $valueRef = eval { $_[0]->_r->value($_[0]) };
+  #
+  # Register hooks if not already the case
+  #
+  if ($_[0]->marpaRecceHook) {
+    $_registrations{ref($_[0])} = $_[0]->_r->registrations unless (defined($_registrations{ref($_[0])}));
+  }
   $_[0]->_croak($@) if ($@);
   $_[0]->_croak('Value reference is undefined') if (! defined($valueRef));
 
@@ -430,6 +453,8 @@ sub inner {
 sub _dolog {
   my ($self, $method, $format, @arguments) = @_;
 
+  print STDERR "... $method $format\n";
+
   #
   # If we are in an action, we do nothing else
   # but propage the message to the log handler
@@ -504,5 +529,66 @@ with qw/MooX::Role::Logger MarpaX::Java::ClassFile::Role::Parser::Actions/;
 
 requires 'callbacks';
 requires 'grammar';
+
+#
+# Marpa Hooks
+#
+sub BEGIN {
+  #
+  # Marpa internal optimisation: we do not want the closures to be rechecked every time
+  # we call $r->value(). This is a static information, although determined at run-time
+  # the first time $r->value() is called on a recognizer.
+  #
+  no warnings 'redefine';
+
+  sub Marpa::R2::Recognizer::registrations {
+    my $recce = shift;
+    if (@_) {
+      my $hash = shift;
+      if (! defined($hash) ||
+          ref($hash) ne 'HASH' ||
+          grep {! exists($hash->{$_})} qw/
+                                           NULL_VALUES
+                                           REGISTRATIONS
+                                           CLOSURE_BY_SYMBOL_ID
+                                           CLOSURE_BY_RULE_ID
+                                           RESOLVE_PACKAGE
+                                           RESOLVE_PACKAGE_SOURCE
+                                           PER_PARSE_CONSTRUCTOR
+                                         /) {
+        Marpa::R2::exception(
+                             "Attempt to reuse registrations failed:\n",
+                             "  Registration data is not a hash containing all necessary keys:\n",
+                             "  Got : " . ((ref($hash) eq 'HASH') ? join(', ', sort keys %{$hash}) : '') . "\n",
+                             "  Want: CLOSURE_BY_RULE_ID, CLOSURE_BY_SYMBOL_ID, NULL_VALUES, PER_PARSE_CONSTRUCTOR, REGISTRATIONS, RESOLVE_PACKAGE, RESOLVE_PACKAGE_SOURCE\n"
+                            );
+      }
+      $recce->[Marpa::R2::Internal::Recognizer::NULL_VALUES] = $hash->{NULL_VALUES};
+      $recce->[Marpa::R2::Internal::Recognizer::REGISTRATIONS] = $hash->{REGISTRATIONS};
+      $recce->[Marpa::R2::Internal::Recognizer::CLOSURE_BY_SYMBOL_ID] = $hash->{CLOSURE_BY_SYMBOL_ID};
+      $recce->[Marpa::R2::Internal::Recognizer::CLOSURE_BY_RULE_ID] = $hash->{CLOSURE_BY_RULE_ID};
+      $recce->[Marpa::R2::Internal::Recognizer::RESOLVE_PACKAGE] = $hash->{RESOLVE_PACKAGE};
+      $recce->[Marpa::R2::Internal::Recognizer::RESOLVE_PACKAGE_SOURCE] = $hash->{RESOLVE_PACKAGE_SOURCE};
+      $recce->[Marpa::R2::Internal::Recognizer::PER_PARSE_CONSTRUCTOR] = $hash->{PER_PARSE_CONSTRUCTOR};
+    }
+    return {
+            NULL_VALUES => $recce->[Marpa::R2::Internal::Recognizer::NULL_VALUES],
+            REGISTRATIONS => $recce->[Marpa::R2::Internal::Recognizer::REGISTRATIONS],
+            CLOSURE_BY_SYMBOL_ID => $recce->[Marpa::R2::Internal::Recognizer::CLOSURE_BY_SYMBOL_ID],
+            CLOSURE_BY_RULE_ID => $recce->[Marpa::R2::Internal::Recognizer::CLOSURE_BY_RULE_ID],
+            RESOLVE_PACKAGE => $recce->[Marpa::R2::Internal::Recognizer::RESOLVE_PACKAGE],
+            RESOLVE_PACKAGE_SOURCE => $recce->[Marpa::R2::Internal::Recognizer::RESOLVE_PACKAGE_SOURCE],
+            PER_PARSE_CONSTRUCTOR => $recce->[Marpa::R2::Internal::Recognizer::PER_PARSE_CONSTRUCTOR]
+           };
+  }
+
+  sub Marpa::R2::Scanless::R::registrations {
+    my $slr = shift;
+    my $thick_g1_recce =
+      $slr->[Marpa::R2::Internal::Scanless::R::THICK_G1_RECCE];
+    return $thick_g1_recce->registrations(@_);
+  }
+}
+
 
 1;
