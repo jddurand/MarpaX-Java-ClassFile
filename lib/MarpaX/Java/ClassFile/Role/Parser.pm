@@ -451,9 +451,6 @@ sub inner {
 #
 sub _dolog {
   my ($self, $method, $format, @arguments) = @_;
-
-  print STDERR "... $method $format\n";
-
   #
   # If we are in an action, we do nothing else
   # but propage the message to the log handler
