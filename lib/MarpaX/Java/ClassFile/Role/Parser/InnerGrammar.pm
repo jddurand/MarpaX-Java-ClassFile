@@ -20,12 +20,7 @@ use MarpaX::Java::ClassFile::Util::ProductionMode qw/prod_isa/;
 # < 0 unknown (then caller should set max)
 # > 0 fixed
 #
-has size          => ( is => 'ro',  prod_isa(Int),               default => sub {  0 } );
-has nbDone        => ( is => 'rwp', prod_isa(PositiveOrZeroInt), default => sub {  0 } );
-
-sub inc_nbDone {
-  $_[0]->_set_nbDone($_[0]->nbDone + 1)
-}
+has size  => ( is => 'ro',  prod_isa(Int), default => sub {  0 } );
 
 with qw/MarpaX::Java::ClassFile::Role::Parser/;
 
@@ -34,9 +29,13 @@ with qw/MarpaX::Java::ClassFile::Role::Parser/;
 # ------------------
 has '+ast'        => ( is => 'ro',  prod_isa(ArrayRef), lazy => 1, builder => 1);
 
+sub nbDone { $MarpaX::Java::ClassFile::Role::Parser::InnerGrammar::nbDone }
+sub inc_nbDone { $MarpaX::Java::ClassFile::Role::Parser::InnerGrammar::nbDone++ }
+
 around ast => sub {
   my ($orig, $self) = @_;
 
+  local $MarpaX::Java::ClassFile::Role::Parser::InnerGrammar::nbDone = 0;
   (($self->size > 0) || (($self->size < 0) && ($self->max > $self->pos))) ? $self->$orig : []
 };
 
@@ -44,7 +43,7 @@ around manageEvents => sub {
   my ($orig, $self) = @_;
 
   $self->$orig;
-  $self->_set_max($self->pos) if (($self->size > 0) && ($self->nbDone >= $self->size))
+  $self->_set_max($self->pos) if (($self->size > 0) && ($MarpaX::Java::ClassFile::Role::Parser::InnerGrammar::nbDone >= $self->size))
 };
 
 around whoami => sub {
@@ -52,16 +51,10 @@ around whoami => sub {
 
   my $whoami = $self->$orig(@args);
   my $size   = $self->size;
-  my $i      = $self->nbDone;
+  my $i      = $MarpaX::Java::ClassFile::Role::Parser::InnerGrammar::nbDone;
 
   ++$i if ($i < $size);
   "${whoami}[${i}/${size}]"
-};
-
-before _set_nbDone => sub {
-  my ($self) = @_;
-
-  $self->tracef('Entry %d/%d done', $self->nbDone + 1, $self->size)
 };
 
 1;
