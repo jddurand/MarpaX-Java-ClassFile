@@ -396,12 +396,13 @@ sub getAndCheckCpInfo {
 
   if ($_[2]) {
     my $blessed = blessed($rc) // '';
-    $_[0]->fatalf('Invalid index %d', $_[1]) unless ($blessed eq "MarpaX::Java::ClassFile::Struct::$_[2]");
+    my $wantedBlessed = "MarpaX::Java::ClassFile::Struct::$_[2]";
+    $_[0]->fatalf('Invalid index %d', $_[1]) unless ($blessed eq $wantedBlessed)
   }
   if ($_[3]) {
     my $valueMethod = $_[3];
     $rc = $rc->$valueMethod;
-    $_[0]->fatalf('%s returned undef in constant pool No %d', $valueMethod, $_[1]) unless (defined($rc));
+    $_[0]->fatalf('%s returned undef in constant pool No %d', $valueMethod, $_[1]) unless (defined($rc))
   }
 
   $rc

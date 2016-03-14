@@ -2,7 +2,7 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::FormalParameterTarget;
-use Moo;
+use MarpaX::Java::ClassFile::Struct::_Base;
 
 # ABSTRACT: formal_parameter_target
 
@@ -12,6 +12,6 @@ use Moo;
 
 use MarpaX::Java::ClassFile::Struct::_Types qw/U1/;
 
-has formal_parameter_index  => ( is => 'ro', isa => U1 );
+has formal_parameter_index  => ( is => 'ro', required => 1, isa => U1 );
 
 1;

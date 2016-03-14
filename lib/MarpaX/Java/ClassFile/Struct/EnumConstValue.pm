@@ -2,7 +2,7 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::EnumConstValue;
-use Moo;
+use MarpaX::Java::ClassFile::Struct::_Base;
 
 # ABSTRACT: enum constant value
 

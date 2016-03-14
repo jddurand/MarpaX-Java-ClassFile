@@ -2,7 +2,7 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ThrowsTarget;
-use Moo;
+use MarpaX::Java::ClassFile::Struct::_Base;
 
 # ABSTRACT: throws_target
 
@@ -12,6 +12,6 @@ use Moo;
 
 use MarpaX::Java::ClassFile::Struct::_Types qw/U2/;
 
-has throws_type_index  => ( is => 'ro', isa => U2 );
+has throws_type_index  => ( is => 'ro', required => 1, isa => U2 );
 
 1;

@@ -2,7 +2,7 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ConstantLongInfo;
-use Moo;
+use MarpaX::Java::ClassFile::Struct::_Base;
 
 # ABSTRACT: CONSTANT_Long_info
 

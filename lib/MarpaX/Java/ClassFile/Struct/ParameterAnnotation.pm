@@ -2,7 +2,7 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ParameterAnnotation;
-use Moo;
+use MarpaX::Java::ClassFile::Struct::_Base;
 
 # ABSTRACT: parameter annotation
 
@@ -13,7 +13,7 @@ use Moo;
 use MarpaX::Java::ClassFile::Struct::_Types qw/U2 Annotation/;
 use Types::Standard qw/ArrayRef/;
 
-has num_annotations => ( is => 'ro', isa => U2 );
-has annotations     => ( is => 'ro', isa => ArrayRef[Annotation] );
+has num_annotations => ( is => 'ro', required => 1, isa => U2 );
+has annotations     => ( is => 'ro', required => 1, isa => ArrayRef[Annotation] );
 
 1;

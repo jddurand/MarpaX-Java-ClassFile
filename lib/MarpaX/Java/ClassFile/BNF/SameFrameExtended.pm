@@ -13,6 +13,7 @@ use Moo;
 use Data::Section -setup;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
 use MarpaX::Java::ClassFile::Struct::_Types qw/U1/;
+use MarpaX::Java::ClassFile::Util::ProductionMode qw/prod_isa/;
 #
 # require because we do not import ANYTHING from these module, just require they are loaded
 #
@@ -22,7 +23,7 @@ require MarpaX::Java::ClassFile::Struct::SameFrameExtended;
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
 my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_data) } );
 
-has preloaded_frame_type => (is => 'ro', required => 1, isa => U1);
+has preloaded_frame_type => (is => 'ro', required => 1, prod_isa(U1));
 
 # --------------------------------------------------------
 # What role MarpaX::Java::ClassFile::Role::Parser requires

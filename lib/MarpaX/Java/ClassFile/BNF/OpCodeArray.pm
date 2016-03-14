@@ -12,6 +12,7 @@ use Moo;
 
 use Data::Section -setup;
 use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
+use MarpaX::Java::ClassFile::Util::ProductionMode qw/prod_isa/;
 #
 # require because we do not import ANYTHING from these module, just require they are loaded
 #
@@ -22,7 +23,7 @@ use Types::Common::Numeric qw/PositiveOrZeroInt/;
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
 my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_data) } );
 
-has _originPos => (is => 'rwp', isa => PositiveOrZeroInt);
+has _originPos => (is => 'rwp', prod_isa(PositiveOrZeroInt));
 
 sub BUILD {
   #

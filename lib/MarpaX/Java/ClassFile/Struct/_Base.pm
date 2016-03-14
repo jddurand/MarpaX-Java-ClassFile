@@ -6,90 +6,106 @@ use warnings FATAL => 'all';
 # In development/author phases it is ok to do type checkings,
 # but in production mode, this is too expensive, so we go
 # back to the old style. In addition, I want objects to
-# "look like" a C structure.
+# "look like" a C structure and ALWAYS READ-ONLY.
+#
 # This module, when running in production mode, creates
-# an object that, when inpsected via dumper modules, will
-# truely look like an array.
-# This CANNOT be generalized: we use a trick specific to
-# our implementation: SCALAR references never exist in input to new().
-# we fake a SCALAR reference when needed, just to have
-# something pretty in dumper modules.
+# an object that, when inspected via dumper modules, will
+# truely look like an array with read-only accessors.
+#
+# We se a trick specific to our implementation: SCALAR references
+# never exist in input to new(). We fake a SCALAR reference when needed,
+# just to have something pretty in dumper modules.
 #
 
 package MarpaX::Java::ClassFile::Struct::_Base;
 use Carp qw/croak/;
-use if   $ENV{AUTHOR_TESTING}, 'Moo';
-use Scalar::Util qw//;
-use namespace::sweep;
+use Import::Into;
+use Class::Method::Modifiers qw/install_modifier/;
+use Scalar::Util qw/reftype blessed/;
+require Moo;
 
-my $_CONSTRUCTOR_HEADER = <<'CONSTRUCTOR_HEADER';
-my ($class, %input) = @_;
-bless([
-CONSTRUCTOR_HEADER
+my %_HAS_TRACKED = ();
+my @_GETTER = ();
 
-my $_CONSTRUCTOR_TRAILER = <<'CONSTRUCTOR_TRAILER';
-], $class)
-CONSTRUCTOR_TRAILER
+sub import {
+  my $target = caller;
 
-sub make_me {
-  my ($class, @has) = @_;
-  #
-  # We want keys to be in the same order as the input to this
-  # routine, this is why we unpacked @_ to @has and not %has
-  #
-  # Get the hash
-  #
-  my %has = @has;
-  #
-  # Get ordered keys
-  #
-  my @keys = ();
-  while (@has) {
-    push(@keys, shift(@has));
-    shift(@has);
-  }
   if ($ENV{AUTHOR_TESTING}) {
     #
-    # In author testing mode, we use the model below OO implementation.
-    # Always as hash AFAIK. Values of %has must be references to a hash.
+    # Import Moo into caller
     #
-    map { has($_, %{$has{$_}}) } @keys
+    Moo->import::into($target)
   } else {
-    no strict 'refs';
     #
-    # In prod mode, we use the fastest mode I know:
-    # array style (good because this is how we expect structure members
-    # to appear) and no type checking. You can think to Class::Accessor::Faster
-    # though this is not exactly the same here -;
+    # Our version of 'has'. We support only that.
     #
-    # -----------
-    # Constructor
-    # -----------
-    my @CONSTRUCTOR = ($_CONSTRUCTOR_HEADER,
-                       #
-                       # See: EVERYTHING is blessed:
-                       # - references are kepts as is
-                       # - Scalars are blessed their key name
-                       # We know by construction that we hever have references to SCALAR in input
-                       # this is why it is ok.
-                       #
-                       join(",\n", map { "  do {
-                                                 my \$value = \$input{$keys[$_]};
-                                                 ref(\$value) ? \$value : bless(\\\$value, '$keys[$_]')
-                                               }" } (0..$#keys)),
-                       $_CONSTRUCTOR_TRAILER);
-    my $CONSTRUCTOR = join("\n", @CONSTRUCTOR);
-    *{"${class}::new"} = eval "sub { $CONSTRUCTOR }" || croak $@;
+    install_modifier($target, 'fresh', has => sub { _has($target, @_) } );
     #
-    # -------
-    # Getters
-    # ---------
+    # And our version of 'new'.
     #
-    # If the value is a reference to a scalar, this is mean that in input it was an unblessed scalar
-    #
-    map { *{"${class}::$keys[$_]"} = eval "sub { my \$value = \$_[0]->[$_]; (Scalar::Util::reftype(\$value) ne 'SCALAR') ? \$value : \${\$value} }" || croak $@ } (0..$#keys);
+    install_modifier($target, 'fresh', new => sub { _new($target, @_) } )
   }
+}
 
+sub _has {
+  my $target = shift;
+  my $name = shift;
+  my @proto = ((reftype($name) //'') eq 'ARRAY') ? @{$name} : $name;
+  #
+  # No check, will carp naturally if this does not expand to a hash
+  #
+  my %spec = @_;
+  #
+  # Keep track of members as the 'has' appears
+  #
+  my $has_tracked = $_HAS_TRACKED{$target} //= {};
+  foreach my $proto (@proto) {
+    next if (exists($has_tracked->{$proto}));
+    #
+    # Member not yet registered
+    #
+    my $proto_indice = scalar(keys %{$has_tracked});
+    $has_tracked->{$proto} = $proto_indice;
+    #
+    # We do NO CHECK whatever on 'is', 'isa', etc...
+    # Everything is assumed to be a readonly thing initalized at new() time.
+    # There is NO mutator, write-accessor, nor type checking - full point.
+    #
+    # Oh, our new() ensures everything is a reference, so reftype() always return a non-null value.
+    #
+    $_GETTER[$proto_indice] //= eval "sub { my \$value = \$_[0]->[$proto_indice]; (Scalar::Util::reftype(\$value) eq 'SCALAR') ? \${\$value} : \$value }" || croak $@;
+    install_modifier($target, 'fresh', $proto => $_GETTER[$proto_indice])
+  }
+}
+
+sub _new {
+  my ($target, $class, %args) = @_;
+
+  my $has_tracked = $_HAS_TRACKED{$target};
+  my @array = ();
+  foreach my $proto (keys %{$has_tracked}) {
+    my $value = $args{$proto};
+    my $indice = $has_tracked->{$proto};
+    #
+    # NO type checking nor safety checking
+    #
+    if (blessed($value)) {
+      $array[$indice] = $args{$proto}
+    } else {
+      #
+      # scalars are explicitely stored as a reference (i.e. ref() will return 'SCALAR'
+      #
+      if (ref($value)) {
+        $array[$indice] = bless($value, $proto)
+      } else {
+        $array[$indice] = bless(\$value, $proto)
+      }
+    }
+  }
+  #
+  # In conclusion...: reftype() will never return a null value
+  #
+  bless(\@array, $class)
 }
 
 1;

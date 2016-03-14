@@ -14,6 +14,7 @@ use Data::Section -setup;
 use MarpaX::Java::ClassFile::Util::BNF qw/bnf/;
 use Types::Standard qw/ArrayRef Str/;
 use MarpaX::Java::ClassFile::Struct::_Types qw/CpInfo/;
+use MarpaX::Java::ClassFile::Util::ProductionMode qw/prod_isa/;
 #
 # require because we do not import ANYTHING from these module, just require they are loaded
 #
@@ -98,11 +99,11 @@ with 'MarpaX::Java::ClassFile::Role::Parser';
 #
 # We want to say that exhaustion is definitely fatal
 #
-has '+exhaustion' => (is => 'ro',  isa => Str, default => sub { 'fatal' });
+has '+exhaustion' => (is => 'ro',  prod_isa(Str), default => sub { 'fatal' });
 #
 # We want to take control over constant_pool in this class (and only here btw)
 #
-has '+constant_pool' => ( is => 'rw', isa => ArrayRef[CpInfo], default => sub { [] });
+has '+constant_pool' => ( is => 'rw', prod_isa(ArrayRef[CpInfo]), default => sub { [] });
 
 1;
 
