@@ -208,7 +208,7 @@ option constants => (
                      }
                     );
 
-=head2 Bool with_ansicolor
+=head2 Bool withcolor
 
 Use ANSI colors. Default is a false value if $ENV{ANSI_COLORS_DISABLED} exists, else a true value if $ENV{ANSI_COLORS_ENABLED} exists, else a false value if L<Win32::Console::ANSI> cannot be loaded and you are on Windows, else a true value.
 
@@ -222,6 +222,19 @@ option withcolor => (
                      negativable => 1,
                      doc => 'ANSI colorized output. Default is a ' . ($_canColor ? 'true' : 'false') . ' value. Option is ngativable with --no-.',
                      default => sub { return $_canColor });
+
+=head2 Bool withdefcolor
+
+Definition of ANSI colors.
+
+=cut
+
+my $_DEFCOLOR='{"a":1,"b":2}';
+option withdefcolor => (
+                        is => 'ro',
+                        json => 1,
+                        doc => "ANSI color definition. Form is a JSON string. Default is $_DEFCOLOR.",
+                        default => sub { return {} });
 
 sub dsstart {
   my ($self) = @_;
