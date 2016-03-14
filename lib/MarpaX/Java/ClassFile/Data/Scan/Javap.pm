@@ -67,22 +67,6 @@ has handle => (
                }
               );
 
-=head2 Str indent
-
-Indentation. Default is '  '.
-
-=cut
-
-option indent => (
-                  is => 'ro',
-                  isa => Str,
-                  doc => 'Indentation. Default is "  ".',
-                  format => 's',
-                  default => sub {
-                    return '  '
-                  }
-                 );
-
 =head2 Bool verbose
 
 Verbose mode. Default is a false value.
@@ -208,6 +192,22 @@ option constants => (
                      }
                     );
 
+=head2 Str withindent
+
+Indentation. Default is '  '.
+
+=cut
+
+option withindent => (
+                      is => 'ro',
+                      isa => Str,
+                      doc => 'Indentation. Default is "  ".',
+                      format => 's',
+                      default => sub {
+                        return '  '
+                      }
+                 );
+
 =head2 Bool withcolor
 
 Use ANSI colors. Default is a false value if $ENV{ANSI_COLORS_DISABLED} exists, else a true value if $ENV{ANSI_COLORS_ENABLED} exists, else a false value if L<Win32::Console::ANSI> cannot be loaded and you are on Windows, else a true value.
@@ -220,7 +220,7 @@ option withcolor => (
                      is => 'ro',
                      isa => Bool,
                      negativable => 1,
-                     doc => 'ANSI colorized output. Default is a ' . ($_canColor ? 'true' : 'false') . ' value. Option is ngativable with --no-.',
+                     doc => 'ANSI colorized output. Option is ngativable with --nowithcolor. Default is a ' . ($_canColor ? 'true' : 'false') . ' value.',
                      default => sub { return $_canColor });
 
 =head2 Bool withdefcolor
