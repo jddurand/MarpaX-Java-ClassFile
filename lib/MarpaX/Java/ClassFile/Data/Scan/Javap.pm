@@ -4,6 +4,17 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Data::Scan::Javap;
 use Moo;
 use MooX::Options;
+use Perl::OSType qw/is_os_type/;
+my $_HAVE_Win32__Console__ANSI;
+BEGIN {
+  #
+  # Will/Should success only on Win32
+  #
+  $_HAVE_Win32__Console__ANSI = eval 'use Win32::Console::ANSI; 1;' ## no critic qw/BuiltinFunctions::ProhibitStringyEval/
+}
+use Term::ANSIColor;
+use Types::Standard -all;
+use Types::Common::Numeric -all;
 
 # ABSTRACT: Data::Scan javap implementation
 
@@ -30,7 +41,11 @@ MarpaX::Java::ClassFile::Data::Scan::Javap is an implementation of the L<Data::S
 
 =cut
 
-use Types::Standard -all;
+#
+# Internal variables
+#
+has _currentLevel => (is => 'rwp', isa => PositiveOrZeroInt);
+
 
 =head1 CONSTRUCTOR OPTIONS
 
@@ -193,11 +208,48 @@ option constants => (
                      }
                     );
 
-sub dsstart {}
+=head2 Bool with_ansicolor
+
+Use ANSI colors. Default is a false value if $ENV{ANSI_COLORS_DISABLED} exists, else a true value if $ENV{ANSI_COLORS_ENABLED} exists, else a false value if L<Win32::Console::ANSI> cannot be loaded and you are on Windows, else a true value.
+
+=cut
+
+my $_canColor = __PACKAGE__->_canColor;
+
+option withcolor => (
+                     is => 'ro',
+                     isa => Bool,
+                     negativable => 1,
+                     doc => 'ANSI colorized output. Default is a ' . ($_canColor ? 'true' : 'false') . ' value. Option is ngativable with --no-.',
+                     default => sub { return $_canColor });
+
+sub dsstart {
+  my ($self) = @_;
+
+  $self->_set__currentLevel(0);
+}
+
 sub dsopen {}
 sub dsread {}
 sub dsclose {}
 sub dsend {}
+
+sub _canColor {
+  my ($class) = @_;
+  #
+  # Mimic Data::Printer use of $ENV{ANSI_COLORS_DISABLED}
+  #
+  return 0 if exists($ENV{ANSI_COLORS_DISABLED});
+  #
+  # Add the support of ANSI_COLORS_ENABLED
+  #
+  return 1 if exists($ENV{ANSI_COLORS_ENABLED});
+  #
+  # that has precedence on the Windows check, returning 0 if we did not load Win32::Console::ANSI
+  #
+  return 0 if (is_os_type('Windows') && ! $_HAVE_Win32__Console__ANSI);
+  return 1
+}
 
 with 'Data::Scan::Role::Consumer';
 
