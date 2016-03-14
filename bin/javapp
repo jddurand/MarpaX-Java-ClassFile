@@ -1,8 +1,8 @@
 #!perl
 use strict;
 use warnings FATAL => 'all';
+use MarpaX::Java::ClassFile::Data::Scan::Javap;
 use MarpaX::Java::ClassFile;
-use Data::Scan::Printer;
 use POSIX qw/EXIT_SUCCESS EXIT_FAILURE/;
 use Log::Log4perl qw/:easy/;
 use Log::Any::Adapter;
@@ -28,17 +28,20 @@ Log::Any::Adapter->set('Log4perl');
 
 # AUTHORITY
 
+my $consumer = MarpaX::Java::ClassFile::Data::Scan::Javap->new_with_options();
+
 my $file = shift || '';
 if (! $file) {
   print STDERR "Usage: $0 classFile\n";
   exit(EXIT_FAILURE);
 }
-# use Data::Dumper::GUI;
-dspp
-# print Dumper
-  (
-MarpaX::Java::ClassFile->parse($file)
-)
-;
+
+my $ast = MarpaX::Java::ClassFile->parse($file);
+Data::Scan->new(consumer => $consumer)->process($ast);
+
+# print STDERR "CONSTANT_POOL_COUNT: " . $ast->constant_pool_count . "\n";
+# use Data::Dumper::GUI; Dumper($ast);
+# use Data::Dumper; print Dumper($ast);
+# use Data::Scan::Printer; dspp($ast);
 
 exit(EXIT_SUCCESS);
