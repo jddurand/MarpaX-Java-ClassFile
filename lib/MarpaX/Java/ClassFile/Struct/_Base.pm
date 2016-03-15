@@ -18,6 +18,13 @@ use warnings FATAL => 'all';
 #
 
 package MarpaX::Java::ClassFile::Struct::_Base;
+
+# ABSTRACT: Base class for all structure - optimized to a very basic array-based object in production mode
+
+# VERSION
+
+# AUTHORITY
+
 use Carp qw/croak/;
 use Import::Into;
 use Class::Method::Modifiers qw/install_modifier/;

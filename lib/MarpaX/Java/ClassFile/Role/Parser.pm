@@ -513,6 +513,7 @@ sub BEGIN {
   # the first time $r->value() is called on a recognizer.
   #
   no warnings 'redefine';
+  no strict 'subs';
 
   sub Marpa::R2::Recognizer::registrations {
     my $recce = shift;
