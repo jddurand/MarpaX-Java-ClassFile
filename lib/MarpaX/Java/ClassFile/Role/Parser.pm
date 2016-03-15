@@ -35,6 +35,7 @@ MarpaX::Java::ClassFile::Role::Parser is the parse engine role used by L<MarpaX:
 # Required parameters
 #
 has inputRef       => ( is => 'ro',  prod_isa(ScalarRef[Bytes]),                                          required => 1);
+has check          => ( is => 'ro',  prod_isa(Bool),                                                      required => 1);
 #
 # Parameters with a default
 #
@@ -134,7 +135,9 @@ sub _build_ast {
 
   $_[0]->_read;
   while ($_[0]->pos < $_[0]->max) { $_[0]->_resume }
-  $_[0]->_value
+  my $ast = $_[0]->_value;
+  $_[0]->checker($ast) if ($_[0]->check);
+  $ast
 }
 
 sub exhausted {
@@ -410,6 +413,7 @@ sub _inner {
                                constant_pool_count => $_[0]->constant_pool_count,
                                constant_pool       => $_[0]->constant_pool,
                                inputRef            => $_[0]->inputRef,
+                               check               => $_[0]->check,
                                pos                 => $_[0]->pos,
                                @_[3..$#_]);
   my $innerGrammarValue = $inner->ast;
@@ -493,6 +497,11 @@ sub _croak {
   $msg .= "\nContext:\n" . $MarpaX::Java::ClassFile::Role::Parser::R->show_progress if $MarpaX::Java::ClassFile::Role::Parser::R;
   croak($msg)
 }
+
+#
+# Default checker is empty - up to every consumer to override it
+#
+sub checker { }
 
 with qw/MooX::Role::Logger MarpaX::Java::ClassFile::Role::Parser::Actions/;
 

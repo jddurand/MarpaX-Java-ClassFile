@@ -41,9 +41,11 @@ sub callbacks {
           # Implicitely from the spec, indices in constant pool start at 1:
           # - The final action on Constant pool will insert a fake undef entry at position 0
           #
+          # Constant pool check is delayed
+          #
           'constant_pool_count$' => sub {
             $_[0]->constant_pool_count($_[0]->literalU2('constant_pool_count'));
-            $_[0]->constant_pool($_[0]->inner('ConstantPoolArray', size => $_[0]->constant_pool_count - 1))
+            $_[0]->constant_pool($_[0]->inner('ConstantPoolArray', size => $_[0]->constant_pool_count - 1, check => 0))
           },
           'interfaces_count$'    => sub { $_[0]->inner('InterfacesArray', size => $_[0]->literalU2('interfaces_count')) },
           'fields_count$'        => sub { $_[0]->inner('FieldsArray',     size => $_[0]->literalU2('fields_count')) },
@@ -105,6 +107,40 @@ has '+exhaustion' => (is => 'ro',  prod_isa(Str), default => sub { 'fatal' });
 #
 has '+constant_pool_count' => ( is => 'rw', prod_isa(PositiveOrZeroInt), default => sub {  0 });
 has '+constant_pool'       => ( is => 'rw', prod_isa(ArrayRef[CpInfo]),  default => sub { [] });
+#
+# Method override
+#
+sub checker {
+  # my ($self, $struct) = @_;
+  #
+  # The first four bytes must contain the right magic number
+  # --------------------------------------------------------
+  $_[0]->fatalf('The first four bytes must be 0xCAFEBABE, got 0x%8x', $_[1]->magic) unless ($_[1]->magic == 0xCAFEBABE);
+  #
+  # All recognized attributes must be of the proper length
+  # ------------------------------------------------------
+  # This is delegated to attributes BNF
+  #
+  # The constant pool must satisfy the constraints documented throughout (section name)
+  # -----------------------------------------------------------------------------------
+  # - Each item in the constant_pool table must begin with a 1-byte tag indicating the kind of cp_info entry.
+  #   The ConstantPoolArray BNF is designed to croak if the 1-byte tag is not valid
+  #
+  # - Each tag byte must be followed by two or more bytes giving information about the specific constant. The format of the additional information varies with the tag value.
+  #   The grammar natively croaks in the specific content cannot be parsed
+  #
+  # - CONSTANT_Class_info
+  #   + The value of the name_index item must be a valid index into the constant_pool table. The constant_pool entry at that index must be a CONSTANT_Utf8_info structure (...) representing a valid binary class or interface name encoded in internal form (...)
+  #   + Because arrays are objects, the opcodes anewarray and multianewarray - but not the opcode new - can reference array "classes" via CONSTANT_Class_info structures in the constant_pool table. For such array classes, the name of the class is the descriptor of the array type (...). An array type descriptor is valid only if it represents 255 or fewer dimensions.
+  #     This is delegated to OpCodeArray BNF
+  #
+  # All field references and method references in the constant pool must have valid names, valid classes, and valid descriptors
+  # ---------------------------------------------------------------------------------------------------------------------------
+  # This is delegated to fields and methods BNF
+  #
+  die "HERE";
+}
+
 
 1;
 

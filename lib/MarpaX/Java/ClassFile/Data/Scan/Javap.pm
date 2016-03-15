@@ -92,6 +92,22 @@ option verbose => (
                   }
                  );
 
+=head2 Bool check
+
+Format checking mode. This mode ensure that indexes, modified UTF-8, double, floats, names, descriptors etc... are correct. Default is a true value.
+
+=cut
+
+option check => (
+                 is => 'ro',
+                 isa => Bool,
+                 negativable => 1,
+                 doc => 'Format checking mode. Option is negativable with --no-check. Default is a true value.',
+                 default => sub {
+                   return 1
+                 }
+                );
+
 =head2 Bool local
 
 Verbose mode. Default is a false value.
@@ -241,7 +257,7 @@ option withcolor => (
                      is => 'ro',
                      isa => Bool,
                      negativable => 1,
-                     doc => 'ANSI colorized output. Option is ngativable with --nowithcolor. Default is a ' . ($_canColor ? 'true' : 'false') . ' value.',
+                     doc => 'ANSI colorized output. Option is negativable with --no-withcolor. Default is a ' . ($_canColor ? 'true' : 'false') . ' value.',
                      default => sub { return $_canColor });
 
 =head2 Bool withdefcolor
