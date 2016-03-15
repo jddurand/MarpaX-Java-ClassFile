@@ -34,9 +34,8 @@ sub _ConstantIntegerInfo {
   # my ($self, $tag, $bytes) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantIntegerInfo->new(
-                                                            tag     => $_[0]->u1($_[1]),
-                                                            bytes   => $_[2],
-                                                            _value  => $_[0]->signedU4($_[2])
+                                                            tag     => $_[1],
+                                                            bytes   => $_[2]
                                                           )
 }
 
@@ -46,7 +45,4 @@ with 'MarpaX::Java::ClassFile::Role::Parser';
 
 __DATA__
 __[ bnf ]__
-ConstantIntegerInfo ::=
-             [\x{03}] # tag
-             U4       # bytes
-  action => _ConstantIntegerInfo
+ConstantIntegerInfo ::= [\x{03}] U4 action => _ConstantIntegerInfo

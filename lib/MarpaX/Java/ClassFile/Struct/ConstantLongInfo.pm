@@ -17,6 +17,5 @@ use Types::Standard qw/Int/;
 has tag          => ( is => 'ro', required => 1, isa => U1 );
 has high_bytes   => ( is => 'ro', required => 1, isa => Bytes );
 has low_bytes    => ( is => 'ro', required => 1, isa => Bytes );
-has _value       => ( is => 'ro', required => 1, isa => Int );
 
 1;

@@ -35,8 +35,7 @@ sub _ConstantStringInfo {
 
   MarpaX::Java::ClassFile::Struct::ConstantStringInfo->new(
                                                            tag          => $_[1],
-                                                           string_index => $_[2],
-                                                           _value       => $_[2]
+                                                           string_index => $_[2]
                                                           )
 }
 
@@ -46,6 +45,5 @@ with 'MarpaX::Java::ClassFile::Role::Parser';
 
 __DATA__
 __[ bnf ]__
-ConstantStringInfo ::= tag string_index action => _ConstantStringInfo
-tag                ::= [\x{08}]         action => u1
+ConstantStringInfo ::= [\x{08}] string_index action => _ConstantStringInfo
 string_index       ::= U2               action => u2

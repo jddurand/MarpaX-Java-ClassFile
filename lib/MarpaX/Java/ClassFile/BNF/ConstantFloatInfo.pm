@@ -34,10 +34,9 @@ sub _ConstantFloatInfo {
   # my ($self, $tag, $bytes) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantFloatInfo->new(
-                                                            tag     => $_[0]->u1($_[1]),
-                                                            bytes   => $_[2],
-                                                            _value  => $_[0]->float($_[2])
-                                                          )
+                                                          tag     => $_[1],
+                                                          bytes   => $_[2]
+                                                         )
 }
 
 with 'MarpaX::Java::ClassFile::Role::Parser';
@@ -46,7 +45,4 @@ with 'MarpaX::Java::ClassFile::Role::Parser';
 
 __DATA__
 __[ bnf ]__
-ConstantFloatInfo ::=
-             [\x{04}] # tag
-             U4       # bytes
-  action => _ConstantFloatInfo
+ConstantFloatInfo ::= [\x{04}] U4 action => _ConstantFloatInfo

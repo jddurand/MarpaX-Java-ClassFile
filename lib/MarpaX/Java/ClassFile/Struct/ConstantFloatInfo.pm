@@ -16,6 +16,5 @@ use Types::Standard qw/InstanceOf/;
 
 has tag          => ( is => 'ro', required => 1, isa => U1 );
 has bytes        => ( is => 'ro', required => 1, isa => Bytes );
-has _value       => ( is => 'ro', required => 1, isa => InstanceOf['Math::BigFloat'] );
 
 1;

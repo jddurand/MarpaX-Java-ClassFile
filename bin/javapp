@@ -37,11 +37,12 @@ foreach (@ARGV) {
   print STDERR "==> $_\n";
   my $classFile = MarpaX::Java::ClassFile->new(filename => $_);
   my $ast       = $classFile->ast;
+  use Data::Dumper::GUI; Dumper($ast);
+  # use Data::Dumper; print Dumper($ast);
   # Data::Scan->new(consumer => $consumer)->process($classFile->ast);
 }
 
 # print STDERR "CONSTANT_POOL_COUNT: " . $ast->constant_pool_count . "\n";
-# use Data::Dumper::GUI; Dumper($ast);
 # use Data::Dumper; print Dumper($ast);
 # use Data::Scan::Printer; dspp($ast);
 

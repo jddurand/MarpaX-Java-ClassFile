@@ -39,6 +39,7 @@ has inputRef       => ( is => 'ro',  prod_isa(ScalarRef[Bytes]),                
 # Parameters with a default
 #
 has marpaRecceHook => ( is => 'ro',  prod_isa(Bool),                                                      default => sub { 1 });
+has constant_pool_count => ( is => 'ro',  prod_isa(PositiveOrZeroInt),                                    default => sub { 0 } );
 has constant_pool  => ( is => 'ro',  prod_isa(ArrayRef[CpInfo]),                                          default => sub { [] } );
 has pos            => ( is => 'rwp', prod_isa(PositiveOrZeroInt),                                         default => sub { 0 });
 has exhaustion     => ( is => 'ro',  prod_isa(Str),                                                       default => sub { 'event' });
@@ -389,25 +390,6 @@ sub literal {
   $_[0]->_literal($_[1])
 }
 
-sub getAndCheckCpInfo {
-  # my ($self, $index, $baseBlessed, $valueMethod) = @_;
-
-  my $rc = $_[0]->constant_pool->[$_[1]];
-
-  if ($_[2]) {
-    my $blessed = blessed($rc) // '';
-    my $wantedBlessed = "MarpaX::Java::ClassFile::Struct::$_[2]";
-    $_[0]->fatalf('Invalid index %d', $_[1]) unless ($blessed eq $wantedBlessed)
-  }
-  if ($_[3]) {
-    my $valueMethod = $_[3];
-    $rc = $rc->$valueMethod;
-    $_[0]->fatalf('%s returned undef in constant pool No %d', $valueMethod, $_[1]) unless (defined($rc))
-  }
-
-  $rc
-}
-
 sub activate {
   # my ($self, $eventName, $status) = @_;
 
@@ -424,10 +406,11 @@ sub _inner {
 
   my $innerClass = "MarpaX::Java::ClassFile::BNF::$_[1]";
   $_[0]->tracef('Starting inner grammar %s at position %s, with%s outside event, extra arguments: %s', $innerClass, $_[0]->pos, $_[2] ? 'out' : '', { @_[3..$#_] });
-  my $inner = $innerClass->new(parent        => $_[0],
-                               constant_pool => $_[0]->constant_pool,
-                               inputRef      => $_[0]->inputRef,
-                               pos           => $_[0]->pos,
+  my $inner = $innerClass->new(parent              => $_[0],
+                               constant_pool_count => $_[0]->constant_pool_count,
+                               constant_pool       => $_[0]->constant_pool,
+                               inputRef            => $_[0]->inputRef,
+                               pos                 => $_[0]->pos,
                                @_[3..$#_]);
   my $innerGrammarValue = $inner->ast;
   $_[0]->lexeme_read('MANAGED', $inner->pos - $_[0]->pos, $innerGrammarValue, $_[2]);

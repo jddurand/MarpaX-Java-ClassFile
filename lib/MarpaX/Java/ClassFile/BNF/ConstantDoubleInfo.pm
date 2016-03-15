@@ -34,10 +34,9 @@ sub _ConstantDoubleInfo {
   # my ($self, $tag, $high_bytes, $low_bytes) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantDoubleInfo->new(
-                                                           tag        => $_[0]->u1($_[1]),
+                                                           tag        => $_[1],
                                                            high_bytes => $_[2],
-                                                           low_bytes  => $_[3],
-                                                           _value     => $_[0]->double($_[2], $_[3])
+                                                           low_bytes  => $_[3]
                                                           )
 }
 
@@ -47,8 +46,4 @@ with 'MarpaX::Java::ClassFile::Role::Parser';
 
 __DATA__
 __[ bnf ]__
-ConstantDoubleInfo ::=
-             [\x{06}] # tag
-             U4       # high_bytes
-             U4       # low_bytes
-  action => _ConstantDoubleInfo
+ConstantDoubleInfo ::= [\x{06}] U4 U4 action => _ConstantDoubleInfo

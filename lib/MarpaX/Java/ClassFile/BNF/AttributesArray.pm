@@ -13,6 +13,7 @@ use Moo;
 use Carp qw/croak/;
 use Data::Section -setup;
 use MarpaX::Java::ClassFile::Util::BNF qw/bnf/;
+use Scalar::Util qw/blessed/;
 #
 # require because we do not import ANYTHING from these module, just require they are loaded
 #
@@ -46,7 +47,22 @@ sub callbacks {
            "'exhausted" => sub { $_[0]->exhausted },
           'attribute_info$' => sub { $_[0]->inc_nbDone },
           '^U2' => sub {
-            my $attribute_name = $_[0]->getAndCheckCpInfo($_[0]->pauseU2, 'ConstantUtf8Info', '_value');
+            #
+            # There is a subtility here: All known attributes DO fit in the ASCII table.
+            # From perl point of view, input is a sequence of Bytes, which is Str compatible.
+            # There is no need to do modified UTF-8 to Perl's UTF8 conversion when we want
+            # to check that a sequence of Bytes is equal to a Str Containing only ASCII things,
+            # because ASCII characters all fit in a single byte.
+            #
+            my $u2 = $_[0]->pauseU2;
+            my $attribute_name = '';
+            if (($u2 >= 1) && ($u2 <= $_[0]->constant_pool_count)) {
+              my $constant = $_[0]->constant_pool->[$u2];
+              my $blessed = blessed($constant) // '';
+              if ($blessed eq 'MarpaX::Java::ClassFile::Struct::ConstantUtf8Info') {
+                $attribute_name = $constant->bytes;
+              }
+            }
             if    ($attribute_name eq 'ConstantValue')             { $_[0]->inner('ConstantValueAttribute') }
             elsif ($attribute_name eq 'Code')                      { $_[0]->inner('CodeAttribute') }
             elsif ($attribute_name eq 'StackMapTable')             { $_[0]->inner('StackMapTableAttribute') }

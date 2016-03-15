@@ -16,7 +16,6 @@ use Types::Standard qw/Str Undef/;
 
 has tag          => ( is => 'ro', required => 1, isa => U1 );
 has length       => ( is => 'ro', required => 1, isa => U2 );
-has bytes        => ( is => 'ro', required => 1, isa => Bytes );
-has _value       => ( is => 'ro', required => 1, isa => Str|Undef );
+has bytes        => ( is => 'ro', required => 1, isa => Bytes|Undef );
 
 1;

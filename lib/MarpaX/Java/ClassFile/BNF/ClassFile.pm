@@ -13,6 +13,7 @@ use Moo;
 use Data::Section -setup;
 use MarpaX::Java::ClassFile::Util::BNF qw/bnf/;
 use Types::Standard qw/ArrayRef Str/;
+use Types::Common::Numeric qw/PositiveOrZeroInt/;
 use MarpaX::Java::ClassFile::Struct::_Types qw/CpInfo/;
 use MarpaX::Java::ClassFile::Util::ProductionMode qw/prod_isa/;
 #
@@ -36,15 +37,14 @@ sub grammar   { $_grammar    }
 sub callbacks {
   return {
           #
-          # For constant pool indexes start at 1:
+          # Size of constant pool array is constant_pool_count - 1 as per the spec.
+          # Implicitely from the spec, indices in constant pool start at 1:
           # - The final action on Constant pool will insert a fake undef entry at position 0
           #
           'constant_pool_count$' => sub {
-            $_[0]->constant_pool
-              (
-               $_[0]->inner('ConstantPoolArray', size => $_[0]->literalU2('constant_pool_count') - 1)
-              )
-            },
+            $_[0]->constant_pool_count($_[0]->literalU2('constant_pool_count'));
+            $_[0]->constant_pool($_[0]->inner('ConstantPoolArray', size => $_[0]->constant_pool_count - 1))
+          },
           'interfaces_count$'    => sub { $_[0]->inner('InterfacesArray', size => $_[0]->literalU2('interfaces_count')) },
           'fields_count$'        => sub { $_[0]->inner('FieldsArray',     size => $_[0]->literalU2('fields_count')) },
           'methods_count$'       => sub { $_[0]->inner('MethodsArray',    size => $_[0]->literalU2('methods_count')) },
@@ -103,7 +103,8 @@ has '+exhaustion' => (is => 'ro',  prod_isa(Str), default => sub { 'fatal' });
 #
 # We want to take control over constant_pool in this class (and only here btw)
 #
-has '+constant_pool' => ( is => 'rw', prod_isa(ArrayRef[CpInfo]), default => sub { [] });
+has '+constant_pool_count' => ( is => 'rw', prod_isa(PositiveOrZeroInt), default => sub {  0 });
+has '+constant_pool'       => ( is => 'rw', prod_isa(ArrayRef[CpInfo]),  default => sub { [] });
 
 1;
 

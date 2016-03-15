@@ -39,10 +39,9 @@ sub _ConstantUtf8Info {
   # my ($self, $U1, $U2, $MANAGED) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantUtf8Info->new(
-                                                         tag    => $_[0]->u1($_[1]),
-                                                         length => $_[0]->u2($_[2]),
-                                                         bytes  => $_[3],
-                                                         _value => $_[0]->utf8($_[3])
+                                                         tag    => $_[1],
+                                                         length => $_[2],
+                                                         bytes  => $_[3]
                                                         )
 }
 
@@ -54,8 +53,5 @@ __DATA__
 __[ bnf ]__
 :lexeme ~ <U2> pause => after event => 'U2$'
 
-ConstantUtf8Info ::=
-             [\x{01}] # tag
-             U2       # length
-             MANAGED  # bytes
-  action => _ConstantUtf8Info
+ConstantUtf8Info ::= [\x{01}] length MANAGED action => _ConstantUtf8Info
+length           ::= U2                      action => u2
