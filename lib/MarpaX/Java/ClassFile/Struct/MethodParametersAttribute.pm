@@ -10,7 +10,7 @@ use MarpaX::Java::ClassFile::Struct::_Base;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types qw/U1 U2 U4/;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U1 U2 U4 Parameter/;
 use Types::Standard qw/ArrayRef/;
 
 has attribute_name_index  => ( is => 'ro', required => 1, isa => U2 );
