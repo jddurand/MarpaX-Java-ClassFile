@@ -30,7 +30,7 @@ my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_da
 sub grammar   { $_grammar    }
 sub callbacks { return {
                         "'exhausted"              => sub { $_[0]->exhausted },
-                        'code_length$'            => sub { $_[0]->inner('OpCodeArray', size => -1, max => $_[0]->pos + $_[0]->literalU4('code_length')) },
+                        'code_length$'            => sub { $_[0]->inner('OpCodeArray', originPos => $_[0]->pos, size => -1, max => $_[0]->pos + $_[0]->literalU4('code_length')) },
                         'exception_table_length$' => sub { $_[0]->inner('ExceptionTableArray', size => $_[0]->literalU2('exception_table_length')) },
                         'attributes_count$'       => sub { $_[0]->inner('AttributesArray', size => $_[0]->literalU2('attributes_count')) }
                        }

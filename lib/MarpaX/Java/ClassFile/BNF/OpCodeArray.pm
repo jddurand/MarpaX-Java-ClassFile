@@ -23,14 +23,7 @@ use Types::Common::Numeric qw/PositiveOrZeroInt/;
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
 my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_data) } );
 
-has _originPos => (is => 'rwp', prod_isa(PositiveOrZeroInt));
-
-sub BUILD {
-  #
-  # Remember original position to calculate padding of lookupswitch
-  #
-  $_[0]->_set__originPos($_[0]->pos)
-}
+has originPos => (is => 'ro', required => 1, prod_isa(PositiveOrZeroInt));
 
 # --------------------------------------------------
 # What role MarpaX::Java::ClassFile::Common requires
@@ -41,9 +34,9 @@ sub callbacks {
            "'exhausted" => sub { $_[0]->exhausted },
           'opcode$'     => sub { $_[0]->inc_nbDone },
           '^padding'    => sub {
-            $_[0]->tracef('Code origin offset is %d', $_[0]->_originPos);
+            $_[0]->tracef('Code origin offset is %d', $_[0]->originPos);
             $_[0]->tracef('Current offset is %d', $_[0]->pos);
-            my $currentRelativeOffset = $_[0]->pos - $_[0]->_originPos;
+            my $currentRelativeOffset = $_[0]->pos - $_[0]->originPos;
             my $modulo = $currentRelativeOffset % 4;
             $_[0]->tracef('Current relative offset is %d, modulo 4 gives %d', $currentRelativeOffset, $modulo);
             if ($modulo) {
@@ -110,7 +103,7 @@ sub _opcodeOffset {
   #
   # G1 location zero does NOT correspond to a range
   #
-  (offset => ($startG1 <= 0) ? $_[0]->_originPos : $startG1Pos + $startG1Length)
+  (offset => ($startG1 <= 0) ? $_[0]->originPos : $startG1Pos + $startG1Length)
 }
 #
 # For all the actions, we always push the menemonic plus all the arguments
