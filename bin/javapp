@@ -1,6 +1,8 @@
 #!perl
 use strict;
 use warnings FATAL => 'all';
+use Data::Scan;
+use IO::Handle;
 use MarpaX::Java::ClassFile::Data::Scan::Javap;
 use MarpaX::Java::ClassFile;
 use POSIX qw/EXIT_SUCCESS EXIT_FAILURE/;
@@ -11,7 +13,7 @@ use Log::Any qw/$log/;
 # Init log
 #
 our $defaultLog4perlConf = '
-log4perl.rootLogger              = TRACE, Screen
+log4perl.rootLogger              = WARN, Screen
 log4perl.appender.Screen         = Log::Log4perl::Appender::Screen
 log4perl.appender.Screen.stderr  = 0
 log4perl.appender.Screen.layout  = PatternLayout
@@ -28,16 +30,14 @@ Log::Any::Adapter->set('Log4perl');
 
 # AUTHORITY
 
+autoflush STDOUT 1;
 my $consumer = MarpaX::Java::ClassFile::Data::Scan::Javap->new_with_options();
 
-my $file = shift || '';
-if (! $file) {
-  print STDERR "Usage: $0 classFile\n";
-  exit(EXIT_FAILURE);
+foreach (@ARGV) {
+  print STDERR "==> $_\n";
+  my $classFile = MarpaX::Java::ClassFile->new(filename => $_);
+  Data::Scan->new(consumer => $consumer)->process($classFile->ast);
 }
-
-my $ast = MarpaX::Java::ClassFile->parse($file);
-Data::Scan->new(consumer => $consumer)->process($ast);
 
 # print STDERR "CONSTANT_POOL_COUNT: " . $ast->constant_pool_count . "\n";
 # use Data::Dumper::GUI; Dumper($ast);
