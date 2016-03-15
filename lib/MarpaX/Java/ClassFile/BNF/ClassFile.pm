@@ -159,6 +159,22 @@ sub checker {
       # This is delegated to OpCodeArray BNF
       #
     }
+    elsif ($blessed eq 'ConstantFieldrefInfo') {
+      #
+      # CONSTANT_Fieldref_info
+      # ----------------------
+      # The value of the class_index item must be a valid index into the constant_pool table.
+      # The constant_pool entry at that index must be a CONSTANT_Class_info structure (...) representing a class or interface type that has the field or method as a member.
+      #
+      $_[0]->_checkCpAtIndex($constant_pool_count, $constant_pool, 'ConstantFieldrefInfo.class_index', $constant->class_index, 'ConstantClassInfo', $index);
+      #
+      # The value of the name_and_type_index item must be a valid index into the constant_pool table.
+      # The constant_pool entry at that index must be a CONSTANT_NameAndType_info structure
+      #
+      $_[0]->_checkCpAtIndex($constant_pool_count, $constant_pool, 'ConstantFieldrefInfo.name_and_type_index', $constant->name_and_type_index, 'ConstantNameAndTypeInfo', $index);
+    }
+    else {
+    }
   }
   #
   # All field references and method references in the constant pool must have valid names, valid classes, and valid descriptors
