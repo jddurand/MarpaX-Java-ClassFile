@@ -108,6 +108,22 @@ option check => (
                  }
                 );
 
+=head2 Str loglevel
+
+Log level. Should be one of TRACE, DEBUG, INFO, WARN, ERROR. Default is WARN.
+
+=cut
+
+option loglevel => (
+                    is => 'ro',
+                    isa => Enum[qw/TRACE DEBUG INFO WARN ERROR/],
+                    format => 's',
+                    doc => 'Log level. Should be one of TRACE, DEBUG, INFO, WARN, ERROR. Default is WARN.',
+                    default => sub {
+                      return 'WARN'
+                    }
+                );
+
 =head2 Bool local
 
 Verbose mode. Default is a false value.

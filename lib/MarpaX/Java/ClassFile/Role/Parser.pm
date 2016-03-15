@@ -132,9 +132,13 @@ sub _build_ast {
   local $MarpaX::Java::ClassFile::Role::Parser::IS_INFO     = $_[0]->_logger->is_info;
   local $MarpaX::Java::ClassFile::Role::Parser::IS_WARN     = $_[0]->_logger->is_warn;
   local $MarpaX::Java::ClassFile::Role::Parser::IS_ERROR    = $_[0]->_logger->is_error;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_FATAL    = $_[0]->_logger->is_fatal;
 
+  local $MarpaX::Java::ClassFile::Role::Parser::LEX_CONTEXT = 1;
   $_[0]->_read;
   while ($_[0]->pos < $_[0]->max) { $_[0]->_resume }
+  undef $MarpaX::Java::ClassFile::Role::Parser::LEX_CONTEXT;
+
   my $ast = $_[0]->_value;
   $_[0]->checker($ast) if ($_[0]->check);
   $ast
@@ -179,7 +183,6 @@ sub _value {
   $_[0]->_croak('Parse is ambiguous') if ($ambiguity_metric != 1);
 
   $_[0]->tracef('value($_[0])');
-  local $MarpaX::Java::ClassFile::Role::Parser::VALUE_CONTEXT = 1;
   #
   # Registration hook ?
   #
@@ -435,14 +438,14 @@ sub _dolog {
   # only in the lexing phase, that may not use
   # another level but TRACE btw -;
   #
-  if ($MarpaX::Java::ClassFile::Role::Parser::VALUE_CONTEXT) {
-    $self->_logger->$method($format, @arguments)
-  } else {
+  if ($MarpaX::Java::ClassFile::Role::Parser::LEX_CONTEXT) {
     my $inputLength = length(${$self->inputRef});
     my $nbcharacters = length("$inputLength");
     my ($offset, $max) = ($self->pos, $self->max);
 
     $self->_logger->$method("[pos %*s->%*s] %s: $format", $nbcharacters, $offset, $nbcharacters, $self->max, $self->whoami, @arguments)
+  } else {
+    $self->_logger->$method("%s: $format", $self->whoami, @arguments)
   }
 }
 
@@ -484,6 +487,7 @@ sub tracef {
 sub fatalf {
   my ($self, $format, @arguments) = @_;
 
+  $self->_dolog('fatalf', $format, @arguments) if ($MarpaX::Java::ClassFile::Role::Parser::IS_FATAL);
   croak sprintf($format, @arguments)
 }
 

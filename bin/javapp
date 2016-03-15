@@ -9,18 +9,6 @@ use POSIX qw/EXIT_SUCCESS EXIT_FAILURE/;
 use Log::Log4perl qw/:easy/;
 use Log::Any::Adapter;
 use Log::Any qw/$log/;
-#
-# Init log
-#
-our $defaultLog4perlConf = '
-log4perl.rootLogger              = WARN, Screen
-log4perl.appender.Screen         = Log::Log4perl::Appender::Screen
-log4perl.appender.Screen.stderr  = 0
-log4perl.appender.Screen.layout  = PatternLayout
-log4perl.appender.Screen.layout.ConversionPattern = %d %-5p %6P %m{chomp}%n
-';
-Log::Log4perl::init(\$defaultLog4perlConf);
-Log::Any::Adapter->set('Log4perl');
 
 # PODNAME: javapp
 
@@ -32,6 +20,20 @@ Log::Any::Adapter->set('Log4perl');
 
 autoflush STDOUT 1;
 my $consumer = MarpaX::Java::ClassFile::Data::Scan::Javap->new_with_options();
+
+#
+# Init log
+#
+my $loglevel = $consumer->loglevel;
+our $defaultLog4perlConf = "
+log4perl.rootLogger              = $loglevel, Screen
+log4perl.appender.Screen         = Log::Log4perl::Appender::Screen
+log4perl.appender.Screen.stderr  = 0
+log4perl.appender.Screen.layout  = PatternLayout
+log4perl.appender.Screen.layout.ConversionPattern = %d %-5p %6P %m{chomp}%n
+";
+Log::Log4perl::init(\$defaultLog4perlConf);
+Log::Any::Adapter->set('Log4perl');
 
 foreach (@ARGV) {
   print STDERR "==> $_\n";
