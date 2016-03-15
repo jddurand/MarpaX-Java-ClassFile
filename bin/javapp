@@ -37,7 +37,7 @@ Log::Any::Adapter->set('Log4perl');
 
 foreach (@ARGV) {
   print STDERR "==> $_\n";
-  my $classFile = MarpaX::Java::ClassFile->new(filename => $_, check => $consumer->check);
+  my $classFile = MarpaX::Java::ClassFile->new(filename => $_);
   my $ast       = $classFile->ast;
   use Data::Dumper::GUI; Dumper($ast);
   # use Data::Dumper; print Dumper($ast);

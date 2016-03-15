@@ -13,7 +13,6 @@ use Types::Standard qw/Str InstanceOf Bool/;
 # AUTHORITY
 
 has filename => ( is => 'ro',  isa => Str, required => 1);
-has check    => ( is => 'ro', isa => Bool, required => 1);
 has ast      => ( is => 'ro', isa => InstanceOf['MarpaX::Java::ClassFile::Struct::ClassFile'], lazy => 1, builder => 1);
 
 use Carp qw/croak/;
@@ -28,7 +27,7 @@ sub _build_ast {
   my $input = do { local $/; <$fh>};
   close($fh) || warn "Cannot close " . $self->filename . ", $!";
 
-  MarpaX::Java::ClassFile::BNF::ClassFile->new(inputRef => \$input, check => $self->check)->ast
+  MarpaX::Java::ClassFile::BNF::ClassFile->new(inputRef => \$input)->ast
 }
 
 1;

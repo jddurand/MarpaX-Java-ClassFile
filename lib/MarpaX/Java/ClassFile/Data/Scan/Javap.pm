@@ -92,22 +92,6 @@ option verbose => (
                   }
                  );
 
-=head2 Bool check
-
-Format checking mode. This mode ensure that indexes, modified UTF-8, double, floats, names, descriptors etc... are correct. Default is a true value.
-
-=cut
-
-option check => (
-                 is => 'ro',
-                 isa => Bool,
-                 negativable => 1,
-                 doc => 'Format checking mode. Option is negativable with --no-check. Default is a true value.',
-                 default => sub {
-                   return 1
-                 }
-                );
-
 =head2 Str loglevel
 
 Log level. Should be one of TRACE, DEBUG, INFO, WARN, ERROR. Default is WARN.
