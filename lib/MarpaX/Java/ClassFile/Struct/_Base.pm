@@ -55,9 +55,9 @@ sub import {
     install_modifier($target, 'fresh', new => sub { _new($target, @_) } )
   }
   #
-  # In any case, inject the toString method
+  # In any case, inject the toString method unless class already provide this
   #
-  install_modifier($target, 'fresh', toString => sub { goto &_toString } )
+  install_modifier($target, 'fresh', toString => sub { goto &_toString } ) unless ($target->can('toString'))
 }
 
 sub _has {

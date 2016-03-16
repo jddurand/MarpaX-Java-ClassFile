@@ -34,8 +34,9 @@ sub _ConstantFloatInfo {
   # my ($self, $tag, $bytes) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantFloatInfo->new(
-                                                          tag     => $_[1],
-                                                          bytes   => $_[2]
+                                                          tag        => $_[1],
+                                                          bytes      => $_[2],
+                                                          _perlvalue => $_[0]->float($_[2])
                                                          )
 }
 

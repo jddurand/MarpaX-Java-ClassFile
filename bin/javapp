@@ -13,6 +13,6 @@ use POSIX qw/EXIT_SUCCESS EXIT_FAILURE/;
 
 # AUTHORITY
 
-map { print MarpaX::Java::ClassFile->new(filename => $_)->toString } @ARGV;
+map { print MarpaX::Java::ClassFile->new(filename => $_)->ast } @ARGV;
 
 exit(EXIT_SUCCESS);

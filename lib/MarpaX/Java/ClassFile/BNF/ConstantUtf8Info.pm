@@ -36,12 +36,13 @@ sub callbacks {
 # Grammar actions
 # ---------------
 sub _ConstantUtf8Info {
-  # my ($self, $U1, $U2, $MANAGED) = @_;
+  # my ($self, $tag, $length, $MANAGED) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantUtf8Info->new(
-                                                         tag    => $_[1],
-                                                         length => $_[2],
-                                                         bytes  => $_[3]
+                                                         _perlvalue => $_[0]->utf8($_[3]),
+                                                         tag        => $_[1],
+                                                         length     => $_[2],
+                                                         bytes      => $_[3]
                                                         )
 }
 

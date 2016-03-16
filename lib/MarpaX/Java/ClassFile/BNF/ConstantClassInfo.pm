@@ -34,8 +34,9 @@ sub _ConstantClassInfo {
   # my ($self, $tag, $name_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantClassInfo->new(
-                                                          tag        => $_[1],
-                                                          name_index => $_[2]
+                                                          _constant_pool => $_[0]->constant_pool,
+                                                          tag            => $_[1],
+                                                          name_index     => $_[2]
                                                           )
 }
 

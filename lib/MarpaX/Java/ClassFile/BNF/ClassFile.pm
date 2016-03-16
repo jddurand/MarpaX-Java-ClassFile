@@ -44,7 +44,15 @@ sub callbacks {
           #
           'constant_pool_count$' => sub {
             $_[0]->constant_pool_count($_[0]->literalU2('constant_pool_count'));
-            $_[0]->constant_pool($_[0]->inner('ConstantPoolArray', size => $_[0]->constant_pool_count - 1))
+            my $constant_pool = $_[0]->inner('ConstantPoolArray', size => $_[0]->constant_pool_count - 1);
+            $_[0]->constant_pool($constant_pool);
+            #
+            # Make sure all constant pool items that require a cross-reference to this array
+            # have the correct value
+            #
+            foreach (@{$constant_pool}) {
+              $_->_constant_pool($constant_pool) if (blessed($_) && ($_->can('_constant_pool')))
+            }
           },
           'interfaces_count$'    => sub { $_[0]->inner('InterfacesArray', size => $_[0]->literalU2('interfaces_count')) },
           'fields_count$'        => sub { $_[0]->inner('FieldsArray',     size => $_[0]->literalU2('fields_count')) },
