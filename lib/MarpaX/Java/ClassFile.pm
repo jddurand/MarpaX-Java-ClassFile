@@ -28,6 +28,8 @@ sub _build_ast {
   close($fh) || warn "Cannot close " . $self->filename . ", $!";
 
   MarpaX::Java::ClassFile::BNF::ClassFile->new(inputRef => \$input)->ast
-}
+  }
+
+sub toString { $_[0]->ast->toString }
 
 1;

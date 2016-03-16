@@ -7,14 +7,12 @@ use POSIX qw/EXIT_SUCCESS EXIT_FAILURE/;
 
 # PODNAME: classdump
 
-# ABSTRACT: java .class dump
+# ABSTRACT: javap writen in perl
 
 # VERSION
 
 # AUTHORITY
 
-autoflush STDOUT 1;
-
-map { dspp(MarpaX::Java::ClassFile->new(filename => $_)->ast ) } @ARGV;
+map { print MarpaX::Java::ClassFile->new(filename => $_)->toString } @ARGV;
 
 exit(EXIT_SUCCESS);
