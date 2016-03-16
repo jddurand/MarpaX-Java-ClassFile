@@ -53,5 +53,6 @@ __DATA__
 __[ bnf ]__
 :lexeme ~ <U2> pause => after event => 'U2$'
 
-ConstantUtf8Info ::= [\x{01}] length MANAGED action => _ConstantUtf8Info
-length           ::= U2                      action => u2
+ConstantUtf8Info ::= tag length MANAGED action => _ConstantUtf8Info
+tag              ::= [\x{01}]           action => u1
+length           ::= U2                 action => u2

@@ -45,5 +45,6 @@ with 'MarpaX::Java::ClassFile::Role::Parser';
 
 __DATA__
 __[ bnf ]__
-ConstantStringInfo ::= [\x{08}] string_index action => _ConstantStringInfo
+ConstantStringInfo ::= tag string_index action => _ConstantStringInfo
+tag                ::= [\x{08}]         action => u1
 string_index       ::= U2               action => u2

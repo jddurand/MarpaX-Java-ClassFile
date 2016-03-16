@@ -45,4 +45,5 @@ with 'MarpaX::Java::ClassFile::Role::Parser';
 
 __DATA__
 __[ bnf ]__
-ConstantFloatInfo ::= [\x{04}] U4 action => _ConstantFloatInfo
+ConstantFloatInfo ::= tag U4   action => _ConstantFloatInfo
+tag               ::= [\x{04}] action => u1

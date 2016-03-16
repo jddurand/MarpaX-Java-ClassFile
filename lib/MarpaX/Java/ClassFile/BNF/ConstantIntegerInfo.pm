@@ -45,4 +45,5 @@ with 'MarpaX::Java::ClassFile::Role::Parser';
 
 __DATA__
 __[ bnf ]__
-ConstantIntegerInfo ::= [\x{03}] U4 action => _ConstantIntegerInfo
+ConstantIntegerInfo ::= tag U4   action => _ConstantIntegerInfo
+tag                 ::= [\x{03}] action => u1
