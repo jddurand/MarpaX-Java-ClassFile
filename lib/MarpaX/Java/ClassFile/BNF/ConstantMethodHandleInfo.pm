@@ -34,6 +34,7 @@ sub _ConstantMethodHandleInfo {
   # my ($self, $tag, $reference_kind, $reference_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantMethodHandleInfo->new(
+                                                                 _constant_pool  => $_[0]->constant_pool,
                                                                  tag             => $_[1],
                                                                  reference_kind  => $_[2],
                                                                  reference_index => $_[3]

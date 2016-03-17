@@ -36,7 +36,8 @@ sub _ConstantLongInfo {
   MarpaX::Java::ClassFile::Struct::ConstantLongInfo->new(
                                                          tag        => $_[1],
                                                          high_bytes => $_[2],
-                                                         low_bytes  => $_[3]
+                                                         low_bytes  => $_[3],
+                                                         _perlvalue => $_[0]->double($_[2], $_[3])
                                                         )
 }
 
