@@ -11,10 +11,10 @@ use overload '""' => \&_stringify;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types qw/U1 U2/;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U1 U2 ConstantPoolArray/;
 use Types::Standard qw/ArrayRef/;
 
-has _constant_pool   => ( is => 'rw', required => 1, isa => ArrayRef);
+has _constant_pool   => ( is => 'rw', required => 1, isa => ConstantPoolArray);
 has tag              => ( is => 'ro', required => 1, isa => U1 );
 has name_index       => ( is => 'ro', required => 1, isa => U2 );
 has descriptor_index => ( is => 'ro', required => 1, isa => U2 );
@@ -24,8 +24,8 @@ sub _stringify {
 
   my $name_index          = $_[0]->name_index;
   my $descriptor_index    = $_[0]->descriptor_index;
-  my $constant_name       = $_[0]->_constant_pool->[$_[0]->name_index];
-  my $constant_descriptor = $_[0]->_constant_pool->[$_[0]->descriptor_index];
+  my $constant_name       = $_[0]->_constant_pool->get($_[0]->name_index);
+  my $constant_descriptor = $_[0]->_constant_pool->get($_[0]->descriptor_index);
 
   "NameAndType{name_index:#$name_index => $constant_name, descriptor_index:#$descriptor_index => $constant_descriptor}"
 }

@@ -14,7 +14,7 @@ use Data::Section -setup;
 use MarpaX::Java::ClassFile::Util::BNF qw/bnf/;
 use Types::Standard qw/ArrayRef Str/;
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
-use MarpaX::Java::ClassFile::Struct::_Types qw/CpInfo/;
+use MarpaX::Java::ClassFile::Struct::_Types qw/ConstantPoolArray/;
 use MarpaX::Java::ClassFile::Util::ProductionMode qw/prod_isa/;
 use Scalar::Util qw/blessed/;
 #
@@ -50,7 +50,7 @@ sub callbacks {
             # Make sure all constant pool items that require a cross-reference to this array
             # have the correct value
             #
-            foreach (@{$constant_pool}) {
+            foreach ($constant_pool->elements) {
               $_->_constant_pool($constant_pool) if (blessed($_) && ($_->can('_constant_pool')))
             }
           },
@@ -108,12 +108,12 @@ with 'MarpaX::Java::ClassFile::Role::Parser';
 #
 # We want to say that exhaustion is definitely fatal
 #
-has '+exhaustion' => (is => 'ro',  prod_isa(Str), default => sub { 'fatal' });
+has '+exhaustion' => (default => sub { 'fatal' });
 #
-# We want to take control over constant_pool in this class (and only here btw)
+# We want to take control over constant_pool count and content in this class (and only here btw)
 #
-has '+constant_pool_count' => ( is => 'rw', prod_isa(PositiveOrZeroInt), default => sub {  0 });
-has '+constant_pool'       => ( is => 'rw', prod_isa(ArrayRef[CpInfo]),  default => sub { [] });
+has '+constant_pool_count' => ( is => 'rw' );
+has '+constant_pool'       => ( is => 'rw' );
 
 1;
 

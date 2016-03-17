@@ -30,7 +30,6 @@ use Import::Into;
 use Class::Method::Modifiers qw/install_modifier/;
 use Scalar::Util qw/reftype blessed/;
 use Import::Into;
-use Data::Dumper;
 require Moo;
 
 my %_HAS_TRACKED = ();
@@ -119,63 +118,6 @@ sub _new {
   # In conclusion...: reftype() will never return a null value
   #
   bless(\@array, $class)
-}
-
-sub _toString {
-  my ($self) = @_;
-  #
-  # The presence of a _perlvalue always have precedence
-  #
-  my $_perlvalue = $self->can('_perlvalue');
-  my $value = $_perlvalue ? $self->_perlvalue : $self;
-  #
-  # In case of real OO thingy, we are lazy and let Data::Dumper do the job
-  #
-  return Dumper($value) if ($ENV{AUTHOR_TESTING});
-  #
-  # Do heuristic based on members
-  #
-  my $has_tracked = $_HAS_TRACKED{blessed($self)};
-  my @string = ();
-  #
-  # Eventual indentation
-  #
-  my $indent = $MarpaX::Java::ClassFile::Struct::_Base::INDENT // 0;
-  #
-  # Loop on members sorted by indice
-  #
-  foreach my $proto (sort { $has_tracked->{$a} <=> $has_tracked->{$b} } keys %{$has_tracked}) {
-    $value = $self->$proto;
-
-    my $blessed = blessed($value);
-    if (! $blessed) {
-      push(@string, "$proto: " . ($value // ''));
-    } else {
-      my $toString = $value->can('toString');
-      if ($toString) {
-        push(@string, "$proto: " . $value->$toString)
-      } else {
-        #
-        # Then, it is always an array reference in our model
-        #
-        my @array = ();
-        foreach (@{$value}) {
-          #
-          # An array member is either blessed either a scalar
-          #
-          if (blessed($_)) {
-            local $MarpaX::Java::ClassFile::Struct::_Base::INDENT = $indent + 1;
-            push(@array, $_->toString)
-          } else {
-            push(@array, $_ // '')
-          }
-        }
-        push(@string, "$proto: [" . join(",\n", @array) . "]");
-      }
-    }
-  }
-  my $indentToString = (' ' x $indent);
-  return $indentToString . join("\n$indentToString", @string) . "\n"
 }
 
 1;

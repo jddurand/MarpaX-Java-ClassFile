@@ -16,6 +16,7 @@ use MarpaX::Java::ClassFile::Util::BNF qw/:all/;
 # require because we do not import ANYTHING from these module, just require they are loaded
 #
 require Marpa::R2;
+require MarpaX::Java::ClassFile::Struct::ConstantPoolArray;
 require MarpaX::Java::ClassFile::BNF::ConstantUtf8Info;
 require MarpaX::Java::ClassFile::BNF::ConstantIntegerInfo;
 require MarpaX::Java::ClassFile::BNF::ConstantFloatInfo;
@@ -95,6 +96,16 @@ sub callbacks {
          }
 }
 
+# ---------------
+# Grammar actions
+# ---------------
+sub _cpInfoArray {
+  my ($self, @cpInfoArray) = @_;
+
+  MarpaX::Java::ClassFile::Struct::ConstantPoolArray->new(\@cpInfoArray);
+}
+
+
 with qw/MarpaX::Java::ClassFile::Role::Parser::InnerGrammar/;
 
 1;
@@ -105,6 +116,6 @@ __[ bnf ]__
 :lexeme ~ <U1> pause => before event => '^U1'
 event 'cpInfo$' = completed cpInfo
 
-cpInfoArray ::= cpInfo*
+cpInfoArray ::= cpInfo*     action => _cpInfoArray
 cpInfo ::= U1
          | MANAGED          action => ::first

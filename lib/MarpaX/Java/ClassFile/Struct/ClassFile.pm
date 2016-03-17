@@ -11,7 +11,7 @@ use overload '""' => \&_stringify;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types qw/U2 U4 CpInfo FieldInfo MethodInfo AttributeInfo/;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U2 U4 ConstantPoolArray FieldInfo MethodInfo AttributeInfo/;
 use Types::Standard qw/ArrayRef InstanceOf/;
 use Scalar::Util qw/blessed/;
 
@@ -19,7 +19,7 @@ has magic               => ( is => 'ro', required => 1, isa => U4);
 has minor_version       => ( is => 'ro', required => 1, isa => U2);
 has major_version       => ( is => 'ro', required => 1, isa => U2);
 has constant_pool_count => ( is => 'ro', required => 1, isa => U2);
-has constant_pool       => ( is => 'ro', required => 1, isa => ArrayRef[InstanceOf[CpInfo]]);
+has constant_pool       => ( is => 'ro', required => 1, isa => ConstantPoolArray);
 has access_flags        => ( is => 'ro', required => 1, isa => U2);
 has this_class          => ( is => 'ro', required => 1, isa => U2);
 has super_class         => ( is => 'ro', required => 1, isa => U2);
@@ -46,17 +46,15 @@ my %_ACCESS_FLAG = (
 sub _stringify {
   # my ($self) = @_;
 
-  my $this_class          = sprintf('Class name         : %s', $_[0]->constant_pool->[$_[0]->this_class]);
+  my $this_class          = sprintf('Class name         : %s', $_[0]->constant_pool->get($_[0]->this_class));
   my $magic               = sprintf('Magic number       : 0x%X', $_[0]->magic);
   my $version             = sprintf('Version            : %d.%d', $_[0]->major_version, $_[0]->minor_version);
   my $access_flags        = sprintf('Access flags       : %s', join(', ', grep { ($_ACCESS_FLAG{$_} & $_[0]->access_flags) == $_ACCESS_FLAG{$_} } sort { $_ACCESS_FLAG{$a} <=> $_ACCESS_FLAG{$b} } keys %_ACCESS_FLAG));
   my $constant_pool_count = sprintf('Constant pool count: %d', $_[0]->constant_pool_count);
   my $constant_pool       = sprintf("Constant pool      :\n%s",
-                                    join("\n",
-                                         map { s/^/    /sxmg; $_ }
-                                         map { sprintf('#%d %s', $_, $_[0]->constant_pool->[$_]) }
-                                         grep { blessed($_[0]->constant_pool->[$_]) } (1..$_[0]->constant_pool_count-1)
-                                        )
+                                    #
+                                    # Because this is an array, this is multiline
+                                    do { my $string = $_[0]->constant_pool; $string =~ s/^/  /sxmg; $string }
                                    );
   return <<_TOSTRING;
 ClassFile:
