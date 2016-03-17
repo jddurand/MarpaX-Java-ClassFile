@@ -81,12 +81,12 @@ sub _has {
     $has_tracked->{$proto} = $proto_indice;
     #
     # We do NO CHECK whatever on 'is', 'isa', etc...
-    # Everything is assumed to be a readonly thing initalized at new() time.
-    # There is NO mutator, write-accessor, nor type checking - full point.
+    # Everything is assumed to be a mutator eventually initalized at new() time.
+    # There is NO type checking - full point.
     #
     # Oh, our new() ensures everything is a reference, so reftype() always return a non-null value.
     #
-    $_GETTER[$proto_indice] //= eval "sub { my \$value = \$_[0]->[$proto_indice]; (Scalar::Util::reftype(\$value) eq 'SCALAR') ? \${\$value} : \$value }" || croak $@;
+    $_GETTER[$proto_indice] //= eval "sub { \$_[0]->[$proto_indice] = \$_[1] if (\$#_); my \$value = \$_[0]->[$proto_indice]; (Scalar::Util::reftype(\$value) eq 'SCALAR') ? \${\$value} : \$value }" || croak $@;
     install_modifier($target, 'fresh', $proto => $_GETTER[$proto_indice])
   }
 }

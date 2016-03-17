@@ -34,6 +34,7 @@ sub _ConstantNameAndTypeInfo {
   # my ($self, $tag, $name_index, $descriptor_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantNameAndTypeInfo->new(
+                                                                _constant_pool   => $_[0]->constant_pool,
                                                                 tag              => $_[1],
                                                                 name_index       => $_[2],
                                                                 descriptor_index => $_[3]

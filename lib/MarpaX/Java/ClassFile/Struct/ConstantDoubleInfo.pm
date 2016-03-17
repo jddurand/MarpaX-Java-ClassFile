@@ -23,8 +23,9 @@ has low_bytes    => ( is => 'ro', required => 1, isa => Bytes );
 sub _stringify {
   # my ($self) = @_;
 
-  my $double = $_[0]->_perlvalue;
-  "DoubleInfo $double"
+  my $_perlvalue = $_[0]->_perlvalue;
+
+  "Double=$_perlvalue"
 }
 
 1;

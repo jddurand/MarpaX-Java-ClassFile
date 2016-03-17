@@ -22,8 +22,9 @@ has bytes        => ( is => 'ro', required => 1, isa => Bytes );
 sub _stringify {
   # my ($self) = @_;
 
-  my $float = $_[0]->_perlvalue;
-  "FloatInfo $float"
+  my $_perlvalue = $_[0]->_perlvalue;
+
+  "Float=$_perlvalue"
 }
 
 1;

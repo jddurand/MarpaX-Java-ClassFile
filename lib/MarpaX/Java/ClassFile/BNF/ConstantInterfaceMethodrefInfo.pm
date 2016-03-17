@@ -34,9 +34,10 @@ sub _ConstantInterfaceMethodrefInfo {
   # my ($self, $tag, $class_index, $name_and_type_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantInterfaceMethodrefInfo->new(
-                                                             tag                 => $_[1],
-                                                             class_index         => $_[2],
-                                                             name_and_type_index => $_[3]
+                                                                       _constant_pool      => $_[0]->constant_pool,
+                                                                       tag                 => $_[1],
+                                                                       class_index         => $_[2],
+                                                                       name_and_type_index => $_[3]
                                                             )
 }
 

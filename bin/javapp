@@ -1,9 +1,9 @@
 #!perl
 use strict;
 use warnings FATAL => 'all';
-use Data::Scan::Printer;
-use MarpaX::Java::ClassFile;
-use POSIX qw/EXIT_SUCCESS EXIT_FAILURE/;
+use POSIX qw/EXIT_SUCCESS/;
+
+require MarpaX::Java::ClassFile;
 
 # PODNAME: classdump
 
@@ -12,6 +12,7 @@ use POSIX qw/EXIT_SUCCESS EXIT_FAILURE/;
 # VERSION
 
 # AUTHORITY
+
 
 map { print MarpaX::Java::ClassFile->new(filename => $_)->ast } @ARGV;
 

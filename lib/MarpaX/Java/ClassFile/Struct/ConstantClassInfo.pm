@@ -22,8 +22,9 @@ sub _stringify {
   # my ($self) = @_;
 
   my $name_index = $_[0]->name_index;
-  my $constant = $_[0]->_constant_pool->[$_[0]->name_index];
-  "ClassInfo{#$name_index => $constant}"
+  my $constant   = $_[0]->_constant_pool->[$_[0]->name_index];
+
+  "Class{name_index:#$name_index => $constant}"
 }
 
 1;

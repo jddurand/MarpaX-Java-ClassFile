@@ -21,9 +21,11 @@ has length       => ( is => 'ro', required => 1, isa => U2 );
 has bytes        => ( is => 'ro', required => 1, isa => Bytes|Undef );
 
 sub _stringify {
-  my ($self) = @_;
+  # my ($self) = @_;
 
-  'Utf8Info ' . $self->_perlvalue // ''
+  my $_perlvalue = $_[0]->_perlvalue // '';
+
+  "Utf8=$_perlvalue"
 }
 
 1;

@@ -53,7 +53,8 @@ sub _stringify {
   my $constant_pool_count = sprintf('Constant pool count: %d', $_[0]->constant_pool_count);
   my $constant_pool       = sprintf("Constant pool      :\n%s",
                                     join("\n",
-                                         map { sprintf('  #%d %s', $_, $_[0]->constant_pool->[$_]) }
+                                         map { s/^/    /sxmg; $_ }
+                                         map { sprintf('#%d %s', $_, $_[0]->constant_pool->[$_]) }
                                          grep { blessed($_[0]->constant_pool->[$_]) } (1..$_[0]->constant_pool_count-1)
                                         )
                                    );

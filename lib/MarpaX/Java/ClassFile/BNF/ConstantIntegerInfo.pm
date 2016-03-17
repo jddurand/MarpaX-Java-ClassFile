@@ -35,7 +35,8 @@ sub _ConstantIntegerInfo {
 
   MarpaX::Java::ClassFile::Struct::ConstantIntegerInfo->new(
                                                             tag     => $_[1],
-                                                            bytes   => $_[2]
+                                                            bytes   => $_[2],
+                                                            _perlvalue => $_[0]->signedU4($_[2])
                                                           )
 }
 
