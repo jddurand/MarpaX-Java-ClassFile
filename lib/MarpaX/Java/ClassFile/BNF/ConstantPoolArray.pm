@@ -102,7 +102,7 @@ sub callbacks {
 sub _cpInfoArray {
   my ($self, @cpInfoArray) = @_;
 
-  MarpaX::Java::ClassFile::Struct::ConstantPoolArray->new(\@cpInfoArray);
+  MarpaX::Java::ClassFile::Struct::ConstantPoolArray->new(_array => \@cpInfoArray);
 }
 
 

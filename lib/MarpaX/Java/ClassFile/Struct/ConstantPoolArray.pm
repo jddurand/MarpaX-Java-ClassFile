@@ -21,14 +21,6 @@ sub set       { $_[0]->_array->[$_[1]] = $_[2] }
 sub elements  { @{$_[0]->_array} }
 sub maxIndice { $#{$_[0]->_array} }
 
-sub BUILDARGS {
-  my ($class, @args) = @_;
-
-  unshift @args, '_array' if (@args % 2 == 1);
-
-  return { @args };
-}
-
 sub _stringify {
   # my ($self) = @_;
 
