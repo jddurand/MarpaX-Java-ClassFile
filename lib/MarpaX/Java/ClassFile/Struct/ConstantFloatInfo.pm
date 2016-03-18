@@ -24,7 +24,7 @@ sub _stringify {
 
   my $_perlvalue = $_[0]->_perlvalue;
 
-  "Float=$_perlvalue"
+  "FloatInfo:$_perlvalue"
 }
 
 1;

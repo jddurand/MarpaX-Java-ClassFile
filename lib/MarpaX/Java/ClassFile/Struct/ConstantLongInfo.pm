@@ -25,7 +25,7 @@ sub _stringify {
 
   my $_perlvalue = $_[0]->_perlvalue;
 
-  "Long=$_perlvalue"
+  "LongInfo:$_perlvalue"
 }
 
 1;

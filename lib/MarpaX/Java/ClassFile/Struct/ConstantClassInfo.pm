@@ -24,7 +24,7 @@ sub _stringify {
   my $name_index = $_[0]->name_index;
   my $constant   = $_[0]->_constant_pool->get($_[0]->name_index);
 
-  "Class{name_index:#$name_index => $constant}"
+  "ClassInfo{#$name_index => $constant}"
 }
 
 1;

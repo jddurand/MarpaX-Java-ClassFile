@@ -34,8 +34,9 @@ sub _ConstantStringInfo {
   # my ($self, $tag, $string_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantStringInfo->new(
-                                                           tag          => $_[1],
-                                                           string_index => $_[2]
+                                                           _constant_pool => $_[0]->constant_pool,
+                                                           tag            => $_[1],
+                                                           string_index   => $_[2]
                                                           )
 }
 

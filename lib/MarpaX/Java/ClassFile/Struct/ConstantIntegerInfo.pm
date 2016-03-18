@@ -24,7 +24,7 @@ sub _stringify {
 
   my $_perlvalue = $_[0]->_perlvalue;
 
-  "Integer=$_perlvalue"
+  "IntegerInfo:$_perlvalue"
 }
 
 1;

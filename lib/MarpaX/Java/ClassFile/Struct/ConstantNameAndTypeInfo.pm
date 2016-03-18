@@ -27,7 +27,7 @@ sub _stringify {
   my $constant_name       = $_[0]->_constant_pool->get($_[0]->name_index);
   my $constant_descriptor = $_[0]->_constant_pool->get($_[0]->descriptor_index);
 
-  "NameAndType{name_index:#$name_index => $constant_name, descriptor_index:#$descriptor_index => $constant_descriptor}"
+  "NameAndTypeInfo{#$name_index => $constant_name, #$descriptor_index => $constant_descriptor}"
 }
 
 1;

@@ -25,7 +25,7 @@ sub _stringify {
   my $reference_index         = $_[0]->reference_index;
   my $constant_reference      = $_[0]->_constant_pool->get($_[0]->reference_index);
 
-  "ConstantMethodHandle{reference_index:#$reference_index => $constant_reference}"
+  "MethodHandleInfo{#$reference_index => $constant_reference}"
 }
 
 1;

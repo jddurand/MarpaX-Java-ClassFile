@@ -27,7 +27,7 @@ sub _stringify {
   my $constant_class         = $_[0]->_constant_pool->get($_[0]->class_index);
   my $constant_name_and_type = $_[0]->_constant_pool->get($_[0]->name_and_type_index);
 
-  "InterfaceMethodref{class_index:#$class_index => $constant_class, name_and_type_index:#$name_and_type_index => $constant_name_and_type}"
+  "InterfaceMethodrefInfo{#$class_index => $constant_class, #$name_and_type_index => $constant_name_and_type}"
 }
 
 1;

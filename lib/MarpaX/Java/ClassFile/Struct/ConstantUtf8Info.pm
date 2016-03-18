@@ -25,7 +25,7 @@ sub _stringify {
 
   my $_perlvalue = $_[0]->_perlvalue // '';
 
-  "Utf8=$_perlvalue"
+  "Utf8Info:$_perlvalue"
 }
 
 1;

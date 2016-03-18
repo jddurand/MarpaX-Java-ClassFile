@@ -34,8 +34,9 @@ sub _ConstantMethodTypeInfo {
   # my ($self, $tag, $descriptor_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantMethodTypeInfo->new(
-                                                              tag              => $_[1],
-                                                              descriptor_index => $_[2]
+                                                               _constant_pool  => $_[0]->constant_pool,
+                                                               tag              => $_[1],
+                                                               descriptor_index => $_[2]
                                                              )
 }
 

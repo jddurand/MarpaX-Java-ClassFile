@@ -16,7 +16,7 @@ use Types::Standard qw/ArrayRef/;
 
 has _array => ( is => 'ro', required => 1, isa => ArrayRef[CpInfo], default => sub { [] } );
 
-sub get       { $_[0]->_array->[$_[1]] // '!!! Internal Error !!!'}
+sub get       { $_[0]->_array->[$_[1]] }
 sub set       { $_[0]->_array->[$_[1]] = $_[2] }
 sub elements  { @{$_[0]->_array} }
 sub maxIndice { $#{$_[0]->_array} }
@@ -35,8 +35,8 @@ sub _stringify {
   my $maxIndice       = $_[0]->maxIndice;
   my $lengthMaxIndice = length($maxIndice);
   my @stringArray = ();
-  map { push(@stringArray, sprintf('[%*d] %s', $lengthMaxIndice, $_, $_[0]->get($_))) } (0..$maxIndice);
-  join("\n", @stringArray)
+  map { push(@stringArray, sprintf('  #%-*d %s', $lengthMaxIndice, $_, $_[0]->get($_))) } grep { defined($_[0]->get($_)) } (0..$maxIndice);
+  "Constant pool\n[\n" . join("\n", @stringArray) . "]"
 }
 
 1;

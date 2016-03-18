@@ -29,7 +29,6 @@ use Carp qw/croak/;
 use Import::Into;
 use Class::Method::Modifiers qw/install_modifier/;
 use Scalar::Util qw/reftype blessed/;
-use Import::Into;
 require Moo;
 
 my %_HAS_TRACKED = ();
@@ -53,10 +52,6 @@ sub import {
     #
     install_modifier($target, 'fresh', new => sub { _new($target, @_) } )
   }
-  #
-  # In any case, inject the toString method unless class already provide this
-  #
-  install_modifier($target, 'fresh', toString => sub { goto &_toString } ) unless ($target->can('toString'))
 }
 
 sub _has {

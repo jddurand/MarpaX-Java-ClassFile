@@ -37,6 +37,7 @@ sub _ConstantValue_attribute {
   # my ($self, $attribute_name_index, $attribute_length, $constantvalue_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ConstantValueAttribute->new(
+                                                               _constant_pool       => $_[0]->constant_pool,
                                                                attribute_name_index => $_[1],
                                                                attribute_length     => $_[2],
                                                                constantvalue_index  => $_[3]

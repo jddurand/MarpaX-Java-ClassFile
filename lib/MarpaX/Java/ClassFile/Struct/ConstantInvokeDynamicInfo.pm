@@ -28,7 +28,7 @@ sub _stringify {
   my $constant_bootstrap_method_attr = $_[0]->_constant_pool->get($_[0]->class_index);
   my $constant_name_and_type         = $_[0]->_constant_pool->get($_[0]->name_and_type_index);
 
-  "Fieldref{bootstrap_method_attr_index:#$bootstrap_method_attr_index => $constant_bootstrap_method_attr, name_and_type_index:#$name_and_type_index => $constant_name_and_type}"
+  "InvokeDynamicInfo{#$bootstrap_method_attr_index => $constant_bootstrap_method_attr, #$name_and_type_index => $constant_name_and_type}"
 }
 
 1;

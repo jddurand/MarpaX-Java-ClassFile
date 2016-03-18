@@ -25,7 +25,7 @@ sub _stringify {
 
   my $_perlvalue = $_[0]->_perlvalue;
 
-  "Double=$_perlvalue"
+  "DoubleInfo:$_perlvalue"
 }
 
 1;
