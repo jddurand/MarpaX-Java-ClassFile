@@ -2,47 +2,13 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ClassFile;
+use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
-  style => 'ARRAY',
   '""' => [
            [ sub { 'magic              ' } => sub { sprintf('0x%0X', $_[0]->magic) } ],
            [ sub { 'version            ' } => sub { sprintf('%d.%d', $_[0]->major_version, $_[0]->minor_version) } ],
            [ sub { 'constant pool count' } => sub { $_[0]->constant_pool_count } ],
-           [ sub { 'constant pool      ' } => sub
-             {
-               #
-               # Current recursivity level in OUR stringification routines
-               #
-               my $currentLevel = $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_LEVEL // 0;
-               my $localIndent = '  ' x $currentLevel;
-               #
-               # To have a pretty printing of indices
-               #
-               my $maxIndice = $#{$_[0]->constant_pool};
-               my $lengthMaxIndice = length($maxIndice);
-               #
-               # Call for stringification
-               #
-               my $innerIndent = '  ' . $localIndent;
-               my $rc = "[\n" . join(",\n",
-                                     map {
-                                       #
-                                       # Say to any other overload stub that we fake a new level because we
-                                       # managed ourself the fact that this is a deployed array
-                                       #
-                                       local $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_LEVEL = $currentLevel + 1;
-                                       sprintf('%s#%*d %s',
-                                               $innerIndent,
-                                               -$lengthMaxIndice,
-                                               $_,
-                                               $_[0]->constant_pool->[$_]
-                                              )
-                                     }
-                                     grep { defined($_[0]->constant_pool->[$_]) }  # A cp can be undef
-                                     (0..$#{$_[0]->constant_pool})) . "\n$localIndent]";
-               $rc
-             }
-           ]
+           [ sub { 'constant pool      ' } => sub { $_[0]->arrayStringificator($_[0]->constant_pool) } ]
           ];
 
 # ABSTRACT: struct ClassFile
