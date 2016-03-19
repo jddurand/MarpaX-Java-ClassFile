@@ -57,7 +57,7 @@ sub callbacks {
             my $u2 = $_[0]->pauseU2;
             my $attribute_name = '';
             if (($u2 >= 1) && ($u2 <= $_[0]->constant_pool_count)) {
-              my $constant = $_[0]->constant_pool->get($u2);
+              my $constant = $_[0]->constant_pool->[$u2];
               my $blessed = blessed($constant) // '';
               if ($blessed eq 'MarpaX::Java::ClassFile::Struct::ConstantUtf8Info') {
                 $attribute_name = $constant->bytes;

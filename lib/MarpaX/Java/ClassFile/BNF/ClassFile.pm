@@ -14,7 +14,6 @@ use Data::Section -setup;
 use MarpaX::Java::ClassFile::Util::BNF qw/bnf/;
 use Types::Standard qw/ArrayRef Str/;
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
-use MarpaX::Java::ClassFile::Struct::_Types qw/ConstantPoolArray/;
 use MarpaX::Java::ClassFile::Util::ProductionMode qw/prod_isa/;
 use Scalar::Util qw/blessed/;
 #
@@ -50,7 +49,7 @@ sub callbacks {
             # Make sure all constant pool items that require a cross-reference to this array
             # have the correct value
             #
-            foreach ($constant_pool->elements) {
+            foreach (@{$constant_pool}) {
               $_->_constant_pool($constant_pool) if (blessed($_) && ($_->can('_constant_pool')))
             }
           },

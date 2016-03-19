@@ -16,7 +16,6 @@ use Moo::Role;
 # you are not interested in micro-optimizations)
 #
 use Carp qw/croak/;
-use MarpaX::Java::ClassFile::Struct::_Types qw/ConstantPoolArray/;
 use MarpaX::Java::ClassFile::Util::MarpaTrace qw//;
 use MarpaX::Java::ClassFile::Util::ProductionMode qw/prod_isa/;
 use Data::Section -setup;
@@ -24,8 +23,6 @@ use Scalar::Util qw/blessed/;
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
 use Types::Standard qw/Any ScalarRef Bool ArrayRef Str Undef ConsumerOf InstanceOf/;
 use Types::Encodings qw/Bytes/;
-
-require MarpaX::Java::ClassFile::Struct::ConstantPoolArray;
 
 =head1 DESCRIPTION
 
@@ -42,7 +39,7 @@ has inputRef       => ( is => 'ro',  prod_isa(ScalarRef[Bytes]),                
 #
 has marpaRecceHook => ( is => 'ro',  prod_isa(Bool),                                                      default => sub { 1 });
 has constant_pool_count => ( is => 'ro',  prod_isa(PositiveOrZeroInt),                                    default => sub { 0 } );
-has constant_pool  => ( is => 'ro',  prod_isa(ConstantPoolArray),                                         lazy => 1, builder => 1);
+has constant_pool  => ( is => 'ro',  prod_isa(ArrayRef),                                                  lazy => 1, builder => 1);
 has pos            => ( is => 'rwp', prod_isa(PositiveOrZeroInt),                                         default => sub { 0 });
 has exhaustion     => ( is => 'ro',  prod_isa(Str),                                                       default => sub { 'event' });
 has parent         => ( is => 'ro',  prod_isa(Undef|ConsumerOf['MarpaX::Java::ClassFile::Role::Parser']), default => sub { return });
@@ -77,9 +74,7 @@ sub BEGIN {
     }
 }
 
-sub _build_constant_pool {
-  MarpaX::Java::ClassFile::Struct::ConstantPoolArray->new()
-}
+sub _build_constant_pool { [] }
 
 sub _build_max {
   # my ($self) = @_;

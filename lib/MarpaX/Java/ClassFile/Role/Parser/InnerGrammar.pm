@@ -11,7 +11,6 @@ package MarpaX::Java::ClassFile::Role::Parser::InnerGrammar;
 
 use Moo::Role;
 
-use MarpaX::Java::ClassFile::Struct::_Types qw/ConstantPoolArray/;
 use MarpaX::Java::ClassFile::Util::ProductionMode qw/prod_isa/;
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
 use Types::Standard qw/Int ArrayRef/;
@@ -28,8 +27,6 @@ with qw/MarpaX::Java::ClassFile::Role::Parser/;
 # ------------------
 # Role modifications
 # ------------------
-has '+ast'        => ( is => 'ro',  prod_isa(ArrayRef|ConstantPoolArray), lazy => 1, builder => 1);
-
 sub nbDone { $MarpaX::Java::ClassFile::Role::Parser::InnerGrammar::nbDone }
 sub inc_nbDone { $MarpaX::Java::ClassFile::Role::Parser::InnerGrammar::nbDone++ }
 

@@ -2,8 +2,48 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ClassFile;
-use MarpaX::Java::ClassFile::Struct::_Base;
-use overload '""' => \&_stringify;
+use MarpaX::Java::ClassFile::Struct::_Base
+  style => 'ARRAY',
+  '""' => [
+           [ sub { 'magic              ' } => sub { sprintf('0x%0X', $_[0]->magic) } ],
+           [ sub { 'version            ' } => sub { sprintf('%d.%d', $_[0]->major_version, $_[0]->minor_version) } ],
+           [ sub { 'constant pool count' } => sub { $_[0]->constant_pool_count } ],
+           [ sub { 'constant pool      ' } => sub
+             {
+               #
+               # Current recursivity level in OUR stringification routines
+               #
+               my $currentLevel = $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_LEVEL // 0;
+               my $localIndent = '  ' x $currentLevel;
+               #
+               # To have a pretty printing of indices
+               #
+               my $maxIndice = $#{$_[0]->constant_pool};
+               my $lengthMaxIndice = length($maxIndice);
+               #
+               # Call for stringification
+               #
+               my $innerIndent = '  ' . $localIndent;
+               my $rc = "[\n" . join(",\n",
+                                     map {
+                                       #
+                                       # Say to any other overload stub that we fake a new level because we
+                                       # managed ourself the fact that this is a deployed array
+                                       #
+                                       local $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_LEVEL = $currentLevel + 1;
+                                       sprintf('%s#%*d %s',
+                                               $innerIndent,
+                                               -$lengthMaxIndice,
+                                               $_,
+                                               $_[0]->constant_pool->[$_]
+                                              )
+                                     }
+                                     grep { defined($_[0]->constant_pool->[$_]) }  # A cp can be undef
+                                     (0..$#{$_[0]->constant_pool})) . "\n$localIndent]";
+               $rc
+             }
+           ]
+          ];
 
 # ABSTRACT: struct ClassFile
 
@@ -11,7 +51,7 @@ use overload '""' => \&_stringify;
 
 # AUTHORITY
 
-use MarpaX::Java::ClassFile::Struct::_Types qw/U2 U4 ConstantPoolArray FieldInfo MethodInfo AttributeInfo/;
+use MarpaX::Java::ClassFile::Struct::_Types qw/U2 U4 FieldInfo MethodInfo AttributeInfo/;
 use Types::Standard qw/ArrayRef InstanceOf/;
 use Scalar::Util qw/blessed/;
 
@@ -19,7 +59,7 @@ has magic               => ( is => 'ro', required => 1, isa => U4);
 has minor_version       => ( is => 'ro', required => 1, isa => U2);
 has major_version       => ( is => 'ro', required => 1, isa => U2);
 has constant_pool_count => ( is => 'ro', required => 1, isa => U2);
-has constant_pool       => ( is => 'ro', required => 1, isa => ConstantPoolArray);
+has constant_pool       => ( is => 'ro', required => 1, isa => ArrayRef);
 has access_flags        => ( is => 'ro', required => 1, isa => U2);
 has this_class          => ( is => 'ro', required => 1, isa => U2);
 has super_class         => ( is => 'ro', required => 1, isa => U2);

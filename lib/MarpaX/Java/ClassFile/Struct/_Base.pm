@@ -35,6 +35,8 @@ my %_HAS_TRACKED = ();
 my @_GETTER = ();
 
 sub import {
+  my ($class, %args) = @_;
+
   my $target = caller;
 
   if ($ENV{AUTHOR_TESTING}) {
@@ -52,6 +54,70 @@ sub import {
     #
     install_modifier($target, 'fresh', new => sub { _new($target, @_) } )
   }
+  #
+  # We provide a default stringification which always obey to the following:
+  #
+  # Any object always expand to:
+  #
+  # NAME [
+  #   DESCRIPTION
+  # ]
+  #
+  # NAME        default is the last blessed name component. Can be overwriten with $args{name}.
+  # DESCRIPTION default is the stringified list of members in the following format:
+  #
+  # WHAT [",\n" WHAT [",\n" WHAT]]
+  #
+  # The list of members is always empty. Can be overwiten with $arg{'""'} = [LIST_OF_MEMBERS_TO_STRINGIFY].
+  #
+  # LIST_OF_MEMBERS_TO_STRINGIFY impacts WHAT:
+  # - an arrayref [ x     ]  Stringified as "$self->x". x must be a CODE reference.
+  # - an arrayref [ x,  y ]  Stringified as "$self->x => $self->y". x and y must be CODE references.
+  #
+  # Any output is always automatically indented by adding two spaces '  ' to any stringified members if there
+  # is more than once member, or left on a single line if there at maximum one member.
+  # Indent can be overwriten with $arg{indent}
+  #
+  # Please note that there is type-checking on %args values.
+  #
+  my $name   = $args{name}   // (split(/::/, $target))[-1];
+  my $list   = $args{'""'}   // [];
+  my $indent = $args{indent} // '  ';
+
+  my $stub = sub {
+    #
+    # There is no way to pass private arguments in the '""' overload
+    # this is why we use this localized variable
+    #
+    my $currentLevel = $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_LEVEL // 0;
+    #
+    # Current recursivity level represent a forced indentation
+    # when we deply a multiline output
+    #
+    my $forceIndent = $indent x $currentLevel;
+    my $localIndent = $#{$list} ? $forceIndent . $indent : '';
+    #
+    # We have to localize again, in case stringification happens
+    # implicitely INSIDE the callbacks, not explicitely
+    #
+    local $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_LEVEL = ++$currentLevel;
+    my $description = join(",\n", map {
+      my ($x, $y) = @{$_};
+      if ($y) {
+        $localIndent . join(' => ', $_[0]->$x, $_[0]->$y)
+      } else {
+        $localIndent . join('', $_[0]->$x)
+      }
+    } @{$list});
+    #
+    # More then one item ? Force newline.
+    #
+    $#{$list} ? "${name} [\n${description}\n$forceIndent]" : "${name} [${description}]"
+  };
+  #
+  # Inject overload
+  #
+  overload->import::into($target, '""' => $stub)
 }
 
 sub _has {

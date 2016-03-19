@@ -16,7 +16,6 @@ use Type::Library
                   U1 U2 U4
                   ClassFile
 
-                  ConstantPoolArray
                   ConstantClassInfo
                   ConstantFieldrefInfo
                   ConstantMethodrefInfo
@@ -129,7 +128,6 @@ declare U1, as Int, where { ($_ >= 0) && ($_ <= 255)   },      inline_as { my $v
 declare U2, as Int, where { ($_ >= 0) && ($_ <= 65535) },      inline_as { my $varname = $_[1]; "($varname >= 0) && ($varname <= 65535)" };
 declare U4, as Int, where { ($_ >= 0) && ($_ <= 4294967295) }, inline_as { my $varname = $_[1]; "($varname >= 0) && ($varname <= 4294967295)" };
 
-class_type ConstantPoolArray,              { class => 'MarpaX::Java::ClassFile::Struct::ConstantPoolArray' };
 class_type ClassFile,                      { class => 'MarpaX::Java::ClassFile::Struct::ClassFile' };
 class_type ConstantClassInfo,              { class => 'MarpaX::Java::ClassFile::Struct::ConstantClassInfo' };
 class_type ConstantFieldrefInfo,           { class => 'MarpaX::Java::ClassFile::Struct::ConstantFieldrefInfo' };
