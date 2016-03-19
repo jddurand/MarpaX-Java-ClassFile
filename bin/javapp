@@ -2,6 +2,39 @@
 use strict;
 use warnings FATAL => 'all';
 use POSIX qw/EXIT_SUCCESS/;
+use Log::Log4perl qw/:easy/;
+use Log::Any::Adapter;
+use Log::Any qw/$log/;
+use Getopt::Long;
+
+my $loglevel = 'WARN';
+my $help     = 0;
+GetOptions('loglevel=s' => \$loglevel,
+           'help!'      => \$help)
+  || die "Error in command line arguments\n";
+#
+# Help
+#
+if ($help) {
+  print <<USAGE;
+Usage: javapp [--help] [--loglevel level] classfiles
+
+where loglevel is a log4j-like level, like WARN, ERROR, TRACE, etc.
+USAGE
+  exit(EXIT_SUCCESS);
+}
+#
+# Init log
+#
+our $defaultLog4perlConf = "
+log4perl.rootLogger              = $loglevel, Screen
+log4perl.appender.Screen         = Log::Log4perl::Appender::Screen
+log4perl.appender.Screen.stderr  = 0
+log4perl.appender.Screen.layout  = PatternLayout
+log4perl.appender.Screen.layout.ConversionPattern = %d %-5p %6P %m{chomp}%n
+";
+Log::Log4perl::init(\$defaultLog4perlConf);
+Log::Any::Adapter->set('Log4perl');
 
 require MarpaX::Java::ClassFile;
 
