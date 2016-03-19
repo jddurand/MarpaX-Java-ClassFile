@@ -2,7 +2,11 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::Annotation;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { 'Element value pair count' } => sub { $_[0]->num_element_value_pairs } ],
+           [ sub { 'Element value           ' } => sub { $_[0]->arrayStringificator($_[0]->element_value_pairs) } ]
+          ];
 
 # ABSTRACT: annotation
 
