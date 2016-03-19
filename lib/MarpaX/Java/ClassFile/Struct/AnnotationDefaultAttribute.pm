@@ -2,7 +2,11 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::AnnotationDefaultAttribute;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { '#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
+           [ sub { 'default value' } => sub { $_[0]->default_value } ]
+          ];
 
 # ABSTRACT: AnnotationDefault_attribute
 
