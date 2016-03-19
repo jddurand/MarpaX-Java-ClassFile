@@ -49,25 +49,4 @@ my %_ACCESS_FLAG = (
                     ACC_ENUM       => 0x4000
 );
 
-sub _stringify {
-  # my ($self) = @_;
-
-  my $this_class          = sprintf('  Class name         : %s', $_[0]->constant_pool->get($_[0]->this_class));
-  my $magic               = sprintf('  Magic number       : 0x%X', $_[0]->magic);
-  my $version             = sprintf('  Version            : %d.%d', $_[0]->major_version, $_[0]->minor_version);
-  my $access_flags        = sprintf('  Access flags       : %s', join(', ', grep { ($_ACCESS_FLAG{$_} & $_[0]->access_flags) == $_ACCESS_FLAG{$_} } sort { $_ACCESS_FLAG{$a} <=> $_ACCESS_FLAG{$b} } keys %_ACCESS_FLAG));
-  my $constant_pool_count = sprintf('  Constant pool count: %d', $_[0]->constant_pool_count - 1);
-  my $constant_pool       = do { my $string = $_[0]->constant_pool; $string =~ s/^/  /sxmg; $string }; # Because this is an array, this is multiline
-  return <<_TOSTRING;
-ClassFile{
-$this_class
-$magic
-$version
-$access_flags
-$constant_pool_count
-$constant_pool
-}
-_TOSTRING
-}
-
 1;
