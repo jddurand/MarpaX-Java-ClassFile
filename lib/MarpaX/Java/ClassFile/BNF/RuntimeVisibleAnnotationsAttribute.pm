@@ -36,7 +36,7 @@ sub callbacks { return {
 # Grammar actions
 # ---------------
 sub _RuntimeVisibleAnnotations_attribute {
-  # my ($self, $attribute_name_index, $num_annotations, $annotations) = @_;
+  # my ($self, $attribute_name_index, $attribute_length, $num_annotations, $annotations) = @_;
 
   MarpaX::Java::ClassFile::Struct::RuntimeVisibleAnnotationsAttribute->new(
                                                                            attribute_name_index => $_[1],
