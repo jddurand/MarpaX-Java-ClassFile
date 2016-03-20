@@ -49,7 +49,7 @@ around whoami => sub {
 
   my $whoami = $self->$orig(@args);
   my $size   = $self->size;
-  my $i      = $MarpaX::Java::ClassFile::Role::Parser::InnerGrammar::nbDone;
+  my $i      = $MarpaX::Java::ClassFile::Role::Parser::InnerGrammar::nbDone // 0;
 
   ++$i if ($i < $size);
   "${whoami}[${i}/${size}]"

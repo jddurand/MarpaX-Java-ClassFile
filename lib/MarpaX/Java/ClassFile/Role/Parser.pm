@@ -54,6 +54,14 @@ my $MARPA_TRACE_FILE_HANDLE;
 my $MARPA_TRACE_BUFFER;
 my %_registrations = ();
 
+sub BUILD {
+  $_[0]->debugf('Starting');
+}
+
+sub DESTROY {
+  $_[0]->debugf('Ending');
+}
+
 sub BEGIN {
     #
     ## We do not want Marpa to pollute STDERR
