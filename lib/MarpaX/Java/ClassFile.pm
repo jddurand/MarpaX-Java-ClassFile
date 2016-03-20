@@ -22,14 +22,31 @@ require MarpaX::Java::ClassFile::Struct::ClassFile;
 sub _build_ast {
   my ($self) = @_;
 
-  open(my $fh, '<', $self->filename) || croak "Cannot open " . $self->filename . ", $!";
-  binmode($fh);
+  $self->_logger->debugf('Opening %s', $self->filename);
+  open(my $fh, '<', $self->filename) || do {
+    $self->fatalf('Cannot open %s, %s', $self->filename, $!);
+    croak "Cannot open " . $self->filename . ", $!"
+  };
+
+  $self->_logger->debugf('Setting %s in binary mode', $self->filename);
+  binmode($fh) || do {
+    $self->fatalf('Failed to set binary mode on %s, %s', $self->filename, $!);
+    croak "Failed to set binary mode on " . $self->filename . ", $!"
+  };
+
+  $self->_logger->debugf('Reading %s', $self->filename);
   my $input = do { local $/; <$fh>};
-  close($fh) || warn "Cannot close " . $self->filename . ", $!";
 
+  $self->_logger->debugf('Closing %s', $self->filename);
+  close($fh) || do {
+    $self->warnf('Failed to close %s, %s', $self->filename, $!);
+    croak "Failed to close " . $self->filename . ", $!"
+  };
+
+  $self->_logger->debugf('Parsing %s', $self->filename);
   MarpaX::Java::ClassFile::BNF::ClassFile->new(inputRef => \$input)->ast
-  }
+}
 
-sub toString { $_[0]->ast->toString }
+with 'MooX::Role::Logger';
 
 1;

@@ -39,12 +39,12 @@ sub callbacks {
 sub _MethodParametersAttribute {
   # my ($self, $attribute_name_index, $attribute_length, $parameters_count, $parameters) = @_;
 
-  MarpaX::Java::ClassFile::Struct::AnnotationDefaultAttribute->new(
-                                                                   attribute_name_index  => $_[1],
-                                                                   attribute_length      => $_[2],
-                                                                   parameters_count      => $_[3],
-                                                                   parameters            => $_[4]
-                                                                  )
+  MarpaX::Java::ClassFile::Struct::MethodParametersAttribute->new(
+                                                                  attribute_name_index  => $_[1],
+                                                                  attribute_length      => $_[2],
+                                                                  parameters_count      => $_[3],
+                                                                  parameters            => $_[4]
+                                                                 )
 }
 
 with 'MarpaX::Java::ClassFile::Role::Parser';

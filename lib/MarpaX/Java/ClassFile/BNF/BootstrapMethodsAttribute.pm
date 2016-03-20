@@ -39,12 +39,12 @@ sub callbacks {
 sub _BootstrapMethodsAttribute {
   # my ($self, $attribute_name_index, $attribute_length, $num_bootstrap_methods, $bootstrap_methods) = @_;
 
-  MarpaX::Java::ClassFile::Struct::AnnotationDefaultAttribute->new(
-                                                                   attribute_name_index  => $_[1],
-                                                                   attribute_length      => $_[2],
-                                                                   num_bootstrap_methods => $_[3],
-                                                                   bootstrap_methods     => $_[4]
-                                                                  )
+  MarpaX::Java::ClassFile::Struct::BootstrapMethodsAttribute->new(
+                                                                  attribute_name_index  => $_[1],
+                                                                  attribute_length      => $_[2],
+                                                                  num_bootstrap_methods => $_[3],
+                                                                  bootstrap_methods     => $_[4]
+                                                                 )
 }
 
 with 'MarpaX::Java::ClassFile::Role::Parser';

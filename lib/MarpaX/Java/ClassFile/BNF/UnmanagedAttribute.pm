@@ -39,9 +39,10 @@ sub _UnmanagedAttribute {
   # my ($self, $U1, $U4, $MANAGED) = @_;
 
   MarpaX::Java::ClassFile::Struct::UnmanagedAttribute->new(
+                                                           _constant_pool       => $_[0]->constant_pool,
                                                            attribute_name_index => $_[1],
-                                                           attribute_length => $_[2],
-                                                           info  => $_[3]
+                                                           attribute_length     => $_[2],
+                                                           info                 => $_[3]
                                                           )
 }
 

@@ -37,6 +37,7 @@ sub _annotation {
   # my ($self, $type_index, $num_element_value_pairs, $element_value_pairs) = @_;
 
   MarpaX::Java::ClassFile::Struct::Annotation->new(
+                                                   _constant_pool          => $_[0]->constant_pool,
                                                    type_index              => $_[1],
                                                    num_element_value_pairs => $_[2],
                                                    element_value_pairs     => $_[3]
