@@ -2,11 +2,12 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::BootstrapMethod;
+use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
            [ sub { '#' . $_[0]->bootstrap_method_ref } => sub { $_[0]->_constant_pool->[$_[0]->bootstrap_method_ref] } ],
-           [ sub { 'Bootstrap Argument Count'        } => sub { $_[0]->num_bootstrap_arguments } ],
-           [ sub { 'Bootstrap Arguments'             } => sub { $_[0]->bootstrap_arguments } ]
+           [ sub { 'Bootstrap Arguments Count'       } => sub { $_[0]->num_bootstrap_arguments } ],
+           [ sub { 'Bootstrap Arguments'             } => sub { $_[0]->arrayStringificator($_[0]->bootstrap_arguments) } ]
           ];
 
 # ABSTRACT: bootstrap method
