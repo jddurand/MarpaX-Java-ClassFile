@@ -33,6 +33,14 @@ require MarpaX::Java::ClassFile::BNF::LocalVariableTableAttribute;
 require MarpaX::Java::ClassFile::BNF::LocalVariableTypeTableAttribute;
 require MarpaX::Java::ClassFile::BNF::DeprecatedAttribute;
 require MarpaX::Java::ClassFile::BNF::RuntimeVisibleAnnotationsAttribute;
+require MarpaX::Java::ClassFile::BNF::RuntimeInvisibleAnnotationsAttribute;
+require MarpaX::Java::ClassFile::BNF::RuntimeVisibleParameterAnnotationsAttribute;
+require MarpaX::Java::ClassFile::BNF::RuntimeInvisibleParameterAnnotationsAttribute;
+require MarpaX::Java::ClassFile::BNF::RuntimeVisibleTypeAnnotationsAttribute;
+require MarpaX::Java::ClassFile::BNF::RuntimeInvisibleTypeAnnotationsAttribute;
+require MarpaX::Java::ClassFile::BNF::AnnotationDefaultAttribute;
+require MarpaX::Java::ClassFile::BNF::BootstrapMethodsAttribute;
+require MarpaX::Java::ClassFile::BNF::MethodParametersAttribute;
 require MarpaX::Java::ClassFile::BNF::UnmanagedAttribute;
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
@@ -63,21 +71,29 @@ sub callbacks {
                 $attribute_name = $constant->bytes;
               }
             }
-            if    ($attribute_name eq 'ConstantValue')             { $_[0]->inner('ConstantValueAttribute') }
-            elsif ($attribute_name eq 'Code')                      { $_[0]->inner('CodeAttribute') }
-            elsif ($attribute_name eq 'StackMapTable')             { $_[0]->inner('StackMapTableAttribute') }
-            elsif ($attribute_name eq 'Exceptions')                { $_[0]->inner('ExceptionsAttribute') }
-            elsif ($attribute_name eq 'InnerClasses')              { $_[0]->inner('InnerClassesAttribute') }
-            elsif ($attribute_name eq 'EnclosingMethod')           { $_[0]->inner('EnclosingMethodAttribute') }
-            elsif ($attribute_name eq 'Synthetic')                 { $_[0]->inner('SyntheticAttribute') }
-            elsif ($attribute_name eq 'Signature')                 { $_[0]->inner('SignatureAttribute') }
-            elsif ($attribute_name eq 'SourceFile')                { $_[0]->inner('SourceFileAttribute') }
-            elsif ($attribute_name eq 'SourceDebugExtension')      { $_[0]->inner('SourceDebugExtensionAttribute') }
-            elsif ($attribute_name eq 'LineNumberTable')           { $_[0]->inner('LineNumberTableAttribute') }
-            elsif ($attribute_name eq 'LocalVariableTable')        { $_[0]->inner('LocalVariableTableAttribute') }
-            elsif ($attribute_name eq 'LocalVariableTypeTable')    { $_[0]->inner('LocalVariableTypeTableAttribute') }
-            elsif ($attribute_name eq 'Deprecated')                { $_[0]->inner('DeprecatedAttribute') }
-            elsif ($attribute_name eq 'RuntimeVisibleAnnotations') { $_[0]->inner('RuntimeVisibleAnnotationsAttribute') }
+            if    ($attribute_name eq 'ConstantValue')                        { $_[0]->inner('ConstantValueAttribute') }
+            elsif ($attribute_name eq 'Code')                                 { $_[0]->inner('CodeAttribute') }
+            elsif ($attribute_name eq 'StackMapTable')                        { $_[0]->inner('StackMapTableAttribute') }
+            elsif ($attribute_name eq 'Exceptions')                           { $_[0]->inner('ExceptionsAttribute') }
+            elsif ($attribute_name eq 'InnerClasses')                         { $_[0]->inner('InnerClassesAttribute') }
+            elsif ($attribute_name eq 'EnclosingMethod')                      { $_[0]->inner('EnclosingMethodAttribute') }
+            elsif ($attribute_name eq 'Synthetic')                            { $_[0]->inner('SyntheticAttribute') }
+            elsif ($attribute_name eq 'Signature')                            { $_[0]->inner('SignatureAttribute') }
+            elsif ($attribute_name eq 'SourceFile')                           { $_[0]->inner('SourceFileAttribute') }
+            elsif ($attribute_name eq 'SourceDebugExtension')                 { $_[0]->inner('SourceDebugExtensionAttribute') }
+            elsif ($attribute_name eq 'LineNumberTable')                      { $_[0]->inner('LineNumberTableAttribute') }
+            elsif ($attribute_name eq 'LocalVariableTable')                   { $_[0]->inner('LocalVariableTableAttribute') }
+            elsif ($attribute_name eq 'LocalVariableTypeTable')               { $_[0]->inner('LocalVariableTypeTableAttribute') }
+            elsif ($attribute_name eq 'Deprecated')                           { $_[0]->inner('DeprecatedAttribute') }
+            elsif ($attribute_name eq 'RuntimeVisibleAnnotations')            { $_[0]->inner('RuntimeVisibleAnnotationsAttribute') }
+            elsif ($attribute_name eq 'RuntimeInvisibleAnnotations')          { $_[0]->inner('RuntimeInvisibleAnnotationsAttribute') }
+            elsif ($attribute_name eq 'RuntimeVisibleParameterAnnotations')   { $_[0]->inner('RuntimeVisibleParameterAnnotationsAttribute') }
+            elsif ($attribute_name eq 'RuntimeInvisibleParameterAnnotations') { $_[0]->inner('RuntimeInvisibleParameterAnnotationsAttribute') }
+            elsif ($attribute_name eq 'RuntimeVisibleTypeAnnotations')        { $_[0]->inner('RuntimeVisibleTypeAnnotationsAttribute') }
+            elsif ($attribute_name eq 'RuntimeInvisibleTypeAnnotations')      { $_[0]->inner('RuntimeInvisibleTypeAnnotationsAttribute') }
+            elsif ($attribute_name eq 'AnnotationDefault')                    { $_[0]->inner('AnnotationDefaultAttribute') }
+            elsif ($attribute_name eq 'BootstrapMethods')                     { $_[0]->inner('BootstrapMethodsAttribute') }
+            elsif ($attribute_name eq 'MethodParameters')                     { $_[0]->inner('MethodParametersAttribute') }
             else {
               $_[0]->infof('Unmanaged attribute %s', $attribute_name);
               $_[0]->inner('UnmanagedAttribute')
