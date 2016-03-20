@@ -43,6 +43,7 @@ sub _BootstrapMethod {
   # my ($self, $bootstrap_method_ref, $num_bootstrap_arguments, $bootstrap_arguments) = @_;
 
   MarpaX::Java::ClassFile::Struct::BootstrapMethod->new(
+                                                        _constant_pool          => $_[0]->constant_pool,
                                                         bootstrap_method_ref    => $_[1],
                                                         num_bootstrap_arguments => $_[2],
                                                         bootstrap_arguments     => $_[3]
