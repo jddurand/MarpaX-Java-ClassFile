@@ -47,6 +47,9 @@ require MarpaX::Java::ClassFile;
 # AUTHORITY
 
 
-map { print MarpaX::Java::ClassFile->new(filename => $_)->ast } @ARGV;
+map {
+  $log->infof('Parsing %s', $_);
+  MarpaX::Java::ClassFile->new(filename => $_)->ast
+} @ARGV;
 
 exit(EXIT_SUCCESS);
