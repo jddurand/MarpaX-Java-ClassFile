@@ -45,7 +45,7 @@ sub _Exceptions_attribute {
                                                             attribute_name_index  => $_[1],
                                                             attribute_length      => $_[2],
                                                             number_of_exceptions  => $_[3],
-                                                            exception_index_table => $_[4],
+                                                            exception_index_table => $_[4]
                                                            )
 }
 
