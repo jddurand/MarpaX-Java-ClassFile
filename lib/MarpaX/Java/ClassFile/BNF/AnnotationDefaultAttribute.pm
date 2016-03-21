@@ -53,6 +53,7 @@ with 'MarpaX::Java::ClassFile::Role::Parser';
 
 __DATA__
 __[ bnf ]__
+event 'attribute_length$' = completed attribute_length
 AnnotationDefaultAttribute ::= attribute_name_index attribute_length default_value action => _AnnotationDefaultAttribute
 attribute_name_index       ::= U2                                                  action => u2
 attribute_length           ::= U4                                                  action => u4
