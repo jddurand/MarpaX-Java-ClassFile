@@ -36,10 +36,11 @@ sub _exception_table {
   # my ($self, $start_pc, $end_pc, $handler_pc, $catch_type) = @_;
 
   MarpaX::Java::ClassFile::Struct::ExceptionTable->new(
-                                                       start_pc   => $_[1],
-                                                       end_pc     => $_[2],
-                                                       handler_pc => $_[3],
-                                                       catch_type => $_[4]
+                                                       _constant_pool => $_[0]->constant_pool,
+                                                       start_pc       => $_[1],
+                                                       end_pc         => $_[2],
+                                                       handler_pc     => $_[3],
+                                                       catch_type     => $_[4]
                                                       )
 }
 

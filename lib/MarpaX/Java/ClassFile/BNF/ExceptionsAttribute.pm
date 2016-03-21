@@ -42,6 +42,7 @@ sub _Exceptions_attribute {
   # my ($self, $attribute_name_index, $attribute_length, $number_of_exceptions, $exception_index_table) = @_;
 
   MarpaX::Java::ClassFile::Struct::ExceptionsAttribute->new(
+                                                            _constant_pool        => $_[0]->constant_pool,
                                                             attribute_name_index  => $_[1],
                                                             attribute_length      => $_[2],
                                                             number_of_exceptions  => $_[3],
