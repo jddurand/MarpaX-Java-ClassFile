@@ -38,6 +38,7 @@ sub _element_value_pair {
   # my ($self, $element_name_index, $value) = @_;
 
   MarpaX::Java::ClassFile::Struct::ElementValuePair->new(
+                                                         _constant_pool      => $_[0]->constant_pool,
                                                          element_name_index  => $_[1],
                                                          value               => $_[2]
                                                         )

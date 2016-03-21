@@ -37,6 +37,7 @@ sub _EnumConstValue {
   # my ($self, $type_name_index, $const_name_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::EnumConstValue->new(
+                                                       _constant_pool   => $_[0]->constant_pool,
                                                        type_name_index  => $_[1],
                                                        const_name_index => $_[2],
                                                       )
