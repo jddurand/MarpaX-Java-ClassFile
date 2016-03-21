@@ -6,8 +6,8 @@ use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
            [ sub { '#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
-           [ sub { 'Bootstrap Methods Count'         } => sub { $_[0]->num_bootstrap_methods } ],
-           [ sub { 'Bootstrap Methods      '         } => sub { $_[0]->arrayStringificator($_[0]->bootstrap_methods) } ]
+           [ sub { 'Bootstrap methods count'         } => sub { $_[0]->num_bootstrap_methods } ],
+           [ sub { 'Bootstrap methods      '         } => sub { $_[0]->arrayStringificator($_[0]->bootstrap_methods) } ]
           ];
 
 # ABSTRACT: BootstrapMethods_attribute
