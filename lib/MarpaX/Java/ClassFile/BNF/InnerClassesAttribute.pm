@@ -39,6 +39,7 @@ sub _InnerClasses_attribute {
   # my ($self, $attribute_name_index, $attribute_length, $number_of_classes, $classes) = @_;
 
   MarpaX::Java::ClassFile::Struct::InnerClassesAttribute->new(
+                                                              _constant_pool       => $_[0]->constant_pool,
                                                               attribute_name_index => $_[1],
                                                               attribute_length     => $_[2],
                                                               number_of_classes    => $_[3],
