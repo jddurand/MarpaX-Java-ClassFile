@@ -2,7 +2,12 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ChopFrame;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Util::FrameTypeStringification qw/frameTypeStringificator/;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { 'frame_type  ' } => sub { $_[0]->frameTypeStringificator($_[0]->frame_type) } ],
+           [ sub { 'offset_delta' } => sub { $_[0]->offset_delta } ],
+          ];
 
 # ABSTRACT: chop_frame
 

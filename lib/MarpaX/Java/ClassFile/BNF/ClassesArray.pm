@@ -36,6 +36,7 @@ sub _class {
   # my ($self, $inner_class_info_index, $outer_class_info_index, $inner_name_index, $inner_class_access_flags) = @_;
 
   MarpaX::Java::ClassFile::Struct::Class->new(
+                                              _constant_pool           => $_[0]->constant_pool,
                                               inner_class_info_index   => $_[1],
                                               outer_class_info_index   => $_[2],
                                               inner_name_index         => $_[3],

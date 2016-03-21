@@ -8,8 +8,8 @@ use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
            [ sub { 'frame_type  ' } => sub { $_[0]->frameTypeStringificator($_[0]->frame_type) } ],
            [ sub { 'offset_delta' } => sub { $_[0]->offset_delta } ],
-           [ sub { 'Locals count' } => sub { $_[0]->arrayStringificator($_[0]->locals) } ],
-           [ sub { 'Locals      ' } => sub { $_[0]->frame_type - 251 } ]
+           [ sub { 'Locals count' } => sub { $_[0]->frame_type - 251 } ],
+           [ sub { 'Locals      ' } => sub { $_[0]->arrayStringificator($_[0]->locals) } ]
           ];
 
 # ABSTRACT: append_frame

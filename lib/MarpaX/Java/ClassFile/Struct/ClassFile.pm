@@ -3,12 +3,14 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ClassFile;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
+use MarpaX::Java::ClassFile::Util::AccessFlagsStringification qw/accessFlagsStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { 'magic              ' } => sub { sprintf('0x%0X', $_[0]->magic) } ],
-           [ sub { 'version            ' } => sub { sprintf('%d.%d', $_[0]->major_version, $_[0]->minor_version) } ],
-           [ sub { 'constant pool count' } => sub { $_[0]->constant_pool_count } ],
-           [ sub { 'constant pool      ' } => sub { $_[0]->arrayStringificator($_[0]->constant_pool) } ]
+           [ sub { 'Magic              ' } => sub { sprintf('0x%0X', $_[0]->magic) } ],
+           [ sub { 'Version            ' } => sub { sprintf('%d.%d', $_[0]->major_version, $_[0]->minor_version) } ],
+           [ sub { 'Constant pool count' } => sub { $_[0]->constant_pool_count } ],
+           [ sub { 'Constant pool      ' } => sub { $_[0]->arrayStringificator($_[0]->constant_pool) } ],
+           [ sub { 'Access flags       ' } => sub { $_[0]->accessFlagsStringificator($_[0]->access_flags) } ]
           ];
 
 # ABSTRACT: struct ClassFile
@@ -37,16 +39,5 @@ has methods_count       => ( is => 'ro', required => 1, isa => U2);
 has methods             => ( is => 'ro', required => 1, isa => ArrayRef[InstanceOf[MethodInfo]]);
 has attributes_count    => ( is => 'ro', required => 1, isa => U2);
 has attributes          => ( is => 'ro', required => 1, isa => ArrayRef[InstanceOf[AttributeInfo]]);
-
-my %_ACCESS_FLAG = (
-                    ACC_PUBLIC     => 0x0001,
-                    ACC_FINAL      => 0x0010,
-                    ACC_SUPER      => 0x0020,
-                    ACC_INTERFACE  => 0x0200,
-                    ACC_ABSTRACT   => 0x0400,
-                    ACC_SYNTHETIC  => 0x1000,
-                    ACC_ANNOTATION => 0x2000,
-                    ACC_ENUM       => 0x4000
-);
 
 1;
