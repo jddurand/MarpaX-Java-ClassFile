@@ -54,9 +54,6 @@ my $MARPA_TRACE_FILE_HANDLE;
 my $MARPA_TRACE_BUFFER;
 my %_registrations = ();
 
-sub BUILD   { $_[0]->debugf('Starting at offset %d', $_[0]->pos) }
-sub DESTROY { $_[0]->debugf('Ending at offset %d', $_[0]->pos) }
-
 sub BEGIN {
     #
     ## We do not want Marpa to pollute STDERR

@@ -22,22 +22,22 @@ require MarpaX::Java::ClassFile::Struct::ClassFile;
 sub _build_ast {
   my ($self) = @_;
 
-  $self->_logger->debugf('Opening %s', $self->filename);
+  $self->_logger->tracef('Opening %s', $self->filename);
   open(my $fh, '<', $self->filename) || do {
     $self->fatalf('Cannot open %s, %s', $self->filename, $!);
     croak "Cannot open " . $self->filename . ", $!"
   };
 
-  $self->_logger->debugf('Setting %s in binary mode', $self->filename);
+  $self->_logger->tracef('Setting %s in binary mode', $self->filename);
   binmode($fh) || do {
     $self->fatalf('Failed to set binary mode on %s, %s', $self->filename, $!);
     croak "Failed to set binary mode on " . $self->filename . ", $!"
   };
 
-  $self->_logger->debugf('Reading %s', $self->filename);
+  $self->_logger->tracef('Reading %s', $self->filename);
   my $input = do { local $/; <$fh>};
 
-  $self->_logger->debugf('Closing %s', $self->filename);
+  $self->_logger->tracef('Closing %s', $self->filename);
   close($fh) || do {
     $self->warnf('Failed to close %s, %s', $self->filename, $!);
     croak "Failed to close " . $self->filename . ", $!"
