@@ -2,7 +2,10 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::FormalParameterTarget;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { 'parameter_index' } => sub { $_[0]->formal_parameter_index } ]
+          ];
 
 # ABSTRACT: formal_parameter_target
 
