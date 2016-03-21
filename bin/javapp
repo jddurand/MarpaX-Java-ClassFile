@@ -1,6 +1,9 @@
 #!perl
 use strict;
 use warnings FATAL => 'all';
+use File::Basename;
+use File::Find;
+use File::Spec;
 use POSIX qw/EXIT_SUCCESS/;
 use Log::Log4perl qw/:easy/;
 use Log::Any::Adapter;
@@ -46,7 +49,24 @@ require MarpaX::Java::ClassFile;
 
 # AUTHORITY
 
-
-map { print MarpaX::Java::ClassFile->new(filename => $_)->ast } @ARGV;
+my $case_tolerant = File::Spec->case_tolerant;
+find({
+    wanted => sub {
+        #
+        # Should look like a file
+        #
+        return if (! -f $_);
+        #
+        # ./.. that end with ".class"
+        #
+        my ($filename_without_suffix, $dirs, $suffix) = fileparse($_, qr/\.[^.]*/);
+        $suffix = lc($suffix) if (! $case_tolerant);
+        return unless ($suffix eq '.class');
+        #
+        # then print (this is implicitely using the '""' overload)
+        #
+        # print
+            MarpaX::Java::ClassFile->new(filename => File::Spec->canonpath($_))->ast
+    }, no_chdir => 1 }, @ARGV);
 
 exit(EXIT_SUCCESS);
