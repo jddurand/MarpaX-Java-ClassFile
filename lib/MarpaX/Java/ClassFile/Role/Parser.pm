@@ -33,22 +33,22 @@ MarpaX::Java::ClassFile::Role::Parser is the parse engine role used by L<MarpaX:
 #
 # Required parameters
 #
-has inputRef       => ( is => 'ro',  prod_isa(ScalarRef[Bytes]),                                          required => 1);
+has inputRef            => ( is => 'ro',  prod_isa(ScalarRef[Bytes]),                                                  required => 1);
 #
 # Parameters with a default
 #
-has marpaRecceHook => ( is => 'ro',  prod_isa(Bool),                                                      default => sub { 1 });
-has constant_pool_count => ( is => 'ro',  prod_isa(PositiveOrZeroInt),                                    default => sub { 0 } );
-has constant_pool  => ( is => 'ro',  prod_isa(ArrayRef),                                                  lazy => 1, builder => 1);
-has pos            => ( is => 'rwp', prod_isa(PositiveOrZeroInt),                                         default => sub { 0 });
-has exhaustion     => ( is => 'ro',  prod_isa(Str),                                                       default => sub { 'event' });
-has parent         => ( is => 'ro',  prod_isa(Undef|ConsumerOf['MarpaX::Java::ClassFile::Role::Parser']), default => sub { return });
+has marpaRecceHook      => ( is => 'ro',  prod_isa(Bool),                                                      default => sub { 1 });
+has constant_pool_count => ( is => 'ro',  prod_isa(PositiveOrZeroInt),                                         default => sub { 0 } );
+has constant_pool       => ( is => 'ro',  prod_isa(ArrayRef),                                                  default => sub { [] });
+has pos                 => ( is => 'rwp', prod_isa(PositiveOrZeroInt),                                         default => sub { 0 });
+has exhaustion          => ( is => 'ro',  prod_isa(Str),                                                       default => sub { 'event' });
+has parent              => ( is => 'ro',  prod_isa(Undef|ConsumerOf['MarpaX::Java::ClassFile::Role::Parser']), default => sub { return });
 #
 # Lazy parameters
 #
-has max            => ( is => 'rwp', prod_isa(PositiveOrZeroInt),                                         lazy => 1, builder => 1);
-has whoami         => ( is => 'ro',  prod_isa(Str),                                                       lazy => 1, builder => 1);
-has ast            => ( is => 'ro',  prod_isa(Any),                                                       lazy => 1, builder => 1);
+has max                 => ( is => 'rwp', prod_isa(PositiveOrZeroInt),                                         lazy => 1, builder => 1);
+has whoami              => ( is => 'ro',  prod_isa(Str),                                                       lazy => 1, builder => 1);
+has ast                 => ( is => 'ro',  prod_isa(Any),                                                       lazy => 1, builder => 1);
 
 my $MARPA_TRACE_FILE_HANDLE;
 my $MARPA_TRACE_BUFFER;
@@ -73,8 +73,6 @@ sub BEGIN {
       }
     }
 }
-
-sub _build_constant_pool { [] }
 
 sub _build_max {
   # my ($self) = @_;
