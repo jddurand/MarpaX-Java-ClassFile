@@ -5,7 +5,6 @@ package MarpaX::Java::ClassFile::Struct::ConstantValueAttribute;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
            [ sub { '#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
-           [ sub { 'length'                          } => sub { $_[0]->attribute_length } ],
            [ sub { '#' . $_[0]->constantvalue_index  } => sub { $_[0]->_constant_pool->[$_[0]->constantvalue_index] } ]
           ];
 

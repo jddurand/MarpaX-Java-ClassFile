@@ -38,6 +38,7 @@ sub _DeprecatedAttribute {
   # my ($self, $U1, $U4, $MANAGED) = @_;
 
   MarpaX::Java::ClassFile::Struct::DeprecatedAttribute->new(
+                                                            _constant_pool       => $_[0]->constant_pool,
                                                             attribute_name_index => $_[1],
                                                             attribute_length     => $_[2]
                                                           )

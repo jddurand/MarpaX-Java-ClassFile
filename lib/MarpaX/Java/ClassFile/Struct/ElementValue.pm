@@ -2,7 +2,10 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ElementValue;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { 'value' } => sub { $_[0]->_value } ]
+          ];
 
 # ABSTRACT: element value
 

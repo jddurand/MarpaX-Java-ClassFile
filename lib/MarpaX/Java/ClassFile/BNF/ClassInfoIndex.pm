@@ -37,6 +37,7 @@ sub _ClassInfoIndex {
   # my ($self, $const_value_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ClassInfoIndex->new(
+                                                       _constant_pool   => $_[0]->constant_pool,
                                                        class_info_index => $_[1]
                                                       )
 }

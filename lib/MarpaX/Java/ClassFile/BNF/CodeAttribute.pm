@@ -43,6 +43,7 @@ sub _Code_attribute {
   # my ($self, $attribute_name_index, $attribute_length, $max_stack, $max_locals, $code_length, $code, $exception_table_length, $exception_table, $attributes_count, $attributes) = @_;
 
   MarpaX::Java::ClassFile::Struct::CodeAttribute->new(
+                                                      _constant_pool          => $_[0]->constant_pool,
                                                       attribute_name_index    => $_[ 1],
                                                       attribute_length        => $_[ 2],
                                                       max_stack               => $_[ 3],

@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ConstantFloatInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { $_[0]->_perlvalue } ]
+           [ sub { $_[0]->_perlvalue->bstr } ]
           ];
 
 # ABSTRACT: CONSTANT_Float_info

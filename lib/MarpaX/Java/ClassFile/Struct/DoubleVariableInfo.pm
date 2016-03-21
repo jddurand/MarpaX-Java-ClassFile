@@ -2,7 +2,10 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::DoubleVariableInfo;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { 'tag' } => sub { 'ITEM_Double' } ]
+          ];
 
 # ABSTRACT: Double_variable_info
 

@@ -2,7 +2,19 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::CodeAttribute;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { '#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
+           [ sub { 'Max stack            ' }           => sub { $_[0]->max_stack  } ],
+           [ sub { 'Max locals           ' }           => sub { $_[0]->max_locals } ],
+           [ sub { 'Code                 ' }           => sub { $_[0]->arrayStringificator($_[0]->code) } ],
+           [ sub { 'Exception table count' }           => sub { $_[0]->exception_table_length } ],
+           [ sub { 'Exception table      ' }           => sub { $_[0]->arrayStringificator($_[0]->exception_table) } ],
+           [ sub { 'Attributes count     ' }           => sub { $_[0]->exception_table_length } ],
+           [ sub { 'Attributes           ' }           => sub { $_[0]->arrayStringificator($_[0]->attributes) } ],
+          ]
+  ;
 
 # ABSTRACT: Code_attribute
 
@@ -13,6 +25,7 @@ use MarpaX::Java::ClassFile::Struct::_Base;
 use MarpaX::Java::ClassFile::Struct::_Types qw/U2 U4 OpCode ExceptionTable AttributeInfo/;
 use Types::Standard qw/ArrayRef/;
 
+has _constant_pool           => ( is => 'rw', required => 1, isa => ArrayRef);
 has attribute_name_index    => ( is => 'ro', required => 1, isa => U2 );
 has attribute_length        => ( is => 'ro', required => 1, isa => U4 );
 has max_stack               => ( is => 'ro', required => 1, isa => U2 );
