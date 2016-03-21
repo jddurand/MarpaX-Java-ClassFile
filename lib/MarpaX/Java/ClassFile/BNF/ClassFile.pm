@@ -14,6 +14,7 @@ use Data::Section -setup;
 use MarpaX::Java::ClassFile::Util::BNF qw/bnf/;
 use Types::Standard qw/ArrayRef Str/;
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
+use MarpaX::Java::ClassFile::Util::ArrayRefWeakenisation qw/arrayRefWeakenisator/;
 use MarpaX::Java::ClassFile::Util::ProductionMode qw/prod_isa/;
 use Scalar::Util qw/blessed/;
 #
@@ -26,6 +27,8 @@ require MarpaX::Java::ClassFile::BNF::InterfacesArray;
 require MarpaX::Java::ClassFile::BNF::FieldsArray;
 require MarpaX::Java::ClassFile::BNF::MethodsArray;
 require MarpaX::Java::ClassFile::BNF::AttributesArray;
+
+has _nonweak_constant_pool => ( is => 'rwp',  prod_isa(ArrayRef), default => sub { [] } );
 
 my $_data      = ${ __PACKAGE__->section_data('bnf') };
 my $_grammar   = Marpa::R2::Scanless::G->new( { source => \__PACKAGE__->bnf($_data) } );
@@ -44,10 +47,21 @@ sub callbacks {
           'constant_pool_count$' => sub {
             $_[0]->constant_pool_count($_[0]->literalU2('constant_pool_count'));
             my $constant_pool = $_[0]->inner('ConstantPoolArray', size => $_[0]->constant_pool_count - 1);
+            #
+            # Keep the version with references. This will go in the structure.
+            # C.f. call to MarpaX::Java::ClassFile::Struct::ClassFile->new().
+            #
+            $_[0]->_set__nonweak_constant_pool([ @{$constant_pool} ]);
+            #
+            # The default constant_pool attribute is weakened.
+            # Thus this can be propagated to any other subgrammar, thus any other
+            # sub structure -;
+            #
+            $_[0]->arrayRefWeakenisator($constant_pool);
             $_[0]->constant_pool($constant_pool);
             #
-            # Make sure all constant pool items that require a cross-reference to this array
-            # have the correct value
+            # Pass this information to any child, weakened, so that they can pass it
+            # to their child as well, and so on.
             #
             foreach (@{$constant_pool}) {
               $_->_constant_pool($constant_pool) if (blessed($_) && ($_->can('_constant_pool')))
@@ -69,7 +83,7 @@ sub _ClassFile {
       $minor_version,
       $major_version,
       $constant_pool_count,
-      $constant_pool,
+      # $constant_pool,
       $access_flags,
       $this_class,
       $super_class,
@@ -87,7 +101,7 @@ sub _ClassFile {
                                                   minor_version       => $minor_version,
                                                   major_version       => $major_version,
                                                   constant_pool_count => $constant_pool_count,
-                                                  constant_pool       => $constant_pool,
+                                                  constant_pool       => $_[0]->_nonweak_constant_pool,
                                                   access_flags        => $access_flags,
                                                   this_class          => $this_class,
                                                   super_class         => $super_class,
@@ -129,7 +143,7 @@ ClassFile ::=
              minor_version
              major_version
              constant_pool_count
-             constant_pool
+             (constant_pool)                 # C.f. in the constant_pool_count$ event
              access_flags
              this_class
              super_class
