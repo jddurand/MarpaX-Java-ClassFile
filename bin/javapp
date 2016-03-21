@@ -65,8 +65,7 @@ find({
         #
         # then print (this is implicitely using the '""' overload)
         #
-        # print
-            MarpaX::Java::ClassFile->new(filename => File::Spec->canonpath($_))->ast
+        print MarpaX::Java::ClassFile->new(filename => File::Spec->canonpath($_))->ast
     }, no_chdir => 1 }, @ARGV);
 
 exit(EXIT_SUCCESS);
