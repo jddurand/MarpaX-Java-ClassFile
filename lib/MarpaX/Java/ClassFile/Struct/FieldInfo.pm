@@ -2,7 +2,16 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::FieldInfo;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
+use MarpaX::Java::ClassFile::Util::AccessFlagsStringification qw/accessFlagsStringificator/;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { '#' . $_[0]->name_index }       => sub { $_[0]->_constant_pool->[$_[0]->name_index] } ],
+           [ sub { '#' . $_[0]->descriptor_index } => sub { $_[0]->_constant_pool->[$_[0]->descriptor_index] } ],
+           [ sub { 'Access flags       ' }         => sub { $_[0]->accessFlagsStringificator($_[0]->access_flags) } ],
+           [ sub { 'Attributes count   ' } => sub { $_[0]->attributes_count } ],
+           [ sub { 'Attributes         ' } => sub { $_[0]->arrayStringificator($_[0]->attributes) } ]
+          ];
 
 # ABSTRACT: field_info
 
@@ -13,6 +22,7 @@ use MarpaX::Java::ClassFile::Struct::_Base;
 use MarpaX::Java::ClassFile::Struct::_Types qw/U2 AttributeInfo/;
 use Types::Standard qw/ArrayRef/;
 
+has _constant_pool      => ( is => 'rw', required => 1, isa => ArrayRef);
 has access_flags     => ( is => 'ro', required => 1, isa => U2 );
 has name_index       => ( is => 'ro', required => 1, isa => U2 );
 has descriptor_index => ( is => 'ro', required => 1, isa => U2 );
