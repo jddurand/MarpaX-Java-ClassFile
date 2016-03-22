@@ -1,14 +1,17 @@
 #!perl
 use strict;
 use warnings FATAL => 'all';
+use Archive::Extract;
 use File::Basename;
 use File::Find;
 use File::Spec;
+use File::Temp qw/tempdir/;
 use POSIX qw/EXIT_SUCCESS/;
 use Log::Log4perl qw/:easy/;
 use Log::Any::Adapter;
 use Log::Any qw/$log/;
 use Getopt::Long;
+use Try::Tiny;
 
 my $loglevel = 'WARN';
 my $help     = 0;
@@ -32,7 +35,7 @@ USAGE
 our $defaultLog4perlConf = "
 log4perl.rootLogger              = $loglevel, Screen
 log4perl.appender.Screen         = Log::Log4perl::Appender::Screen
-log4perl.appender.Screen.stderr  = 0
+log4perl.appender.Screen.stderr  = 1
 log4perl.appender.Screen.layout  = PatternLayout
 log4perl.appender.Screen.layout.ConversionPattern = %d %-5p %6P %m{chomp}%n
 ";
@@ -50,22 +53,45 @@ require MarpaX::Java::ClassFile;
 # AUTHORITY
 
 my $case_tolerant = File::Spec->case_tolerant;
-find({
-    wanted => sub {
-        #
-        # Should look like a file
-        #
-        return if (! -f $_);
-        #
-        # ./.. that end with ".class"
-        #
-        my ($filename_without_suffix, $dirs, $suffix) = fileparse($_, qr/\.[^.]*/);
-        $suffix = lc($suffix) if (! $case_tolerant);
-        return unless ($suffix eq '.class');
-        #
-        # then print (this is implicitely using the '""' overload)
-        #
-        print MarpaX::Java::ClassFile->new(filename => File::Spec->canonpath($_))->ast
-    }, no_chdir => 1 }, @ARGV);
+find({wanted => \&_wanted, no_chdir => 1}, @ARGV);
+
+sub _wanted {
+    #
+    # Should look like a file
+    #
+    return if (! -f $_);
+    #
+    # ./.. that end with ".class", or ".jar"
+    #
+    my ($filename_without_suffix, $dirs, $suffix) = fileparse($_, qr/\.[^.]*/);
+    $suffix = lc($suffix) if (! $case_tolerant);
+    #
+    # Try/catch that
+    #
+    my $canonpath = File::Spec->canonpath($_);
+    #
+    # ".class"
+    #
+    if ($suffix eq '.class') {
+        try {
+            print MarpaX::Java::ClassFile->new(filename => $canonpath)->ast;
+        } catch {
+            $log->warnf('%s', $_);
+            return
+        }
+    } elsif ($suffix eq '.jar') {
+        my $dirname = tempdir(CLEANUP => 1);
+        $log->debugf('Extracting %s to %s', $canonpath, $dirname);
+        my $ae = Archive::Extract->new(archive => $canonpath);
+        if ($ae->extract(to => $dirname)) {
+            #
+            # Redo a find
+            #
+            find({wanted => \&_wanted, no_chdir => 1}, $dirname);
+        } else {
+            $log->warnf('%s', $ae->error);
+        }
+    }
+}
 
 exit(EXIT_SUCCESS);
