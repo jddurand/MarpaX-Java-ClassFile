@@ -101,14 +101,26 @@ sub import {
     # implicitely INSIDE the callbacks, not explicitely
     #
     local $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_LEVEL = ++$currentLevel;
-    my $description = join(",\n", map {
+    #
+    # For pretty printing, align the 'x'
+    #
+    my (@x, @y);
+    my $xMaxSize = 0;
+    foreach (@{$list}) {
       my ($x, $y) = @{$_};
-      if ($y) {
-        $localIndent . join(' => ', $_[0]->$x, $_[0]->$y)
-      } else {
-        $localIndent . join('', $_[0]->$x)
-      }
-    } @{$list});
+      push(@x, $_[0]->$x);
+      my $lengthX = length($x[-1]);
+      $xMaxSize = $lengthX if ($lengthX > $xMaxSize);
+      push(@y, $_[0]->$y) if ($y);
+    }
+    my $iDescription = 0;
+    $xMaxSize = -$xMaxSize;   # Left aligned x => y
+    my @description = map {
+      my ($x, $y) = @{$list->[$_]};
+      my $xDescription = sprintf('%*s', $xMaxSize, $x[$_]);
+      $localIndent . ($y ? join(' => ', $xDescription, $y[$_]) : $x[$_])
+    } (0..$#x);
+    my $description = join(",\n", @description);
     #
     # More than one item ? Force newline.
     #
