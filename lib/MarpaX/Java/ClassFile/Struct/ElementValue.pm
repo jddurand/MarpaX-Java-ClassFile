@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ElementValue;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { $_[0]->value } ]
+           [ sub { 'value' } => sub { $_[0]->value } ]
           ];
 
 # ABSTRACT: element value

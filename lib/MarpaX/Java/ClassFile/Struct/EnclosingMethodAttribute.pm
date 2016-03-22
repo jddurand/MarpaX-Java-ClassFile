@@ -4,7 +4,6 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::EnclosingMethodAttribute;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { 'Attribute name#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
            [ sub { 'Class#' . $_[0]->class_index                   } => sub { $_[0]->_constant_pool->[$_[0]->class_index] } ],
            #
            # Method index can be zero

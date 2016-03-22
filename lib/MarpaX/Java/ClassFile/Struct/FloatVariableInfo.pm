@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::FloatVariableInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { 'ITEM_Float' } ]
+           [ sub { 'tag' } => sub { 'ITEM_Float' } ]
           ];
 
 # ABSTRACT: Float_variable_info

@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ObjectVariableInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { 'ITEM_Object' } ],
+           [ sub { 'tag'                         } => sub { 'ITEM_Object' } ],
            [ sub { 'Index#' . $_[0]->cpool_index } => sub { $_[0]->_constant_pool->[$_[0]->cpool_index] } ]
           ];
 

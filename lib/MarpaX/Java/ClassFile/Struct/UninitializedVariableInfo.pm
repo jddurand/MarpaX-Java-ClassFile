@@ -4,8 +4,8 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::UninitializedVariableInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { 'ITEM_Uninitialized' } ],
-           [ sub { 'offset'             } => sub { $_[0]->offset } ]
+           [ sub { 'tag'    } => sub { 'ITEM_Uninitialized' } ],
+           [ sub { 'offset' } => sub { $_[0]->offset } ]
           ];
 
 # ABSTRACT: Uninitialized_variable_info

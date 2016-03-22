@@ -5,7 +5,6 @@ package MarpaX::Java::ClassFile::Struct::CodeAttribute;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { 'Attribute name#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
            [ sub { 'Max stack'                                     } => sub { $_[0]->max_stack  } ],
            [ sub { 'Max locals'                                    } => sub { $_[0]->max_locals } ],
            [ sub { 'Code'                                          } => sub { $_[0]->arrayStringificator($_[0]->code) } ],

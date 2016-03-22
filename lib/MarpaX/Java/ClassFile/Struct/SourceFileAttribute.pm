@@ -4,7 +4,6 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::SourceFileAttribute;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { 'Attribute name#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
            [ sub { 'Source file#' . $_[0]->sourcefile_index } => sub { $_[0]->_constant_pool->[$_[0]->sourcefile_index] } ]
           ];
 

@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ConstantUtf8Info;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { $_[0]->_perlvalue // ''} ] # Can be undef
+           [ sub { 'value' } => sub { $_[0]->_perlvalue // ''} ] # Can be undef
           ];
 
 # ABSTRACT: CONSTANT_Utf8_info

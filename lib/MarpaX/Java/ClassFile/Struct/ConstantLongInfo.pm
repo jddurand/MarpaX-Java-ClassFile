@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ConstantLongInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { $_[0]->_perlvalue } ]
+           [ sub { 'value' } => sub { $_[0]->_perlvalue } ]
           ];
 
 # ABSTRACT: CONSTANT_Long_info
