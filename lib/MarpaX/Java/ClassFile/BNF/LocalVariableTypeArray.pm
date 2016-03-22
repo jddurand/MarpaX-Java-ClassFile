@@ -36,6 +36,7 @@ sub _local_variable_type {
   # my ($self, $start_pc, $length, $name_index, $signature_index, $index) = @_;
 
   MarpaX::Java::ClassFile::Struct::LocalVariableType->new(
+                                                          _constant_pool => $_[0]->constant_pool,
                                                           start_pc        => $_[1],
                                                           length          => $_[2],
                                                           name_index      => $_[3],

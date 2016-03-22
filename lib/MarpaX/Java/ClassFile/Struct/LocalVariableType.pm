@@ -18,7 +18,9 @@ use MarpaX::Java::ClassFile::Struct::_Base
 # AUTHORITY
 
 use MarpaX::Java::ClassFile::Struct::_Types qw/U2/;
+use Types::Standard qw/ArrayRef/;
 
+has _constant_pool   => ( is => 'rw', required => 1, isa => ArrayRef);
 has start_pc         => ( is => 'ro', required => 1, isa => U2 );
 has length           => ( is => 'ro', required => 1, isa => U2 );
 has name_index       => ( is => 'ro', required => 1, isa => U2 );
