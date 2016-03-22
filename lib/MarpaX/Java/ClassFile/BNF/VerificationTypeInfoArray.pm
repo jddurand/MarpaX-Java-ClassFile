@@ -90,8 +90,9 @@ sub _Object_variable_info {
   # my ($self, $tag, $cpool_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::ObjectVariableInfo->new(
-                                                           tag         => $_[0]->u1($_[1]),
-                                                           cpool_index => $_[0]->u2($_[2])
+                                                           _constant_pool => $_[0]->constant_pool,
+                                                           tag            => $_[0]->u1($_[1]),
+                                                           cpool_index    => $_[0]->u2($_[2])
                                                           )
 }
 

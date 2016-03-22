@@ -8,11 +8,11 @@ use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
            [ sub { 'Magic              ' } => sub { sprintf('0x%0X', $_[0]->magic) } ],
            [ sub { 'Version            ' } => sub { sprintf('%d.%d', $_[0]->major_version, $_[0]->minor_version) } ],
-           [ sub { 'Constant pool count' } => sub { $_[0]->constant_pool_count } ],
-           [ sub { 'Constant pool      ' } => sub { $_[0]->arrayStringificator($_[0]->constant_pool) } ],
            [ sub { 'Access flags       ' } => sub { $_[0]->accessFlagsStringificator($_[0]->access_flags) } ],
            [ sub { 'This class         ' } => sub { $_[0]->constant_pool->[$_[0]->this_class] } ],
            [ sub { 'Super class        ' } => sub { ($_[0]->super_class > 0) ? $_[0]->constant_pool->[$_[0]->super_class] : '' } ],
+           [ sub { 'Constant pool count' } => sub { $_[0]->constant_pool_count } ],
+           [ sub { 'Constant pool      ' } => sub { $_[0]->arrayStringificator($_[0]->constant_pool) } ],
            [ sub { 'Interfaces count   ' } => sub { $_[0]->interfaces_count } ],
            [ sub { 'Interfaces         ' } => sub { $_[0]->arrayStringificator($_[0]->interfaces) } ],
            [ sub { 'Fields count       ' } => sub { $_[0]->fields_count } ],

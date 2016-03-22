@@ -2,7 +2,10 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::OpCode;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { '{#offset, code}' } => sub { '{#' . $_[0]->offset . ', ' . join(' ', $_[0]->mnemonic, @{$_[0]->parameters}) . '}' } ]
+          ];
 
 # ABSTRACT: Op code
 
@@ -10,12 +13,13 @@ use MarpaX::Java::ClassFile::Struct::_Base;
 
 # AUTHORITY
 
+use MarpaX::Java::ClassFile::Struct::_Types qw/U1/;
 use Types::Standard qw/Str ArrayRef/;
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
 
 has offset     => ( is => 'ro', required => 1, isa => PositiveOrZeroInt );
 has mnemonic   => ( is => 'ro', required => 1, isa => Str );
-has code       => ( is => 'ro', required => 1, isa => Str );
+has code       => ( is => 'ro', required => 1, isa => U1 );
 has parameters => ( is => 'ro', required => 1, isa => ArrayRef );
 
 #

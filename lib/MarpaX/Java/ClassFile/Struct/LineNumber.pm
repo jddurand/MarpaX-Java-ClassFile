@@ -2,7 +2,13 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::LineNumber;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           #
+           # Force one line
+           #
+           [ sub { '{#pc, Line number}' } => sub { '{#' . $_[0]->start_pc . ',' . $_[0]->line_number . '}' } ]
+          ];
 
 # ABSTRACT: line and number
 

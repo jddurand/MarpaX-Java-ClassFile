@@ -39,6 +39,7 @@ sub _LineNumberTable_attribute {
   # my ($self, $attribute_name_index, $attribute_length, $line_number_table_length, $line_number_table) = @_;
 
   MarpaX::Java::ClassFile::Struct::LineNumberTableAttribute->new(
+                                                                 _constant_pool           => $_[0]->constant_pool,
                                                                  attribute_name_index     => $_[1],
                                                                  attribute_length         => $_[2],
                                                                  line_number_table_length => $_[3],

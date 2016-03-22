@@ -11,7 +11,7 @@ use MarpaX::Java::ClassFile::Struct::_Base
            [ sub { 'Code                 ' }           => sub { $_[0]->arrayStringificator($_[0]->code) } ],
            [ sub { 'Exception table count' }           => sub { $_[0]->exception_table_length } ],
            [ sub { 'Exception table      ' }           => sub { $_[0]->arrayStringificator($_[0]->exception_table) } ],
-           [ sub { 'Attributes count     ' }           => sub { $_[0]->exception_table_length } ],
+           [ sub { 'Attributes count     ' }           => sub { $_[0]->attributes_count } ],
            [ sub { 'Attributes           ' }           => sub { $_[0]->arrayStringificator($_[0]->attributes) } ],
           ]
   ;

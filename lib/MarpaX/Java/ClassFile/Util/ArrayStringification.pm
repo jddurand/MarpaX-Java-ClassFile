@@ -14,6 +14,10 @@ our @EXPORT_OK = qw/arrayStringificator/;
 sub arrayStringificator {
   # my ($self, $arrayRef) = @_;
   #
+  # If the array ref is empty, bypass the following
+  #
+  return '[]' if (! @{$_[1]});
+  #
   # Current recursivity level in OUR stringification routines
   #
   my $currentLevel = $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_LEVEL // 0;

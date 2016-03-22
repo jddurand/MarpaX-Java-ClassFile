@@ -40,6 +40,7 @@ sub _MethodParametersAttribute {
   # my ($self, $attribute_name_index, $attribute_length, $parameters_count, $parameters) = @_;
 
   MarpaX::Java::ClassFile::Struct::MethodParametersAttribute->new(
+                                                                  _constant_pool        => $_[0]->constant_pool,
                                                                   attribute_name_index  => $_[1],
                                                                   attribute_length      => $_[2],
                                                                   parameters_count      => $_[3],

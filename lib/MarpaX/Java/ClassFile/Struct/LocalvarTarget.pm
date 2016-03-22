@@ -2,7 +2,12 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::LocalvarTarget;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { 'Table count' } => sub { $_[0]->table_length } ],
+           [ sub { 'Table      ' } => sub { $_[0]->arrayStringificator($_[0]->table) } ]
+          ];
 
 # ABSTRACT: localvar_target
 

@@ -110,9 +110,9 @@ sub import {
       }
     } @{$list});
     #
-    # More then one item ? Force newline.
+    # More than one item ? Force newline.
     #
-    $#{$list} ? "${name} [\n${description}\n$forceIndent]" : "${name} [${description}]"
+    ($#{$list} > 0) ? "${name} [\n${description}\n$forceIndent]" : "${name} [${description}]"
   };
   #
   # Inject overload

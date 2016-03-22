@@ -38,6 +38,7 @@ sub _method_info {
   my ($self, $access_flags, $name_index, $descriptor_index, $attributes_count, $attributes) = @_;
 
   MarpaX::Java::ClassFile::Struct::MethodInfo->new(
+                                                   _constant_pool   => $_[0]->constant_pool,
                                                    access_flags     => $access_flags,
                                                    name_index       => $name_index,
                                                    descriptor_index => $descriptor_index,

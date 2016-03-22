@@ -4,10 +4,10 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ExceptionTable;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
+           [ sub { '#' . $_[0]->catch_type } => sub { ($_[0]->catch_type > 0) ? $_[0]->_constant_pool->[$_[0]->catch_type] : '' } ],
            [ sub { 'start_pc  ' }            => sub { $_[0]->start_pc } ],
            [ sub { 'end_pc    ' }            => sub { $_[0]->end_pc } ],
-           [ sub { 'handler_pc' }            => sub { $_[0]->handler_pc } ],
-           [ sub { '#' . $_[0]->catch_type } => sub { ($_[0]->catch_type > 0) ? $_[0]->_constant_pool->[$_[0]->catch_type] : '' } ]
+           [ sub { 'handler_pc' }            => sub { $_[0]->handler_pc } ]
           ];
 
 # ABSTRACT: exception_table

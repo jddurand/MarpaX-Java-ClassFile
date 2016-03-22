@@ -2,7 +2,13 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::LocalVariableTypeTableAttribute;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { '#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
+           [ sub { 'Local variable type count'       } => sub { $_[0]->local_variable_type_table_length } ],
+           [ sub { 'Local variable type      '       } => sub { $_[0]->arrayStringificator($_[0]->local_variable_type_table) } ]
+          ];
 
 # ABSTRACT: LocalVariableTypeTable_attribute
 

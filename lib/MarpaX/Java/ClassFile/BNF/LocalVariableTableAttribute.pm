@@ -39,6 +39,7 @@ sub _LocalVariableTable_attribute {
   # my ($self, $attribute_name_index, $attribute_length, $local_variable_table_length, $local_variable_table) = @_;
 
   MarpaX::Java::ClassFile::Struct::LocalVariableTableAttribute->new(
+                                                                    _constant_pool              => $_[0]->constant_pool,
                                                                     attribute_name_index        => $_[1],
                                                                     attribute_length            => $_[2],
                                                                     local_variable_table_length => $_[3],
