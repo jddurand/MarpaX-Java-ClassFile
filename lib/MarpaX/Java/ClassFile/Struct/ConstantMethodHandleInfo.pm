@@ -4,8 +4,8 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ConstantMethodHandleInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { 'kind' }                       => sub { $_[0]->reference_kind } ],
-           [ sub { '#' . $_[0]->reference_index } => sub { $_[0]->_constant_pool->[$_[0]->reference_index] } ]
+           [ sub { 'Reference kind' }                      => sub { $_[0]->reference_kind } ],
+           [ sub { 'Reference#' . $_[0]->reference_index } => sub { $_[0]->_constant_pool->[$_[0]->reference_index] } ]
          ];
 
 # ABSTRACT: CONSTANT_MethodHandle_info

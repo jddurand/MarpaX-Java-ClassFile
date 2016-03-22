@@ -5,14 +5,14 @@ package MarpaX::Java::ClassFile::Struct::CodeAttribute;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { '#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
-           [ sub { 'Max stack            ' }           => sub { $_[0]->max_stack  } ],
-           [ sub { 'Max locals           ' }           => sub { $_[0]->max_locals } ],
-           [ sub { 'Code                 ' }           => sub { $_[0]->arrayStringificator($_[0]->code) } ],
-           [ sub { 'Exception table count' }           => sub { $_[0]->exception_table_length } ],
-           [ sub { 'Exception table      ' }           => sub { $_[0]->arrayStringificator($_[0]->exception_table) } ],
-           [ sub { 'Attributes count     ' }           => sub { $_[0]->attributes_count } ],
-           [ sub { 'Attributes           ' }           => sub { $_[0]->arrayStringificator($_[0]->attributes) } ],
+           [ sub { 'Attribute name#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
+           [ sub { 'Max stack'                                     } => sub { $_[0]->max_stack  } ],
+           [ sub { 'Max locals'                                    } => sub { $_[0]->max_locals } ],
+           [ sub { 'Code'                                          } => sub { $_[0]->arrayStringificator($_[0]->code) } ],
+           [ sub { 'Exception table count'                         } => sub { $_[0]->exception_table_length } ],
+           [ sub { 'Exception table'                               } => sub { $_[0]->arrayStringificator($_[0]->exception_table) } ],
+           [ sub { 'Attributes count'                              } => sub { $_[0]->attributes_count } ],
+           [ sub { 'Attributes'                                    } => sub { $_[0]->arrayStringificator($_[0]->attributes) } ],
           ]
   ;
 

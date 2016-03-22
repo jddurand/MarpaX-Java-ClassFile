@@ -5,9 +5,9 @@ package MarpaX::Java::ClassFile::Struct::InnerClassesAttribute;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { '#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
-           [ sub { 'Classes count'  }                  => sub { $_[0]->number_of_classes } ],
-           [ sub { 'Classes      ' }                   => sub { $_[0]->arrayStringificator($_[0]->classes) } ]
+           [ sub { 'Attribute Name#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
+           [ sub { 'Classes count'                                 } => sub { $_[0]->number_of_classes } ],
+           [ sub { 'Classes'                                       } => sub { $_[0]->arrayStringificator($_[0]->classes) } ]
           ];
 
 # ABSTRACT: InnerClasses_attribute

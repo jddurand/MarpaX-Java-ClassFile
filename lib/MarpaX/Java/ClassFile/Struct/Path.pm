@@ -2,7 +2,11 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::Path;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { 'Type path kind'       } => sub { $_[0]->type_path_kind } ],
+           [ sub { 'Type argument index'  } => sub { $_[0]->type_argument_index } ]
+          ];
 
 # ABSTRACT: path
 

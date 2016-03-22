@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ConstantMethodTypeInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { '#' . $_[0]->descriptor_index } => sub { $_[0]->_constant_pool->[$_[0]->descriptor_index] } ]
+           [ sub { 'Descriptor#' . $_[0]->descriptor_index } => sub { $_[0]->_constant_pool->[$_[0]->descriptor_index] } ]
           ];
 
 # ABSTRACT: CONSTANT_MethodType_info

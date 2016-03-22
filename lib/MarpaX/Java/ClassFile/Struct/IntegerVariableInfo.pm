@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::IntegerVariableInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { 'tag' } => sub { 'ITEM_Integer' } ]
+           [ sub { 'ITEM_Integer' } ]
           ];
 
 # ABSTRACT: Integer_variable_info

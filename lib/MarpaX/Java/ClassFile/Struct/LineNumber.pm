@@ -7,7 +7,7 @@ use MarpaX::Java::ClassFile::Struct::_Base
            #
            # Force one line
            #
-           [ sub { '{#pc, Line number}' } => sub { '{#' . $_[0]->start_pc . ',' . $_[0]->line_number . '}' } ]
+           [ sub { '{#Start pc, Line number}' } => sub { '{#' . $_[0]->start_pc . ', ' . $_[0]->line_number . '}' } ]
           ];
 
 # ABSTRACT: line and number

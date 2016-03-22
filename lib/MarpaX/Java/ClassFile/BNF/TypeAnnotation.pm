@@ -86,6 +86,7 @@ sub _typeAnnotation {
   # my ($self, $target_type, $target_info, $target_path, $type_index, $num_element_value_pairs, $element_value_pairs) = @_;
 
   MarpaX::Java::ClassFile::Struct::TypeAnnotation->new(
+                                                       _constant_pool           => $_[0]->constant_pool,
                                                        target_type              => $_[1],
                                                        target_info              => $_[2],
                                                        target_path              => $_[3],

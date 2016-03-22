@@ -5,9 +5,9 @@ package MarpaX::Java::ClassFile::Struct::LocalVariableTableAttribute;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { '#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
-           [ sub { 'Local variable count'            } => sub { $_[0]->local_variable_table_length } ],
-           [ sub { 'Local variable      '            } => sub { $_[0]->arrayStringificator($_[0]->local_variable_table) } ]
+           [ sub { 'Attribute name#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
+           [ sub { 'Local variable count'                          } => sub { $_[0]->local_variable_table_length } ],
+           [ sub { 'Local variable'                                } => sub { $_[0]->arrayStringificator($_[0]->local_variable_table) } ]
           ];
 
 # ABSTRACT: Exceptions_attribute

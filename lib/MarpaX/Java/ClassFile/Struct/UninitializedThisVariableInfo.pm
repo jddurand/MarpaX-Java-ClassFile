@@ -2,7 +2,10 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::UninitializedThisVariableInfo;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { 'ITEM_UninitializedThis' } ]
+          ];
 
 # ABSTRACT: UninitializedThis_variable_info
 

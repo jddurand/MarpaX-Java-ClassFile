@@ -6,12 +6,12 @@ use MarpaX::Java::ClassFile::Util::FrameTypeStringification qw/frameTypeStringif
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { 'frame_type       ' } => sub { $_[0]->frameTypeStringificator($_[0]->frame_type) } ],
-           [ sub { 'offset_delta     ' } => sub { $_[0]->offset_delta } ],
-           [ sub { 'Locals count     ' } => sub { $_[0]->number_of_locals } ],
-           [ sub { 'Locals           ' } => sub { $_[0]->arrayStringificator($_[0]->locals) } ],
+           [ sub { 'Frame type'        } => sub { $_[0]->frameTypeStringificator($_[0]->frame_type) } ],
+           [ sub { 'Offset delta'      } => sub { $_[0]->offset_delta } ],
+           [ sub { 'Locals count'      } => sub { $_[0]->number_of_locals } ],
+           [ sub { 'Locals'            } => sub { $_[0]->arrayStringificator($_[0]->locals) } ],
            [ sub { 'Stack items count' } => sub { $_[0]->number_of_stack_items } ],
-           [ sub { 'Stack items      ' } => sub { $_[0]->arrayStringificator($_[0]->stack) } ]
+           [ sub { 'Stack items'       } => sub { $_[0]->arrayStringificator($_[0]->stack) } ]
           ];
 
 # ABSTRACT: full_frame

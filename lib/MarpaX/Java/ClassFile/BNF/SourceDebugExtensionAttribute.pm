@@ -29,8 +29,7 @@ sub callbacks { return {
                         "'exhausted"        => sub { $_[0]->exhausted },
                         'attribute_length$' => sub {
                           my $attribute_length = $_[0]->literalU4('attribute_length');
-                          map { $_[0]->lexeme_read_u1(1) } (1..$attribute_length);
-                          lexeme_read_managed(0)
+                          lexeme_read_managed($attribute_length)
                         }
                        }
               }
@@ -42,10 +41,11 @@ sub _SourceDebugExtension_attribute {
   # my ($self, $attribute_name_index, $attribute_length, $debug_extension) = @_;
 
   MarpaX::Java::ClassFile::Struct::SourceDebugExtensionAttribute->new(
-                                                            attribute_name_index => $_[1],
-                                                            attribute_length     => $_[2],
-                                                            debug_extension      => $_[3]
-                                                           )
+                                                                      _constant_pool       => $_[0]->constant_pool,
+                                                                      attribute_name_index => $_[1],
+                                                                      attribute_length     => $_[2],
+                                                                      debug_extension      => $_[3]
+                                                                     )
 }
 
 with 'MarpaX::Java::ClassFile::Role::Parser';
@@ -55,9 +55,7 @@ with 'MarpaX::Java::ClassFile::Role::Parser';
 __DATA__
 __[ bnf ]__
 event 'attribute_length$' = completed attribute_length
-SourceDebugExtension_attribute ::= attribute_name_index attribute_length debug_extension (end) action => _SourceDebugExtension_attribute
+SourceDebugExtension_attribute ::= attribute_name_index attribute_length debug_extension action => _SourceDebugExtension_attribute
 attribute_name_index ::= U2                                                     action => u2
 attribute_length     ::= U4                                                     action => u4
-debug_extension      ::= debug                                                  action => [values]
-debug                ::= U2                                                     action => u2
-end                  ::= MANAGED                                                # Used to trigger the exhaustion event
+debug_extension      ::= MANAGED                                                action => utf8

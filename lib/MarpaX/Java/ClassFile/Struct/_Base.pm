@@ -111,7 +111,7 @@ sub import {
       push(@x, $_[0]->$x);
       my $lengthX = length($x[-1]);
       $xMaxSize = $lengthX if ($lengthX > $xMaxSize);
-      push(@y, $_[0]->$y) if ($y);
+      push(@y, $y ? $_[0]->$y : undef)
     }
     my $iDescription = 0;
     $xMaxSize = -$xMaxSize;   # Left aligned x => y

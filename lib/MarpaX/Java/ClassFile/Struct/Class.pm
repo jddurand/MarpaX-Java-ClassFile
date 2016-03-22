@@ -5,30 +5,16 @@ package MarpaX::Java::ClassFile::Struct::Class;
 use MarpaX::Java::ClassFile::Util::AccessFlagsStringification qw/accessFlagsStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { '#' . $_[0]->inner_class_info_index } => sub { $_[0]->_constant_pool->[$_[0]->inner_class_info_index] } ],
-           [ sub { '#' . $_[0]->outer_class_info_index } => sub {
-               #
-               # outer_class_info_index can be zero
-               #
-               ($_[0]->outer_class_info_index > 0)
-                 ?
-                 $_[0]->_constant_pool->[$_[0]->outer_class_info_index]
-                 :
-                 ''
-             }
-           ],
-           [ sub { '#' . $_[0]->inner_name_index } => sub {
-               #
-               # inner_name_index can be zero
-               #
-               ($_[0]->inner_name_index > 0)
-                 ?
-                 $_[0]->_constant_pool->[$_[0]->inner_name_index]
-                 :
-                 ''
-             }
-           ],
-           [ sub { 'Access flags       ' } => sub { $_[0]->accessFlagsStringificator($_[0]->inner_class_access_flags) } ]
+           [ sub { 'Inner class info#' . $_[0]->inner_class_info_index } => sub { $_[0]->_constant_pool->[$_[0]->inner_class_info_index] } ],
+           #
+           # outer_class_info_index can be zero
+           #
+           [ sub { 'Outer class Info#' . $_[0]->outer_class_info_index } => sub { ($_[0]->outer_class_info_index > 0) ? $_[0]->_constant_pool->[$_[0]->outer_class_info_index] : '' } ],
+           #
+           # inner_name_index can be zero
+           #
+           [ sub { 'Inner name#' . $_[0]->inner_name_index             } => sub { ($_[0]->inner_name_index > 0) ? $_[0]->_constant_pool->[$_[0]->inner_name_index] : '' } ],
+           [ sub { 'Inner class access flags'                          } => sub { $_[0]->accessFlagsStringificator($_[0]->inner_class_access_flags) } ]
           ];
 
 # ABSTRACT: classes

@@ -37,6 +37,7 @@ sub _SourceFile_attribute {
   # my ($self, $attribute_name_index, $attribute_length, $sourcefile_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::SourceFileAttribute->new(
+                                                            _constant_pool => $_[0]->constant_pool,
                                                             attribute_name_index => $_[1],
                                                             attribute_length     => $_[2],
                                                             sourcefile_index     => $_[3]

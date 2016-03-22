@@ -49,7 +49,13 @@ my %_ACCESS_FLAG = (
                      [ ACC_NATIVE       => 0x0100 ],
                      [ ACC_ABSTRACT     => 0x0400 ],
                      [ ACC_STRICT       => 0x0800 ],
+                     [ ACC_SYNTHETIC    => 0x1000 ]
+                    ],
+                    'Parameter' =>
+                    [
+                     [ ACC_FINAL        => 0x0010 ],
                      [ ACC_SYNTHETIC    => 0x1000 ],
+                     [ ACC_MANDATED     => 0x8000 ]
                     ]
 );
 

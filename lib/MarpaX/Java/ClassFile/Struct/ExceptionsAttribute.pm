@@ -5,9 +5,9 @@ package MarpaX::Java::ClassFile::Struct::ExceptionsAttribute;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { '#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
-           [ sub { 'Exceptions count' } => sub { $_[0]->number_of_exceptions } ],
-           [ sub { 'Exceptions      ' } => sub { $_[0]->arrayStringificator([ map {$_[0]->_constant_pool->[$_]} @{$_[0]->exception_index_table}]) } ]
+           [ sub { 'Attribute name#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
+           [ sub { 'Exceptions count'                              } => sub { $_[0]->number_of_exceptions } ],
+           [ sub { 'Exceptions'                                    } => sub { $_[0]->arrayStringificator([ map {$_[0]->_constant_pool->[$_]} @{$_[0]->exception_index_table}]) } ]
           ];
 
 # ABSTRACT: Exceptions_attribute

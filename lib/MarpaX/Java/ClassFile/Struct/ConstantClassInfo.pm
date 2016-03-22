@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ConstantClassInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { '#' . $_[0]->name_index } => sub { $_[0]->_constant_pool->[$_[0]->name_index] } ]
+           [ sub { 'Name#' . $_[0]->name_index } => sub { $_[0]->_constant_pool->[$_[0]->name_index] } ]
           ];
 
 # ABSTRACT: CONSTANT_Class_info

@@ -5,9 +5,9 @@ package MarpaX::Java::ClassFile::Struct::MethodParametersAttribute;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { '#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
-           [ sub { 'Parameters count' }                => sub { $_[0]->parameters_count } ],
-           [ sub { 'Parameters      ' }                => sub { $_[0]->arrayStringificator($_[0]->parameters) } ]
+           [ sub { 'Attribute name#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
+           [ sub { 'Parameters count'                              } => sub { $_[0]->parameters_count } ],
+           [ sub { 'Parameters'                                    } => sub { $_[0]->arrayStringificator($_[0]->parameters) } ]
           ];
 
 # ABSTRACT: MethodParameters_attribute

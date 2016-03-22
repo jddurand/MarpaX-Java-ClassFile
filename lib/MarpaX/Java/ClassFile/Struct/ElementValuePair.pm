@@ -4,8 +4,8 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ElementValuePair;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { '#' . $_[0]->element_name_index } => sub { $_[0]->_constant_pool->[$_[0]->element_name_index] } ],
-           [ sub { 'value' }                         => sub { $_[0]->value } ]
+           [ sub { 'Element name#' . $_[0]->element_name_index } => sub { $_[0]->_constant_pool->[$_[0]->element_name_index] } ],
+           [ sub { 'Value'                                     } => sub { $_[0]->value } ]
           ];
 
 # ABSTRACT: element value pair

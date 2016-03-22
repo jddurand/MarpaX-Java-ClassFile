@@ -39,6 +39,7 @@ sub _StackMapTable_attribute {
   # my ($self, $attribute_name_index, $attribute_length, $number_of_entries, $entries) = @_;
 
   MarpaX::Java::ClassFile::Struct::StackMapTableAttribute->new(
+                                                               _constant_pool       => $_[0]->constant_pool,
                                                                attribute_name_index => $_[1],
                                                                attribute_length     => $_[2],
                                                                number_of_entries    => $_[3],

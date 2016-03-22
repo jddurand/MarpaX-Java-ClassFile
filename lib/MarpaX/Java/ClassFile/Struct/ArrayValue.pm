@@ -6,7 +6,7 @@ use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
            [ sub { 'Values count' } => sub { $_[0]->num_values } ],
-           [ sub { 'Values      ' } => sub { $_[0]->arrayStringificator($_[0]->values) } ]
+           [ sub { 'Values'       } => sub { $_[0]->arrayStringificator($_[0]->values) } ]
           ];
 
 # ABSTRACT: constant value

@@ -4,9 +4,12 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::EnclosingMethodAttribute;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { '#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
-           [ sub { '#' . $_[0]->class_index } => sub { $_[0]->_constant_pool->[$_[0]->class_index] } ],
-           [ sub { '#' . $_[0]->method_index } => sub { ($_[0]->method_index > 0) ? $_[0]->_constant_pool->[$_[0]->method_index] : '' } ]
+           [ sub { 'Attribute name#' . $_[0]->attribute_name_index } => sub { $_[0]->_constant_pool->[$_[0]->attribute_name_index] } ],
+           [ sub { 'Class#' . $_[0]->class_index                   } => sub { $_[0]->_constant_pool->[$_[0]->class_index] } ],
+           #
+           # Method index can be zero
+           #
+           [ sub { 'Method#' . $_[0]->method_index                 } => sub { ($_[0]->method_index > 0) ? $_[0]->_constant_pool->[$_[0]->method_index] : '' } ]
           ];
 
 # ABSTRACT: EnclosingMethod_attribute

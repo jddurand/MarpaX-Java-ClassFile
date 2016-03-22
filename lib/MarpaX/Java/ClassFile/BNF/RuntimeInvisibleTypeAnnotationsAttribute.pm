@@ -39,11 +39,12 @@ sub _RuntimeInvisibleTypeAnnotations_attribute {
   # my ($self, $attribute_name_index, $attribute_length, $num_annotations, $annotations) = @_;
 
   MarpaX::Java::ClassFile::Struct::RuntimeInvisibleTypeAnnotationsAttribute->new(
-                                                                               attribute_name_index  => $_[1],
-                                                                               attribute_length      => $_[2],
-                                                                               num_annotations       => $_[3],
-                                                                               annotations           => $_[4]
-                                                                              )
+                                                                                 _constant_pool        => $_[0]->constant_pool,
+                                                                                 attribute_name_index  => $_[1],
+                                                                                 attribute_length      => $_[2],
+                                                                                 num_annotations       => $_[3],
+                                                                                 annotations           => $_[4]
+                                                                                )
 }
 
 with 'MarpaX::Java::ClassFile::Role::Parser';

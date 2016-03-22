@@ -2,7 +2,12 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ParameterAnnotation;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { 'Annotations count' } => sub { $_[0]->num_annotations } ],
+           [ sub { 'Annotations'       } => sub { $_[0]->arrayStringificator($_[0]->annotations) } ]
+          ];
 
 # ABSTRACT: parameter annotation
 

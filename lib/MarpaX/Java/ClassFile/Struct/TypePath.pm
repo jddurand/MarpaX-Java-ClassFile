@@ -2,7 +2,12 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::TypePath;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { 'Path count' } => sub { $_[0]->path_length } ],
+           [ sub { 'Path'       } => sub { $_[0]->arrayStringificator($_[0]->path) } ]
+          ];
 
 # ABSTRACT: type_path
 

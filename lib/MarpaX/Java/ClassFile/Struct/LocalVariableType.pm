@@ -4,11 +4,11 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::LocalVariableType;
 use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
-           [ sub { '#' . $_[0]->name_index }      => sub { $_[0]->_constant_pool->[$_[0]->name_index] } ],
-           [ sub { '#' . $_[0]->signature_index } => sub { $_[0]->_constant_pool->[$_[0]->signature_index] } ],
-           [ sub { 'Start pc'}                    => sub { $_[0]->start_pc } ],
-           [ sub { 'Length'}                      => sub { $_[0]->length } ],
-           [ sub { 'Index'}                       => sub { $_[0]->index } ]
+           [ sub { 'Name#' . $_[0]->name_index           } => sub { $_[0]->_constant_pool->[$_[0]->name_index] } ],
+           [ sub { 'Signature#' . $_[0]->signature_index } => sub { $_[0]->_constant_pool->[$_[0]->signature_index] } ],
+           [ sub { 'Start pc'                            } => sub { $_[0]->start_pc } ],
+           [ sub { 'Length'                              } => sub { $_[0]->length } ],
+           [ sub { 'Index'                               } => sub { $_[0]->index } ]
           ];
 
 # ABSTRACT: local variable type

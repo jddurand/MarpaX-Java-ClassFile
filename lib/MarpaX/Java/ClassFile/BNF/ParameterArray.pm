@@ -38,8 +38,9 @@ sub _Parameter {
   # my ($self, $name_index, $access_flags) = @_;
 
   MarpaX::Java::ClassFile::Struct::Parameter->new(
-                                                  name_index   => $_[1],
-                                                  access_flags => $_[2]
+                                                  _constant_pool => $_[0]->constant_pool,
+                                                  name_index     => $_[1],
+                                                  access_flags   => $_[2]
                                                  )
 }
 

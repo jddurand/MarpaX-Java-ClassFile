@@ -2,7 +2,11 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::TypeArgumentTarget;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { 'Offset'              } => sub { $_[0]->offset } ],
+           [ sub { 'Type argument index' } => sub { $_[0]->type_argument_index } ]
+          ];
 
 # ABSTRACT: localvar_target
 

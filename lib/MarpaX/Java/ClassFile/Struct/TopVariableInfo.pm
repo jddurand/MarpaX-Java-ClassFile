@@ -2,7 +2,10 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::TopVariableInfo;
-use MarpaX::Java::ClassFile::Struct::_Base;
+use MarpaX::Java::ClassFile::Struct::_Base
+  '""' => [
+           [ sub { 'ITEM_Top' } ]
+          ];
 
 # ABSTRACT: Top_variable_info
 

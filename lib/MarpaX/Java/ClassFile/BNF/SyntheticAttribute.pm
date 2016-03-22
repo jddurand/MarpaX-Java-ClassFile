@@ -37,6 +37,7 @@ sub _Synthetic_attribute {
   # my ($self, $attribute_name_index, $class_index, $method_index) = @_;
 
   MarpaX::Java::ClassFile::Struct::SyntheticAttribute->new(
+                                                           _constant_pool       => $_[0]->constant_pool,
                                                            attribute_name_index => $_[1],
                                                            attribute_length     => $_[2]
                                                           )
