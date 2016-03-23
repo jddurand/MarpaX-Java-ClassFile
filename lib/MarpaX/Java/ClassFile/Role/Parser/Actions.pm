@@ -405,7 +405,7 @@ sub utf8 {
         }
     }
 
-    return $s;
+    $s
 }
 
 1;
