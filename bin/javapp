@@ -138,6 +138,10 @@ This help.
 
 $ javapp -l DEBUG myJavaFile.class
 
+=head1 NOTES
+
+javapp means "javap in perl". Nevertheless there is no filtering option to the dump: .class files are shown entirely, and output format is not designed to be compatible with javap.
+
 =head1 SEE ALSO
 
 perldoc MarpaX::Java::ClassFile
