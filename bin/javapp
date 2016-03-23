@@ -1,17 +1,17 @@
 #!perl
 use strict;
 use warnings FATAL => 'all';
-use Archive::Extract;
-use File::Basename;
-use File::Find;
-use File::Spec;
+use Archive::Zip qw/:ERROR_CODES :CONSTANTS/;
+use File::Basename qw/fileparse basename/;
+use File::chdir;
+use File::Find qw/find/;
+use File::Spec qw/case_tolerant canonpath/;
 use File::Temp qw/tempdir/;
 use POSIX qw/EXIT_SUCCESS/;
 use Log::Log4perl qw/:easy/;
 use Log::Any::Adapter;
 use Log::Any qw/$log/;
-use Getopt::Long;
-use Try::Tiny;
+use Getopt::Long qw/GetOptions/;
 
 my $loglevel = 'WARN';
 my $help     = 0;
@@ -56,42 +56,57 @@ my $case_tolerant = File::Spec->case_tolerant;
 find({wanted => \&_wanted, no_chdir => 1}, @ARGV);
 
 sub _wanted {
-    #
-    # Should look like a file
-    #
-    return if (! -f $_);
-    #
-    # ./.. that end with ".class", or ".jar"
-    #
-    my ($filename_without_suffix, $dirs, $suffix) = fileparse($_, qr/\.[^.]*/);
-    $suffix = lc($suffix) if (! $case_tolerant);
-    #
-    # Try/catch that
-    #
-    my $canonpath = File::Spec->canonpath($_);
+  #
+  # Should look like a file
+  #
+  return if (! -f $_);
+  #
+  # ./.. that end with ".class", or ".jar"
+  #
+  my ($filename_without_suffix, $dirs, $suffix) = fileparse($_, qr/\.[^.]*/);
+  $suffix = lc($suffix) if (! $case_tolerant);
+  #
+  # Try/catch that
+  #
+  my $canonpath = File::Spec->canonpath($_);
+  if ($suffix eq '.class') {
     #
     # ".class"
     #
-    if ($suffix eq '.class') {
-        try {
-            print MarpaX::Java::ClassFile->new(filename => $canonpath)->ast;
-        } catch {
-            $log->warnf('%s', $_);
-            return
+    eval { print MarpaX::Java::ClassFile->new(filename => $canonpath)->ast }
+  } elsif ($suffix eq '.jar') {
+    #
+    # ".jar"
+    #
+    local $CWD = tempdir(CLEANUP => 1);
+    $log->debugf('Using temporary directory %s', $CWD);
+
+    $log->debugf('Looking into %s', $canonpath);
+    my $zip = Archive::Zip->new();
+    if ($zip->read($canonpath) != AZ_OK) {
+      $log->errorf('Cannot read %s, %s', $canonpath, $!)
+    } else {
+      foreach ($zip->memberNames()) {
+        my ($filename_without_suffix, $dirs, $suffix) = fileparse($_, qr/\.[^.]*/);
+        $suffix = lc($suffix) if (! $case_tolerant);
+        if ($suffix eq '.class') {
+          #
+          # Note that this is naturally filtering directory members: in a zip
+          # file directory members always end with a forward slash
+          #
+          # ".jar" -> ".class"
+          #
+          $log->debugf('Extracting %s', $_);
+          if ($zip->extractMemberWithoutPaths($_) == AZ_OK) {
+            eval { print MarpaX::Java::ClassFile->new(filename => basename($_))->ast }
+          } else {
+            $log->warnf('Failed to extract %s from %s, %s', $_, $canonpath, $!)
+          }
         }
-    } elsif ($suffix eq '.jar') {
-        my $dirname = tempdir(CLEANUP => 1);
-        $log->debugf('Extracting %s to %s', $canonpath, $dirname);
-        my $ae = Archive::Extract->new(archive => $canonpath);
-        if ($ae->extract(to => $dirname)) {
-            #
-            # Redo a find
-            #
-            find({wanted => \&_wanted, no_chdir => 1}, $dirname);
-        } else {
-            $log->warnf('%s', $ae->error);
-        }
+      }
     }
+    $log->debugf('Leaving %s', $CWD);
+  }
 }
 
 exit(EXIT_SUCCESS);
