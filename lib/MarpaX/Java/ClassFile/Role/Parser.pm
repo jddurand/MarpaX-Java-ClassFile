@@ -413,9 +413,8 @@ sub _inner {
   # stand-alone, there is really no need to go throw an object creation
   # when we know that the result /will be/ []
   #
-  $_DOES_INNERGRAMMAR{$innerClass} //= $innerClass->DOES('MarpaX::Java::ClassFile::Role::Parser::InnerGrammar') ? 1 : 0; # To make sure this is defined
-  if ($_DOES_INNERGRAMMAR{$innerClass}) {
-    my %args = @_[3..$#_];
+  my %args = @_[3..$#_];
+  if ($_DOES_INNERGRAMMAR{$innerClass} //= $innerClass->DOES('MarpaX::Java::ClassFile::Role::Parser::InnerGrammar') ? 1 : 0) { # To make sure this is defined
     if (! $args{size}) { # ok if undef
       # $_[0]->tracef('Bypassing inner grammar %s at position %s, with%s outside event, extra arguments: %s', $innerClass, $_[0]->pos, $_[2] ? 'out' : '', { @_[3..$#_] });
       $_[0]->lexeme_read('MANAGED', 0, [], $_[2]);
@@ -428,7 +427,7 @@ sub _inner {
                                constant_pool       => $_[0]->constant_pool,
                                inputRef            => $_[0]->inputRef,
                                pos                 => $_[0]->pos,
-                               @_[3..$#_]);
+                               %args);
   my $innerGrammarValue = $inner->ast;
   $_[0]->lexeme_read('MANAGED', $inner->pos - $_[0]->pos, $innerGrammarValue, $_[2]);
   $innerGrammarValue
