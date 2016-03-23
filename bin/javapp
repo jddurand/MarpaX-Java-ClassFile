@@ -73,7 +73,7 @@ sub _wanted {
     #
     # ".class"
     #
-    eval { print MarpaX::Java::ClassFile->new(filename => $canonpath)->ast }
+    eval { printf "%s\n", MarpaX::Java::ClassFile->new(filename => $canonpath)->ast }
   } elsif ($suffix eq '.jar') {
     #
     # ".jar"
@@ -98,7 +98,7 @@ sub _wanted {
           #
           $log->debugf('Extracting %s', $_);
           if ($zip->extractMemberWithoutPaths($_) == AZ_OK) {
-            eval { print MarpaX::Java::ClassFile->new(filename => basename($_))->ast }
+            eval { printf "%s\n", MarpaX::Java::ClassFile->new(filename => basename($_))->ast }
           } else {
             $log->warnf('Failed to extract %s from %s, %s', $_, $canonpath, $!)
           }
