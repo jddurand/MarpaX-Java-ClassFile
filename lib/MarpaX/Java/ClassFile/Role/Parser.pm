@@ -53,6 +53,7 @@ has ast                 => ( is => 'ro',  prod_isa(Any),                        
 my $MARPA_TRACE_FILE_HANDLE;
 my $MARPA_TRACE_BUFFER;
 my %_registrations = ();
+my %_DOES_INNERGRAMMAR = ();
 
 sub BEGIN {
     #
@@ -407,7 +408,20 @@ sub _inner {
   # my ($self, $innerGrammarClass, $ignoreEvent, %args) = @_;
 
   my $innerClass = "MarpaX::Java::ClassFile::BNF::$_[1]";
-  $_[0]->tracef('Starting inner grammar %s at position %s, with%s outside event, extra arguments: %s', $innerClass, $_[0]->pos, $_[2] ? 'out' : '', { @_[3..$#_] });
+  #
+  # Even if MarpaX::Java::ClassFile::Role::Parser::InnerGrammar is able to hangle size == 0
+  # stand-alone, there is really no need to go throw an object creation
+  # when we know that the result /will be/ []
+  #
+  if ($_DOES_INNERGRAMMAR{$innerClass} //= $innerClass->DOES('MarpaX::Java::ClassFile::Role::Parser::InnerGrammar')) {
+    my %args = @_[3..$#_];
+    if (! $args{size}) { # ok if undef
+      # $_[0]->tracef('Bypassing inner grammar %s at position %s, with%s outside event, extra arguments: %s', $innerClass, $_[0]->pos, $_[2] ? 'out' : '', { @_[3..$#_] });
+      $_[0]->lexeme_read('MANAGED', 0, [], $_[2]);
+      return []
+    }
+  }
+  # $_[0]->tracef('Starting inner grammar %s at position %s, with%s outside event, extra arguments: %s', $innerClass, $_[0]->pos, $_[2] ? 'out' : '', { @_[3..$#_] });
   my $inner = $innerClass->new(parent              => $_[0],
                                constant_pool_count => $_[0]->constant_pool_count,
                                constant_pool       => $_[0]->constant_pool,
