@@ -1,48 +1,6 @@
 #!perl
 use strict;
 use warnings FATAL => 'all';
-use Archive::Zip qw/:ERROR_CODES :CONSTANTS/;
-use File::Basename qw/fileparse basename/;
-use File::chdir;
-use File::Find qw/find/;
-use File::Spec qw/case_tolerant canonpath/;
-use File::Temp qw/tempdir/;
-use POSIX qw/EXIT_SUCCESS/;
-use Log::Log4perl qw/:easy/;
-use Log::Any::Adapter;
-use Log::Any qw/$log/;
-use Getopt::Long qw/GetOptions/;
-
-my $loglevel = 'WARN';
-my $help     = 0;
-GetOptions('loglevel=s' => \$loglevel,
-           'help!'      => \$help)
-  || die "Error in command line arguments\n";
-#
-# Help
-#
-if ($help) {
-  print <<USAGE;
-Usage: javapp [--help] [--loglevel level] classfiles
-
-where loglevel is a log4j-like level, like WARN, ERROR, TRACE, etc.
-USAGE
-  exit(EXIT_SUCCESS);
-}
-#
-# Init log
-#
-our $defaultLog4perlConf = "
-log4perl.rootLogger              = $loglevel, Screen
-log4perl.appender.Screen         = Log::Log4perl::Appender::Screen
-log4perl.appender.Screen.stderr  = 1
-log4perl.appender.Screen.layout  = PatternLayout
-log4perl.appender.Screen.layout.ConversionPattern = %d %-5p %6P %m{chomp}%n
-";
-Log::Log4perl::init(\$defaultLog4perlConf);
-Log::Any::Adapter->set('Log4perl');
-
-require MarpaX::Java::ClassFile;
 
 # PODNAME: classdump
 
@@ -52,6 +10,45 @@ require MarpaX::Java::ClassFile;
 
 # AUTHORITY
 
+use Archive::Zip qw/:ERROR_CODES :CONSTANTS/;
+use Class::Load qw/load_class/;
+use File::Basename qw/fileparse basename/;
+use File::chdir;
+use File::Find qw/find/;
+use File::Spec qw/case_tolerant canonpath/;
+use File::Temp qw/tempdir/;
+use Getopt::Long qw/GetOptions/;
+use Log::Log4perl qw/:easy/;
+use Log::Any::Adapter;
+use Log::Any qw/$log/;
+use POSIX qw/EXIT_SUCCESS EXIT_FAILURE/;
+use Pod::Usage qw/pod2usage/;
+
+#
+# Options
+# -------
+my $loglevel = 'WARN';
+my $help     = 0;
+GetOptions(
+    'loglevel|l=s' => \$loglevel,
+    'help|h!'      => sub { pod2usage( { -verbose => 3, -exitval => EXIT_SUCCESS }) }
+    ) || pod2usage({ -verbose => 3, -exitval => EXIT_FAILURE });
+#
+# Init log
+# --------
+our $defaultLog4perlConf = "
+log4perl.rootLogger              = $loglevel, Screen
+log4perl.appender.Screen         = Log::Log4perl::Appender::Screen
+log4perl.appender.Screen.stderr  = 1
+log4perl.appender.Screen.layout  = PatternLayout
+log4perl.appender.Screen.layout.ConversionPattern = %d %-5p %6P %m{chomp}%n
+";
+Log::Log4perl::init(\$defaultLog4perlConf);
+Log::Any::Adapter->set('Log4perl');
+#
+# Process
+#
+load_class('MarpaX::Java::ClassFile');
 my $case_tolerant = File::Spec->case_tolerant;
 find({wanted => \&_wanted, no_chdir => 1}, @ARGV);
 
@@ -73,7 +70,10 @@ sub _wanted {
     #
     # ".class"
     #
-    eval { printf "%s\n", MarpaX::Java::ClassFile->new(filename => $canonpath)->ast }
+    eval {
+        printf "%s\n",
+        MarpaX::Java::ClassFile->new(filename => $canonpath)->ast
+    }
   } elsif ($suffix eq '.jar') {
     #
     # ".jar"
@@ -98,7 +98,10 @@ sub _wanted {
           #
           $log->debugf('Extracting %s', $_);
           if ($zip->extractMemberWithoutPaths($_) == AZ_OK) {
-            eval { printf "%s\n", MarpaX::Java::ClassFile->new(filename => basename($_))->ast }
+            eval {
+                printf "%s\n",
+                MarpaX::Java::ClassFile->new(filename => basename($_))->ast
+            }
           } else {
             $log->warnf('Failed to extract %s from %s, %s', $_, $canonpath, $!)
           }
@@ -110,3 +113,31 @@ sub _wanted {
 }
 
 exit(EXIT_SUCCESS);
+
+=head1 SYNOPSIS
+
+$ javapp [--loglevel %s] [--help] <file or directory list>
+
+Searches all .class and .jar files from the argument list, and dump to stdout any .class file (.jar files are automatically handled as a zip archive)
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--loglevel> or B<-l>
+
+Set logging level. Log4perl values are supported, i.e. WARN, TRACE, DEBUG, etc... Default is WARN. Logging always goes to STDERR.
+
+=item B<--help> or B<-h>
+
+This help.
+
+=back
+
+=head1 EXAMPLE
+
+$ javapp -l DEBUG myJavaFile.class
+
+=head1 SEE ALSO
+
+perldoc MarpaX::Java::ClassFile
