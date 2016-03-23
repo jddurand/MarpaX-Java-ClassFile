@@ -116,12 +116,6 @@ sub _build_ast {
   no warnings 'once';
   local $MarpaX::Java::ClassFile::Role::Parser::SELF = $_[0];
   local $MarpaX::Java::ClassFile::Role::Parser::G = $_[0]->grammar;
-  local $MarpaX::Java::ClassFile::Role::Parser::R = Marpa::R2::Scanless::R->new({
-                                                                                 trace_file_handle => $MARPA_TRACE_FILE_HANDLE,
-                                                                                 grammar           => $_[0]->grammar,
-                                                                                 exhaustion        => $_[0]->exhaustion,
-                                                                                 trace_terminals   => $_[0]->_logger->is_trace
-                                                                                });
   #
   # It is far quicker to maintain ourself booleans for trace and debug mode
   # rather than letting logger's tracef() and debugf() handle the request
@@ -132,6 +126,15 @@ sub _build_ast {
   local $MarpaX::Java::ClassFile::Role::Parser::IS_WARN     = $_[0]->_logger->is_warn;
   local $MarpaX::Java::ClassFile::Role::Parser::IS_ERROR    = $_[0]->_logger->is_error;
   local $MarpaX::Java::ClassFile::Role::Parser::IS_FATAL    = $_[0]->_logger->is_fatal;
+  #
+  # Localize recognizer
+  #
+  local $MarpaX::Java::ClassFile::Role::Parser::R = Marpa::R2::Scanless::R->new({
+                                                                                 trace_file_handle => $MARPA_TRACE_FILE_HANDLE,
+                                                                                 grammar           => $_[0]->grammar,
+                                                                                 exhaustion        => $_[0]->exhaustion,
+                                                                                 trace_terminals   => $MarpaX::Java::ClassFile::Role::Parser::IS_TRACE
+                                                                                });
 
   local $MarpaX::Java::ClassFile::Role::Parser::LEX_CONTEXT = 1;
   $_[0]->_read;
