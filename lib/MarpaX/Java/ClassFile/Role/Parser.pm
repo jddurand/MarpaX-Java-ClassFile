@@ -413,7 +413,8 @@ sub _inner {
   # stand-alone, there is really no need to go throw an object creation
   # when we know that the result /will be/ []
   #
-  if ($_DOES_INNERGRAMMAR{$innerClass} //= $innerClass->DOES('MarpaX::Java::ClassFile::Role::Parser::InnerGrammar')) {
+  $_DOES_INNERGRAMMAR{$innerClass} //= $innerClass->DOES('MarpaX::Java::ClassFile::Role::Parser::InnerGrammar') ? 1 : 0; # To make sure this is defined
+  if ($_DOES_INNERGRAMMAR{$innerClass}) {
     my %args = @_[3..$#_];
     if (! $args{size}) { # ok if undef
       # $_[0]->tracef('Bypassing inner grammar %s at position %s, with%s outside event, extra arguments: %s', $innerClass, $_[0]->pos, $_[2] ? 'out' : '', { @_[3..$#_] });
