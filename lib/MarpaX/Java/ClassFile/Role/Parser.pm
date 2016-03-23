@@ -118,14 +118,16 @@ sub _build_ast {
   local $MarpaX::Java::ClassFile::Role::Parser::G = $_[0]->grammar;
   #
   # It is far quicker to maintain ourself booleans for trace and debug mode
-  # rather than letting logger's tracef() and debugf() handle the request
+  # rather than letting logger's tracef() and debugf() handle the request.
+  # Further more we do //= because these really should be constant once
+  # a parsing is starting.
   #
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_TRACE    = $_[0]->_logger->is_trace;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_DEBUG    = $_[0]->_logger->is_debug;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_INFO     = $_[0]->_logger->is_info;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_WARN     = $_[0]->_logger->is_warn;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_ERROR    = $_[0]->_logger->is_error;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_FATAL    = $_[0]->_logger->is_fatal;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_TRACE //= $_[0]->_logger->is_trace;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_DEBUG //= $_[0]->_logger->is_debug;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_INFO  //= $_[0]->_logger->is_info;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_WARN  //= $_[0]->_logger->is_warn;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_ERROR //= $_[0]->_logger->is_error;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_FATAL //= $_[0]->_logger->is_fatal;
   #
   # Localize recognizer
   #
