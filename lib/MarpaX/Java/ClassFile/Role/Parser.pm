@@ -512,7 +512,7 @@ sub _croak {
   #
   # Should never happen that $self->_r is not set at this stage but who knows
   #
-  $msg .= "\nContext:\n" . $MarpaX::Java::ClassFile::Role::Parser::R->show_progress if $MarpaX::Java::ClassFile::Role::Parser::R;
+  $msg .= "\nContext:\n" . $MarpaX::Java::ClassFile::Role::Parser::R->show_progress if $MarpaX::Java::ClassFile::Role::Parser::LEX_CONTEXT;
   croak($msg)
 }
 
