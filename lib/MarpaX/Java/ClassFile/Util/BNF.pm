@@ -22,8 +22,8 @@ my $_bnf_bottom = ${__PACKAGE__->section_data('bnf_bottom')};
 # Class method
 #
 sub bnf {
-  my ($class, $bnf) = @_;
-  join('', $_bnf_top, $bnf, $_bnf_bottom)
+  my ($class, $bnf, $top, $bottom) = @_;
+  join('', $top // $_bnf_top, $bnf, $bottom // $_bnf_bottom)
 }
 
 1;
