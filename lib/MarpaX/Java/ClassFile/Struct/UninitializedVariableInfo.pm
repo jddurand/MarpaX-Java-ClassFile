@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::UninitializedVariableInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/tag offset/],
   '""' => [
            [ sub { 'tag'    } => sub { 'ITEM_Uninitialized' } ],
            [ sub { 'offset' } => sub { $_[0]->offset } ]

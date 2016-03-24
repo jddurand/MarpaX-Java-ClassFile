@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::CatchTarget;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/exception_table_index/],
   '""' => [
            [ sub { 'Exception table index' } => sub { $_[0]->exception_table_index } ]
           ];

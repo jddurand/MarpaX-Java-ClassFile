@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ExceptionTable;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool start_pc end_pc handler_pc catch_type/],
   '""' => [
            #
            # catch_type can be 0

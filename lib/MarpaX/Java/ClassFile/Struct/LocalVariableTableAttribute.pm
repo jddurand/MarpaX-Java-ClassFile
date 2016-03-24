@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::LocalVariableTableAttribute;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool attribute_name_index attribute_length local_variable_table_length local_variable_table/],
   '""' => [
            [ sub { 'Local variable count'                          } => sub { $_[0]->local_variable_table_length } ],
            [ sub { 'Local variable'                                } => sub { $_[0]->arrayStringificator($_[0]->local_variable_table) } ]

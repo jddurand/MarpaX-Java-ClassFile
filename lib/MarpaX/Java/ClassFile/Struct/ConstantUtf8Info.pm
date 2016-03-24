@@ -3,6 +3,8 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ConstantUtf8Info;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_perlvalue tag length bytes/],
+  -tiny => [qw/_perlvalue tag length bytes/],
   '""' => [
            [ sub { 'value' } => sub { $_[0]->_perlvalue // ''} ] # Can be undef
           ];

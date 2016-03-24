@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::FormalParameterTarget;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/formal_parameter_index/],
   '""' => [
            [ sub { 'Parameter index' } => sub { $_[0]->formal_parameter_index } ]
           ];

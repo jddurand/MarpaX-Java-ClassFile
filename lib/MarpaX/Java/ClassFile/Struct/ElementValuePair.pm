@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ElementValuePair;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool element_name_index value/],
   '""' => [
            [ sub { 'Element name#' . $_[0]->element_name_index } => sub { $_[0]->_constant_pool->[$_[0]->element_name_index] } ],
            [ sub { 'Value'                                     } => sub { $_[0]->value } ]

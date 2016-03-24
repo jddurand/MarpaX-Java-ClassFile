@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::EnclosingMethodAttribute;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool attribute_name_index attribute_length class_index method_index/],
   '""' => [
            [ sub { 'Class#' . $_[0]->class_index                   } => sub { $_[0]->_constant_pool->[$_[0]->class_index] } ],
            #

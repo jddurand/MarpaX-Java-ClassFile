@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::BootstrapMethodsAttribute;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool attribute_name_index attribute_length num_bootstrap_methods bootstrap_methods/],
   '""' => [
            [ sub { 'Bootstrap methods count'             } => sub { $_[0]->num_bootstrap_methods } ],
            [ sub { 'Bootstrap methods'                   } => sub { $_[0]->arrayStringificator($_[0]->bootstrap_methods) } ]

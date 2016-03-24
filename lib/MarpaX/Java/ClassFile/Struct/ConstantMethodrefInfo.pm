@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ConstantMethodrefInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool tag class_index name_and_type_index/],
   '""' => [
            [ sub { 'Class#' . $_[0]->class_index                 } => sub { $_[0]->_constant_pool->[$_[0]->class_index] } ],
            [ sub { 'Namd and type#' . $_[0]->name_and_type_index } => sub { $_[0]->_constant_pool->[$_[0]->name_and_type_index] } ]

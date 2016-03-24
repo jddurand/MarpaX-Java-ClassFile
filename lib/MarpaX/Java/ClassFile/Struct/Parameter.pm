@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::Parameter;
 use MarpaX::Java::ClassFile::Util::AccessFlagsStringification qw/accessFlagsStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool name_index access_flags/],
   '""' => [
            #
            # name_index can be zero

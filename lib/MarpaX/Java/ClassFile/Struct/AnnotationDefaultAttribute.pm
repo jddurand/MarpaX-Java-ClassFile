@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::AnnotationDefaultAttribute;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool attribute_name_index attribute_length default_value/],
   '""' => [
            [ sub { 'Default value'                       } => sub { $_[0]->default_value } ]
           ];

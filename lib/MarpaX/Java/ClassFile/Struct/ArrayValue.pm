@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ArrayValue;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/num_values values/],
   '""' => [
            [ sub { 'Values count' } => sub { $_[0]->num_values } ],
            [ sub { 'Values'       } => sub { $_[0]->arrayStringificator($_[0]->values) } ]

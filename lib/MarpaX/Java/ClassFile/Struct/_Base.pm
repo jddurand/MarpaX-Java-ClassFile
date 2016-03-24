@@ -30,6 +30,7 @@ use Import::Into;
 use Class::Method::Modifiers qw/install_modifier/;
 use Scalar::Util qw/reftype blessed/;
 require Moo;
+require Object::Tiny::XS;
 
 my %_HAS_TRACKED = ();
 my @_GETTER = ();
@@ -43,16 +44,31 @@ sub import {
     #
     # Import Moo into caller
     #
-    Moo->import::into($target);
+    Moo->import::into($target)
   } else {
     #
-    # Our version of 'has'. We support only that.
+    # In tiny mode, we inject Object::Tiny::XS
     #
-    install_modifier($target, 'fresh', has => sub { _has($target, @_) } );
-    #
-    # And our version of 'new'.
-    #
-    install_modifier($target, 'fresh', new => sub { _new($target, @_) } )
+    if ($args{-tiny}) {
+      #
+      # Caller has to make sure -tiny => [qw/.../]
+      # Object::Tiny::XS will take care of injecting a 'new' method.
+      #
+      Object::Tiny::XS->import::into($target, @{$args{-tiny}});
+      #
+      # Make 'has' a dummy routine
+      #
+      install_modifier($target, 'fresh', has => sub { })
+    } else {
+      #
+      # Our version of 'has'. We support only that.
+      #
+      install_modifier($target, 'fresh', has => sub { _has($target, @_) } );
+      #
+      # And our version of 'new'.
+      #
+      install_modifier($target, 'fresh', new => sub { _new($target, @_) } )
+    }
   }
   #
   # We provide a default stringification which always obey to the following:

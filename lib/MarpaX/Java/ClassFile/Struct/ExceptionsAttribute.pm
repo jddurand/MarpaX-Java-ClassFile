@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ExceptionsAttribute;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool attribute_name_index attribute_length number_of_exceptions exception_index_table/],
   '""' => [
            [ sub { 'Exceptions count'                              } => sub { $_[0]->number_of_exceptions } ],
            [ sub { 'Exceptions'                                    } => sub { $_[0]->arrayStringificator([ map {$_[0]->_constant_pool->[$_]} @{$_[0]->exception_index_table}]) } ]

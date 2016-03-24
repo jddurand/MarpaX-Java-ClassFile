@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::RuntimeInvisibleTypeAnnotationsAttribute;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool attribute_name_index attribute_length num_annotations annotations/],
   '""' => [
            [ sub { 'Type annotations count'                        } => sub { $_[0]->num_annotations } ],
            [ sub { 'Type annotations'                              } => sub { $_[0]->arrayStringificator($_[0]->annotations) } ]

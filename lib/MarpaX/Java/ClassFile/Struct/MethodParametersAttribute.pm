@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::MethodParametersAttribute;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool attribute_name_index attribute_length parameters_count parameters/],
   '""' => [
            [ sub { 'Parameters count'                              } => sub { $_[0]->parameters_count } ],
            [ sub { 'Parameters'                                    } => sub { $_[0]->arrayStringificator($_[0]->parameters) } ]

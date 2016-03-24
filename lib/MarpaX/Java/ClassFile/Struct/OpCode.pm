@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::OpCode;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/offset mnemonic code parameters/],
   '""' => [
            [ sub { '{#Offset, Code}' } => sub { '{#' . $_[0]->offset . ', ' . join(' ', $_[0]->mnemonic, @{$_[0]->parameters}) . '}' } ]
           ];

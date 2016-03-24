@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ConstantStringInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool tag string_index/],
   '""' => [
            [ sub { 'String#' . $_[0]->string_index } => sub { $_[0]->_constant_pool->[$_[0]->string_index] } ]
           ];

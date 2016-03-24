@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::LocalVariable;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool start_pc length name_index descriptor_index index/],
   '""' => [
            [ sub { 'Name#' . $_[0]->name_index             } => sub { $_[0]->_constant_pool->[$_[0]->name_index] } ],
            [ sub { 'Descriptor#' . $_[0]->descriptor_index } => sub { $_[0]->_constant_pool->[$_[0]->descriptor_index] } ],

@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::Class;
 use MarpaX::Java::ClassFile::Util::AccessFlagsStringification qw/accessFlagsStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool inner_class_info_index outer_class_info_index inner_name_index inner_class_access_flags/],
   '""' => [
            [ sub { 'Inner class info#' . $_[0]->inner_class_info_index } => sub { $_[0]->_constant_pool->[$_[0]->inner_class_info_index] } ],
            #

@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::EnumConstValue;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool type_name_index const_name_index/],
   '""' => [
            [ sub { 'Type name#' . $_[0]->type_name_index   } => sub { $_[0]->_constant_pool->[$_[0]->type_name_index] } ],
            [ sub { 'Const name#' . $_[0]->const_name_index } => sub { $_[0]->_constant_pool->[$_[0]->const_name_index] } ]

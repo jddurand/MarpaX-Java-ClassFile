@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::CodeAttribute;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool attribute_name_index attribute_length max_stack max_locals code_length code exception_table_length exception_table attributes_count attributes/],
   '""' => [
            [ sub { 'Max stack'                                     } => sub { $_[0]->max_stack  } ],
            [ sub { 'Max locals'                                    } => sub { $_[0]->max_locals } ],

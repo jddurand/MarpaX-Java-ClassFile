@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::LineNumber;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/start_pc line_number/],
   '""' => [
            #
            # Force one line

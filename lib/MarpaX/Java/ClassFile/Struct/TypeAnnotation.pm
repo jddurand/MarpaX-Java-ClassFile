@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::TypeAnnotation;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool target_type target_info target_path type_index num_element_value_pairs element_value_pairs/],
   '""' => [
            [ sub { 'Target info' } => sub { $_[0]->target_info } ],
            [ sub { 'Target path' } => sub { $_[0]->target_path } ],

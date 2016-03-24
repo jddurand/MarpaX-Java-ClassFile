@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::TypeParameterBoundTarget;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/type_parameter_index bound_index/],
   '""' => [
            [ sub { 'Type parameter index' } => sub { $_[0]->type_parameter_index } ],
            [ sub { 'Bound index'          } => sub { $_[0]->bound_index } ],

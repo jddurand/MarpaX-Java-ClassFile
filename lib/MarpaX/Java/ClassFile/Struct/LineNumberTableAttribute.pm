@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::LineNumberTableAttribute;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool attribute_name_index attribute_length line_number_table_length line_number_table/],
   '""' => [
            [ sub { 'Line number count'                             } => sub { $_[0]->line_number_table_length } ],
            [ sub { 'Line number'                                   } => sub { $_[0]->arrayStringificator($_[0]->line_number_table) } ]

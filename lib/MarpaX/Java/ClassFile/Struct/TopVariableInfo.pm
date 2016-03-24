@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::TopVariableInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/tag/],
   '""' => [
            [ sub { 'tag' } => sub { 'ITEM_Top' } ]
           ];

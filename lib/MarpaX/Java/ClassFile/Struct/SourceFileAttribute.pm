@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::SourceFileAttribute;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool attribute_name_index attribute_length sourcefile_index/],
   '""' => [
            [ sub { 'Source file#' . $_[0]->sourcefile_index } => sub { $_[0]->_constant_pool->[$_[0]->sourcefile_index] } ]
           ];

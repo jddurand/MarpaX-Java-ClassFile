@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::Path;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/type_path_kind type_argument_index/],
   '""' => [
            [ sub { 'Type path kind'       } => sub { $_[0]->type_path_kind } ],
            [ sub { 'Type argument index'  } => sub { $_[0]->type_argument_index } ]

@@ -5,6 +5,7 @@ package MarpaX::Java::ClassFile::Struct::ClassFile;
 use MarpaX::Java::ClassFile::Util::ArrayStringification qw/arrayStringificator/;
 use MarpaX::Java::ClassFile::Util::AccessFlagsStringification qw/accessFlagsStringificator/;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/magic minor_version major_version constant_pool_count constant_pool access_flags this_class super_class interfaces_count interfaces fields_count fields methods_count methods attributes_count attributes/],
   '""' => [
            [ sub { 'Magic'                             } => sub { sprintf('0x%0X', $_[0]->magic) } ],
            [ sub { 'Version'                           } => sub { sprintf('%d.%d', $_[0]->major_version, $_[0]->minor_version) } ],

@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ConstantValueAttribute;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool attribute_name_index attribute_length constantvalue_index/],
   '""' => [
            [ sub { 'Constant value#' . $_[0]->constantvalue_index  } => sub { $_[0]->_constant_pool->[$_[0]->constantvalue_index] } ]
           ];

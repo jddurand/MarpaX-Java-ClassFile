@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ClassInfoIndex;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/_constant_pool class_info_index/],
   '""' => [
            [ sub { 'Class info#' . $_[0]->class_info_index } => sub { $_[0]->_constant_pool->[$_[0]->class_info_index] } ]
           ]

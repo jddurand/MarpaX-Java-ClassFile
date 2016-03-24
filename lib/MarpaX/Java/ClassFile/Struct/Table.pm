@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::Table;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/start_pc length index/],
   '""' => [
            [ sub { '{#Start pc, #Length, #Index}' } => sub { '{#' . join(', ', $_[0]->start_pc, $_[0]->length, $_[0]->index) . '}' } ]
           ];

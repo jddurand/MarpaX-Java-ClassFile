@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::ElementValue;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/tag value/],
   '""' => [
            [ sub { 'value' } => sub { $_[0]->value } ]
           ];

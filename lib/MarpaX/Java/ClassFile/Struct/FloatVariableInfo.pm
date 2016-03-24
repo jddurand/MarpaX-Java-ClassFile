@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::FloatVariableInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/tag/],
   '""' => [
            [ sub { 'tag' } => sub { 'ITEM_Float' } ]
           ];

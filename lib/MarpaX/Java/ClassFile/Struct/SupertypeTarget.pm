@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::SupertypeTarget;
 use MarpaX::Java::ClassFile::Struct::_Base
+  -tiny => [qw/supertype_index/],
   '""' => [
            [ sub { 'Index' } => sub { $_[0]->supertype_index } ]
           ];
