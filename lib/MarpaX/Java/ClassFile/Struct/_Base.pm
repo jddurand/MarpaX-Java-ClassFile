@@ -30,7 +30,7 @@ use Import::Into;
 use Class::Method::Modifiers qw/install_modifier/;
 use Scalar::Util qw/reftype blessed/;
 require Moo;
-require Object::Tiny::XS;
+require Class::XSAccessor;
 
 my %_HAS_TRACKED = ();
 my @_GETTER = ();
@@ -47,16 +47,54 @@ sub import {
     Moo->import::into($target)
   } else {
     #
-    # In tiny mode, we inject Object::Tiny::XS
+    # In tiny mode, we inject Class::XSAccessor, based on the same logic than Object::Tiny::XS
     #
-    if ($args{-tiny}) {
+    if ($args{-tiny} || $args{-tiny_rw}) {
       #
-      # Caller has to make sure -tiny => [qw/.../]
-      # Object::Tiny::XS will take care of injecting a 'new' method.
+      # Caller has to make sure -tiny => [qw/.../] and -tiny_rw => [qw/.../] and
       #
-      Object::Tiny::XS->import::into($target, @{$args{-tiny}});
+      # Almost the same thingy as is Object::Tiny::XS
+      # but using eventually accessors
       #
-      # Make 'has' a dummy routine
+      $args{-tiny}    //= [];
+      $args{-tiny_rw} //= [];
+      #
+      # Okay, we /know/ that members starting with a '_' are internal and should be
+      # read-write
+      #
+      my @forced_tiny_rw = ();
+      my @ok_tiny_ro = ();
+      foreach (@{$args{-tiny}}) {
+        if (/^_/) {
+          push(@forced_tiny_rw, $_)
+        } else {
+          push(@ok_tiny_ro, $_)
+        }
+      }
+      $args{-tiny} = \@ok_tiny_ro;
+      foreach my $forced_rw (@forced_tiny_rw) {
+        push(@{$args{-tiny_rw}}, $forced_rw) unless (grep { $_ eq $forced_rw } @{$args{-tiny_rw}})
+      }
+
+      my $innerGettersAsString = join(", ",
+                                      map { "'$_' => '$_'" }
+                                      grep { defined and ! ref and /^[^\W\d]\w*$/s }
+                                      @{$args{-tiny}}
+                                     );
+      my $innerAccessorsAsString = join(", ",
+                                        map { "'$_' => '$_'" }
+                                        grep { defined and ! ref and /^[^\W\d]\w*$/s }
+                                        @{$args{-tiny_rw}}
+                                       );
+      no strict 'refs';
+      my $hashRefGetters   = eval " { $innerGettersAsString } "   || croak $@;
+      my $hashRefAccessors = eval " { $innerAccessorsAsString } " || croak $@;
+      Class::XSAccessor->import::into($target,
+                                      constructor => 'new',
+                                      getters => $hashRefGetters,
+                                      accessors => $hashRefAccessors);
+      #
+      # 'has' is then dummy routine
       #
       install_modifier($target, 'fresh', has => sub { })
     } else {
