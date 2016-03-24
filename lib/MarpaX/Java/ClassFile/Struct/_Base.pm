@@ -30,7 +30,7 @@ use Import::Into;
 use Class::Method::Modifiers qw/install_modifier/;
 use Scalar::Util qw/reftype blessed/;
 require Moo;
-require Class::XSAccessor;
+require Class::XSAccessor::Array;
 
 my %_HAS_TRACKED = ();
 my @_GETTER = ();
@@ -47,7 +47,7 @@ sub import {
     Moo->import::into($target)
   } else {
     #
-    # In tiny mode, we inject Class::XSAccessor, based on the same logic than Object::Tiny::XS
+    # In tiny mode, we inject Class::XSAccessor::Array, based on the same logic than Object::Tiny::XS
     #
     if ($args{-tiny} || $args{-tiny_rw}) {
       #
@@ -75,28 +75,41 @@ sub import {
       foreach my $forced_rw (@forced_tiny_rw) {
         push(@{$args{-tiny_rw}}, $forced_rw) unless (grep { $_ eq $forced_rw } @{$args{-tiny_rw}})
       }
-
+      my $indice = 0;
+      my @indice2name = ();
       my $innerGettersAsString = join(", ",
-                                      map { "'$_' => '$_'" }
+                                      map { "'$_' => " . do { $indice2name[$indice] = $_; $indice++ } }
                                       grep { defined and ! ref and /^[^\W\d]\w*$/s }
                                       @{$args{-tiny}}
                                      );
       my $innerAccessorsAsString = join(", ",
-                                        map { "'$_' => '$_'" }
+                                        map { "'$_' => " . do { $indice2name[$indice] = $_; $indice++ } }
                                         grep { defined and ! ref and /^[^\W\d]\w*$/s }
                                         @{$args{-tiny_rw}}
                                        );
       no strict 'refs';
       my $hashRefGetters   = eval " { $innerGettersAsString } "   || croak $@;
       my $hashRefAccessors = eval " { $innerAccessorsAsString } " || croak $@;
-      Class::XSAccessor->import::into($target,
-                                      constructor => 'new',
-                                      getters => $hashRefGetters,
-                                      accessors => $hashRefAccessors);
+      Class::XSAccessor::Array->import::into($target,
+                                             getters => $hashRefGetters,
+                                             accessors => $hashRefAccessors);
       #
       # 'has' is then dummy routine
       #
-      install_modifier($target, 'fresh', has => sub { })
+      install_modifier($target, 'fresh', has => sub { });
+      #
+      # And our version of 'new': default constructor provided by Class::XSAccessor::Array
+      # is doing nothing useful
+      #
+      #
+      my $new = "
+my (\$class, \%args) = \@_;
+bless([" .
+  join(', ', map { "\$args{$indice2name[$_]}" } (0..$#indice2name)) .
+    "], \$class)
+";
+      my $stub = eval "sub { $new }" || croak $@;
+      install_modifier($target, 'fresh', new => $stub)
     } else {
       #
       # Our version of 'has'. We support only that.
