@@ -3,9 +3,9 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::OpCode;
 use MarpaX::Java::ClassFile::Struct::_Base
-  -tiny => [qw/offset mnemonic code parameters/],
+  -tiny => [qw/offset relativeOffset mnemonic code parameters/],
   '""' => [
-           [ sub { '{#Offset, Code}' } => sub { '{#' . $_[0]->offset . ', ' . join(' ', $_[0]->mnemonic, @{$_[0]->parameters}) . '}' } ]
+           [ sub { '{Offset, RelativeOffset, Code}' } => sub { '{' . join(', ', $_[0]->offset, $_[0]->relativeOffset, join(' ', $_[0]->mnemonic, @{$_[0]->parameters})) . '}' } ]
           ];
 
 # ABSTRACT: Op code
@@ -18,10 +18,11 @@ use MarpaX::Java::ClassFile::Struct::_Types qw/U1/;
 use Types::Standard qw/Str ArrayRef/;
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
 
-has offset     => ( is => 'ro', required => 1, isa => PositiveOrZeroInt );
-has mnemonic   => ( is => 'ro', required => 1, isa => Str );
-has code       => ( is => 'ro', required => 1, isa => U1 );
-has parameters => ( is => 'ro', required => 1, isa => ArrayRef );
+has offset         => ( is => 'ro', required => 1, isa => PositiveOrZeroInt );
+has relativeOffset => ( is => 'ro', required => 1, isa => PositiveOrZeroInt );
+has mnemonic       => ( is => 'ro', required => 1, isa => Str );
+has code           => ( is => 'ro', required => 1, isa => U1 );
+has parameters     => ( is => 'ro', required => 1, isa => ArrayRef );
 
 #
 # Do the per-opcode detail in this package
