@@ -1,6 +1,10 @@
 Changelog for MarpaX-Java-ClassFile
 
-0.003 2016-03-28T16:27:51
+0.004 2016-03-28T21:54:19
+ [Jean-Damien Durand <jeandamiendurand@free.fr>]
+ - Parser/Actions.pm: Revised and fixed utf8 action
+
+0.003 2016-03-28T16:27:51Z
  [Jean-Damien Durand <jeandamiendurand@free.fr>]
  - Struct/MethodInfo.pm: Added stringification of access flags
  - Util/AccessFlagsStringification.pm: Added "Class"
