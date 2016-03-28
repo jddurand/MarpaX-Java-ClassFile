@@ -253,159 +253,67 @@ sub double {
 }
 
 sub utf8 {
-    #
-    # Disable all conversion warnings:
-    # either we know we succeed, either we abort -;
-    #
-    no warnings;
+  #
+  # Disable all conversion warnings:
+  # either we know we succeed, either we abort -;
+  #
+  no warnings;
 
-    my @u1 = split('', $_[1]);
-    my $s  = @u1 ? '' : undef;
-    my ($val0, $val1, $val2, $val3, $val4, $val5);
+  return unless length($_[1]);
 
-    while (@u1) {
-        #
-        # No need to reset the array
-        #
-        $val0 = unpack( 'C', $u1[0] );
-        $_[0]->fatalf('Invalid byte with value %s', $val0) if (($val0 == 0) || (($val0 >= 0xF0) && ($val0 <= 0xFF)));
-        #
-        # Below x means either 0 or 1
-        #
-        # 6 bytes ?
-        #
-        if ($val0 == 0xED) {    # 0xED == 11101101
-            if ($#u1 >= 1) {
-                $val1 = unpack('C', $u1[1]);
-                $_[0]->fatalf('Invalid byte with value %s', $val1) if (($val1 == 0) || (($val1 >= 0xF0) && ($val1 <= 0xFF)));
-                if (($val1 & 0xF0) == 0xA0) { # 0xF0 == 11110000, 0xA0 == 10100000
-                    if ($#u1 >= 2) {
-                        $val2 = unpack('C', $u1[2]);
-                        $_[0]->fatalf('Invalid byte with value %s', $val2) if (($val2 == 0) || (($val2 >= 0xF0) && ($val2 <= 0xFF)));
-                        if (($val2 & 0xC0) == 0x80) { # 0xC0 == 11000000, 0x80 == 10000000
-                            if ($#u1 >= 3) {
-                                $val3 = unpack('C', $u1[3]);
-                                $_[0]->fatalf('Invalid byte with value %s', $val3) if (($val3 == 0) || (($val3 >= 0xF0) && ($val3 <= 0xFF)));
-                                if ($val3 == 0xED) {    # 0xED == 11101101
-                                    if ($#u1 >= 4) {
-                                        $val4 = unpack('C', $u1[4]);
-                                        $_[0]->fatalf('Invalid byte with value %s', $val4) if (($val4 == 0) || (($val4 >= 0xF0) && ($val4 <= 0xFF)));
-                                        if (($val4 & 0xF0) == 0xB0) { # 0xF0 == 11110000, 0xA0 == 10110000
-                                            if ($#u1 >= 5) {
-                                                $val5 = unpack('C', $u1[5]);
-                                                $_[0]->fatalf('Invalid byte with value %s', $val2) if (($val5 == 0) || (($val5 >= 0xF0) && ($val5 <= 0xFF)));
-                                                if (($val5 & 0xC0) == 0x80) { # 0xC0 == 11000000, 0x80 == 10000000
-                                                    #
-                                                    # 11101101 1010xxxx 10xxxxxx 11101101 1011xxxx 10xxxxxx: code points above U+FFFF
-                                                    #
-                                                    $s .= chr(0x10000 +
-                                                              (($val1 & 0x0F) << 16) +
-                                                              (($val2 & 0x3F) << 10) +
-                                                              (($val4 & 0x0F) <<  6) +
-                                                               ($val5 & 0x3F)
-                                                             );
-                                                    splice(@u1, 0, 6);
-                                                    next
-                                                } else {
-                                                  $_[0]->fatalf('Invalid byte with value %s', $val5)
-                                                }
-                                            } else {
-                                              $_[0]->fatalf('Not enough bytes to form a 6-byte modified UTF-8')
-                                            }
-                                        } else {
-                                          $_[0]->fatalf('Invalid byte with value %s', $val4)
-                                        }
-                                    } else {
-                                      $_[0]->fatalf('Not enough bytes to form a 6-byte modified UTF-8')
-                                    }
-                                } else {
-                                  $_[0]->fatalf('Invalid byte with value %s', $val3)
-                                }
-                            } else {
-                              $_[0]->fatalf('Not enough bytes to form a 6-byte modified UTF-8')
-                            }
-                        } else {
-                          $_[0]->fatalf('Invalid byte with value %s', $val2)
-                        }
-                    } else {
-                      $_[0]->fatalf('Not enough bytes to form a 6-byte modified UTF-8')
-                    }
-                } else {
-                  $_[0]->fatalf('Invalid byte with value %s', $val1)
-                }
-            } else {
-              $_[0]->fatalf('Not enough bytes to form a 6-byte modified UTF-8')
-            }
-        }
-        #
-        # 3 bytes ?
-        #
-        elsif (($val0 & 0xF0) == 0xE0) {    # 0xF0 == 11110000, 0xE0 == 11100000
-            if ($#u1 >= 1) {
-                $val1 = unpack('C', $u1[1]);
-                $_[0]->fatalf('Invalid byte with value %s', $val1) if (($val1 == 0) || (($val1 >= 0xF0) && ($val1 <= 0xFF)));
-                if (($val1 & 0xC0) == 0x80) {    # 0xC0 == 11000000, 0x80 == 10000000
-                    if ($#u1 >= 2) {
-                        $val2 = unpack('C', $u1[2]);
-                        $_[0]->fatalf('Invalid byte with value %s', $val2) if (($val2 == 0) || (($val2 >= 0xF0) && ($val2 <= 0xFF)));
-                        if (($val2 & 0xC0) == 0x80) {    # 0xC0 == 11000000, 0x80 == 10000000
-                             #
-                             # 1110xxxx 10xxxxxx 10xxxxxx: Code points in the range '\u0800' to '\uFFFF'
-                             #
-                             $s .= chr( (( $val0 & 0xF ) << 12) + (($val1 & 0x3F) << 6) + ($val2 & 0x3F));
-                             splice(@u1, 0, 3);
-                             next
-                        } else {
-                          $_[0]->fatalf('Invalid byte with value %s', $val2)
-                        }
-                    } else {
-                      $_[0]->fatalf('Not enough bytes to form a 3-byte modified UTF-8')
-                    }
-                } else {
-                  $_[0]->fatalf('Invalid byte with value %s', $val1)
-                }
-            } else {
-              $_[0]->fatalf('Not enough bytes to form a 3-byte modified UTF-8')
-            }
-        }
-        #
-        # 2 bytes ?
-        #
-        elsif (($val0 & 0xE0) == 0xC0) {    # 0xE0 == 11100000, 0xC0 == 11000000
-            if ($#u1 >= 1) {
-                $val1 = unpack('C', $u1[1]);
-                $_[0]->fatalf('Invalid byte with value %s', $val1) if (($val1 == 0) || (($val1 >= 0xF0) && ($val1 <= 0xFF)));
-                if (($val1 & 0xC0) == 0x80) {    # 0xC0 == 11000000, 0x80 == 10000000
-                     #
-                     # 110xxxxx 10xxxxxx: null code point ('\u0000') and code points in the range '\u0080' to '\u07FF'
-                     #
-                     $s .= chr( (($val0 & 0x1F) << 6) + ($val1 & 0x3F));
-                     splice(@u1, 0, 2);
-                     next
-                } else {
-                  $_[0]->fatalf('Invalid byte with value %s', $val1)
-                }
-            } else {
-              $_[0]->fatalf('Not enough bytes to form a 2-byte modified UTF-8')
-            }
-        }
-        #
-        # 1 byte ?
-        #
-        elsif (($val0 & 0x80) == 0) {
-            #
-            # 0xxxxxxx: Code points in the range '\u0001' to '\u007F'
-            #
-            $s .= chr($val0);
-            shift(@u1);
-            next
-        }
-        else {
-          $_[0]->fatalf('Unable to map byte with value 0x%x', $val0)
-        }
+  my @bytes = unpack('C*', $_[1]);
+  my $s  = '';
+  my ($c, $val0, $val1, $val2, $val3, $val4, $val5);
+
+  while (@bytes) {
+    #
+    # No need to reset the array
+    #
+    $val0 = shift(@bytes);
+    if (($val0 & 0x80) == 0) { # 0x80 = 10000000
+      #
+      # 1 byte
+      #
+      $s .= chr($val0)
     }
+    elsif ((($val0 & 0xE0) == 0xC0) &&                      # 0xE0 == 11100000, 0xC0 == 11000000
+           ($#bytes >= 0) &&
+           ((($val1 = $bytes[0]) & 0xC0) == 0x80)) {        # 0xC0 == 11000000, 0x80 == 10000000
+      #
+      # 2 bytes
+      #
+      shift(@bytes);
+      $s .= chr((($val0 & 0x1F) << 6) + ($val1 & 0x3F))
+    }
+    elsif ((($val0 & 0xF0) == 0xE0) &&                      # 0xF0 == 11110000, 0xE0 == 11100000
+           ($#bytes >= 1) &&
+           ((($val1 = $bytes[0]) & 0xC0) == 0x80) &&        # 0xC0 == 11000000, 0x80 == 10000000
+           ((($val2 = $bytes[1]) & 0xC0) == 0x80)) {        # 0xC0 == 11000000, 0x80 == 10000000
+      #
+      # 3 bytes
+      #
+      splice(@bytes, 0, 2);
+      $s .= chr((($val0 & 0xF ) << 12) + (($val1 & 0x3F) << 6) + ($val2 & 0x3F))
+    }
+    elsif (($val0 == 0xED) &&                                 # 0xED == 11101101
+           ($#bytes >= 4) &&
+           ((($val1 = $bytes[0]) & 0xF0) == 0xA0) &&          # 0xC0 == 11000000, 0x80 == 10100000
+           ((($val2 = $bytes[1]) & 0xC0) == 0x80) &&          # 0xC0 == 11000000, 0x80 == 10000000
+           ( ($val3 = $bytes[2])         == 0xED) &&          # 0xED == 11101101
+           ((($val4 = $bytes[3]) & 0xF0) == 0x80) &&          # 0xF0 == 11110000, 0xB0 == 10110000
+           ((($val5 = $bytes[4]) & 0xC0) == 0x80)) {          # 0xC0 == 11000000, 0x80 == 10000000
+      #
+      # 6 bytes
+      #
+      splice(@bytes, 0, 5);
+      $s .= chr(0x10000 + (($val1 & 0x0F) << 16) + (($val2 & 0x3F) << 10) + (($val4 & 0x0F) <<  6) + ($val5 & 0x3F))
+    }
+    else {
+      $_[0]->fatalf('Unable to map byte with value 0x%x', $val0)
+    }
+  }
 
-    $s
+  $s
 }
 
 1;
