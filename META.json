@@ -52,12 +52,21 @@
       },
       "runtime" : {
          "requires" : {
+            "Archive::Zip" : "0",
             "Bit::Vector" : "0",
             "Carp" : "0",
             "Class::Load" : "0",
-            "Data::Scan::Printer" : "0",
+            "Class::Method::Modifiers" : "0",
+            "Class::XSAccessor::Array" : "0",
             "Data::Section" : "0",
             "Exporter" : "0",
+            "File::Basename" : "0",
+            "File::Find" : "0",
+            "File::Spec" : "0",
+            "File::Temp" : "0",
+            "File::chdir" : "0",
+            "Getopt::Long" : "0",
+            "Import::Into" : "0",
             "Log::Any" : "0",
             "Log::Any::Adapter" : "0",
             "Log::Log4perl" : "0",
@@ -67,12 +76,16 @@
             "Moo::Role" : "0",
             "MooX::Role::Logger" : "0",
             "POSIX" : "0",
+            "Pod::Usage" : "0",
             "Scalar::Util" : "0",
-            "Try::Tiny" : "0",
+            "Type::Library" : "0",
+            "Type::Utils" : "0",
             "Types::Common::Numeric" : "0",
             "Types::Encodings" : "0",
             "Types::Standard" : "0",
             "constant" : "0",
+            "open" : "0",
+            "parent" : "0",
             "perl" : "5.010",
             "strict" : "0",
             "warnings" : "0"
@@ -95,7 +108,7 @@
       }
    },
    "provides" : {},
-   "release_status" : "testing",
+   "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
          "mailto" : "bug-MarpaX-Java-ClassFile@rt.cpan.org",
@@ -108,7 +121,7 @@
          "web" : "https://github.com/jddurand/marpax-java-classfile"
       }
    },
-   "version" : "0.001",
+   "version" : "0.002",
    "x_authority" : "cpan:JDDPAUSE"
 }
 
