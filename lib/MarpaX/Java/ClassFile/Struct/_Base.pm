@@ -121,82 +121,110 @@ bless([" .
       install_modifier($target, 'fresh', new => sub { _new($target, @_) } )
     }
   }
-  #
-  # We provide a default stringification which always obey to the following:
-  #
-  # Any object always expand to:
-  #
-  # NAME [
-  #   DESCRIPTION
-  # ]
-  #
-  # NAME        default is the last blessed name component. Can be overwriten with $args{name}.
-  # DESCRIPTION default is the stringified list of members in the following format:
-  #
-  # WHAT [",\n" WHAT [",\n" WHAT]]
-  #
-  # The list of members is always empty. Can be overwiten with $arg{'""'} = [LIST_OF_MEMBERS_TO_STRINGIFY].
-  #
-  # LIST_OF_MEMBERS_TO_STRINGIFY impacts WHAT:
-  # - an arrayref [ x     ]  Stringified as "$self->x". x must be a CODE reference.
-  # - an arrayref [ x,  y ]  Stringified as "$self->x => $self->y". x and y must be CODE references.
-  #
-  # Any output is always automatically indented by adding two spaces '  ' to any stringified members if there
-  # is more than once member, or left on a single line if there at maximum one member.
-  # Indent can be overwriten with $arg{indent}
-  #
-  # Please note that there is type-checking on %args values.
-  #
-  my $name   = $args{name}   // (split(/::/, $target))[-1];
-  my $list   = $args{'""'}   // [];
-  my $indent = $args{indent} // '  ';
+  if ($args{'""'}) {
+    #
+    # We provide a default stringification which always obey to the following:
+    #
+    # Any object always expand to:
+    #
+    # NAME [
+    #   DESCRIPTION
+    # ]
+    #
+    # NAME        default is the last blessed name component. Can be overwriten with $args{-name}.
+    # DESCRIPTION default is the stringified list of members in the following format:
+    #
+    # WHAT [",\n" WHAT [",\n" WHAT]]
+    #
+    # The list of members is always empty. Can be overwiten with $arg{'""'} = [LIST_OF_MEMBERS_TO_STRINGIFY].
+    #
+    # LIST_OF_MEMBERS_TO_STRINGIFY impacts WHAT:
+    # - an arrayref [ x     ]  Stringified as "$self->x". x must be a CODE reference.
+    # - an arrayref [ x,  y ]  Stringified as "$self->x => $self->y". x and y must be CODE references.
+    #
+    # Any output is always automatically indented by adding two spaces '  ' to any stringified members if there
+    # is more than once member, or left on a single line if there at maximum one member.
+    # Indent can be overwriten with $arg{indent}
+    #
+    # Please note that there is type-checking on %args values.
+    #
+    my $name                         = $args{-name}   // (split(/::/, $target))[-1];
+    my $list                         = $args{'""'}   // [];
+    my $indent                       = $args{-indent} // '  ';
+    my $oneLineDescription           = $args{-oneLineDescription};
+    my $oneLineDescriptionJoinString = $args{-oneLineDescriptionJoinString} || '';
+    #
+    # Let our importer the possiblity to modify the stringification setup (not the stringification routine itself)
+    #
+    install_modifier($target, 'fresh', stringifySetup => sub { $list });
 
-  my $stub = sub {
+    my $stub = sub {
+      my $setup = $_[0]->stringifySetup;
+      #
+      # There is no way to pass private arguments in the '""' overload
+      # this is why we use this localized variable
+      #
+      my $currentLevel   = $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_LEVEL // 0;
+      my $currentOneLine = $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_ONELINE // $oneLineDescription;
+      #
+      # Current recursivity level represent a forced indentation
+      # when we deply a multiline output
+      #
+      my $forceIndent = $indent x $currentLevel;
+      my $localIndent = $#{$setup} ? $forceIndent . $indent : '';
+      #
+      # We have to localize again, in case stringification happens
+      # implicitely INSIDE the callbacks, not explicitely
+      #
+      local $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_LEVEL = ++$currentLevel;
+      #
+      # For pretty printing, align the 'x'.
+      # In the case of one-line stringification only the originator of this pragma
+      # has x => y (when y is defined). Then all subsequent overloads return
+      # y in the case x=>y, x otherwise.
+      #
+      my (@x, @y);
+      my $xMaxSize = 0;
+      foreach (@{$setup}) {
+        my ($x, $y) = @{$_};
+        if ($MarpaX::Java::ClassFile::Struct::STRINGIFICATION_ONELINE && $y) {
+          local $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_ONELINE = $currentOneLine;
+          push(@x, $_[0]->$y);
+          push(@y, undef)
+        } else {
+          local $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_ONELINE = $currentOneLine;
+          push(@x, $_[0]->$x);
+          push(@y, $y ? $_[0]->$y : undef);
+        }
+        my $lengthX = length($x[-1]);
+        $xMaxSize = $lengthX if ($lengthX > $xMaxSize)
+      }
+      my $iDescription = 0;
+      $xMaxSize = -$xMaxSize;   # Left aligned x => y
+      my @description = map {
+        my ($x, $y) = @{$setup->[$_]};
+        my $xDescription = sprintf('%*s', $xMaxSize, $x[$_]);
+        if ($MarpaX::Java::ClassFile::Struct::STRINGIFICATION_ONELINE && $y) {
+          #
+          # No local indentation in the oneline mode
+          #
+          $x[$_]
+        } else {
+          $localIndent . ($y ? join(' => ', $xDescription, $y[$_]) : $x[$_])
+        }
+      } (0..$#x);
+      if ($MarpaX::Java::ClassFile::Struct::STRINGIFICATION_ONELINE) {
+        join($oneLineDescriptionJoinString, @description)
+      } else {
+        my $description = join(",\n", @description);
+        ($#{$setup} > 0) ? "${name} [\n${description}\n$forceIndent]" : "${name} [${description}]"
+      }
+    };
     #
-    # There is no way to pass private arguments in the '""' overload
-    # this is why we use this localized variable
+    # Inject overload
     #
-    my $currentLevel = $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_LEVEL // 0;
-    #
-    # Current recursivity level represent a forced indentation
-    # when we deply a multiline output
-    #
-    my $forceIndent = $indent x $currentLevel;
-    my $localIndent = $#{$list} ? $forceIndent . $indent : '';
-    #
-    # We have to localize again, in case stringification happens
-    # implicitely INSIDE the callbacks, not explicitely
-    #
-    local $MarpaX::Java::ClassFile::Struct::STRINGIFICATION_LEVEL = ++$currentLevel;
-    #
-    # For pretty printing, align the 'x'
-    #
-    my (@x, @y);
-    my $xMaxSize = 0;
-    foreach (@{$list}) {
-      my ($x, $y) = @{$_};
-      push(@x, $_[0]->$x);
-      my $lengthX = length($x[-1]);
-      $xMaxSize = $lengthX if ($lengthX > $xMaxSize);
-      push(@y, $y ? $_[0]->$y : undef)
-    }
-    my $iDescription = 0;
-    $xMaxSize = -$xMaxSize;   # Left aligned x => y
-    my @description = map {
-      my ($x, $y) = @{$list->[$_]};
-      my $xDescription = sprintf('%*s', $xMaxSize, $x[$_]);
-      $localIndent . ($y ? join(' => ', $xDescription, $y[$_]) : $x[$_])
-    } (0..$#x);
-    my $description = join(",\n", @description);
-    #
-    # More than one item ? Force newline.
-    #
-    ($#{$list} > 0) ? "${name} [\n${description}\n$forceIndent]" : "${name} [${description}]"
-  };
-  #
-  # Inject overload
-  #
-  overload->import::into($target, '""' => $stub)
+    overload->import::into($target, '""' => $stub)
+  }
 }
 
 sub _has {

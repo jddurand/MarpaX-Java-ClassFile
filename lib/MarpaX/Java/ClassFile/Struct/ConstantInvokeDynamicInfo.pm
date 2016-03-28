@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ConstantInvokeDynamicInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   -tiny => [qw/_constant_pool tag bootstrap_method_attr_index name_and_type_index/],
+  -oneLineDescriptionJoinString => '.',
   '""' => [
            [ sub { 'Bootstrap method attribute#' . $_[0]->bootstrap_method_attr_index } => sub { $_[0]->_constant_pool->[$_[0]->bootstrap_method_attr_index] } ],
            [ sub { 'Name and type#' . $_[0]->name_and_type_index                      } => sub { $_[0]->_constant_pool->[$_[0]->name_and_type_index] } ]

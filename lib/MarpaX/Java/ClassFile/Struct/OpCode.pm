@@ -3,10 +3,32 @@ use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Struct::OpCode;
 use MarpaX::Java::ClassFile::Struct::_Base
-  -tiny => [qw/offset relativeOffset mnemonic code parameters/],
+  -tiny => [qw/_constant_pool offset relativeOffset mnemonic code parameters/],
+  -oneLineDescription => 1,
   '""' => [
            [ sub { '{Offset, RelativeOffset, Code}' } => sub { '{' . join(', ', $_[0]->offset, $_[0]->relativeOffset, join(' ', $_[0]->mnemonic, @{$_[0]->parameters})) . '}' } ]
           ];
+
+# The operand of each ldc instruction and each ldc_w instruction must be a valid index into the constant_pool table.
+# The constant pool entry referenced by that index must be of type:
+sub _around_when_first_param_is_and_index {
+  my ($orig, $self) = @_;
+  my $list = $self->$orig;
+  #
+  # Deep copy what is necessary
+  #
+  my @copy = @{$list};
+  #
+  # Change the "y" part of x => y in the description of the first field
+  #
+  my $firstParam = $copy[0];
+  my $x = $firstParam->[0];
+  my $y = $firstParam->[1];
+  my $newy = sub { $y->(@_) . ' // ' . $_[0]->_constant_pool->[$_[0]->parameters->[0]] };
+  $copy[0] = [ $x, $newy ];
+
+  \@copy
+}
 
 # ABSTRACT: Op code
 
@@ -18,6 +40,7 @@ use MarpaX::Java::ClassFile::Struct::_Types qw/U1/;
 use Types::Standard qw/Str ArrayRef/;
 use Types::Common::Numeric qw/PositiveOrZeroInt/;
 
+has _constant_pool => ( is => 'rw', required => 1, isa => ArrayRef);
 has offset         => ( is => 'ro', required => 1, isa => PositiveOrZeroInt );
 has relativeOffset => ( is => 'ro', required => 1, isa => PositiveOrZeroInt );
 has mnemonic       => ( is => 'ro', required => 1, isa => Str );
@@ -53,6 +76,8 @@ use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Anewarray;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Areturn;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
@@ -95,6 +120,8 @@ use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Checkcast;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::D2f;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
@@ -275,9 +302,13 @@ use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Getfield;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Getstatic;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Goto;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
@@ -413,21 +444,33 @@ use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Instanceof;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Invokedynamic;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Invokeinterface;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Invokespecial;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Invokestatic;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Invokevirtual;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Ior;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
@@ -504,14 +547,23 @@ use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
 package MarpaX::Java::ClassFile::Struct::OpCode::Lconst_1;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
 
+# The operand of each ldc instruction and each ldc_w instruction must be a valid index into the constant_pool table.
+# The constant pool entry referenced by that index must be of type:
+
 package MarpaX::Java::ClassFile::Struct::OpCode::Ldc;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Ldc_w;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Ldc2_w;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Ldiv;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
@@ -587,9 +639,13 @@ use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Multianewarray;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::New;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Newarray;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
@@ -605,9 +661,13 @@ use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Putfield;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Putstatic;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';
+use Class::Method::Modifiers qw/around/;
+around stringifySetup => sub { goto &MarpaX::Java::ClassFile::Struct::OpCode::_around_when_first_param_is_and_index };
 
 package MarpaX::Java::ClassFile::Struct::OpCode::Ret;
 use parent 'MarpaX::Java::ClassFile::Struct::OpCode';

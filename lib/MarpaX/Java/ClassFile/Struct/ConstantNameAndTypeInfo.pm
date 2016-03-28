@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 package MarpaX::Java::ClassFile::Struct::ConstantNameAndTypeInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   -tiny => [qw/_constant_pool tag name_index descriptor_index/],
+  -oneLineDescriptionJoinString => ':',
   '""' => [
            [ sub { 'Name#' . $_[0]->name_index             } => sub { $_[0]->_constant_pool->[$_[0]->name_index] } ],
            [ sub { 'Descriptor#' . $_[0]->descriptor_index } => sub { $_[0]->_constant_pool->[$_[0]->descriptor_index] } ]
