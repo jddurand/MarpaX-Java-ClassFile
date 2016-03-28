@@ -128,643 +128,643 @@ sub offsetAndU1    { [ $_[1]->[0], $_[0]->u1($_[1]->[1]) ] }
 # (no matter if there is none: nothing will be pushed)
 #
 sub aaload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Aaload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aaload', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Aaload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aaload', parameters => [ @_[2..$#_] ])
 }
 sub aastore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Aastore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aastore', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Aastore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aastore', parameters => [ @_[2..$#_] ])
 }
 sub aconst_null {
-  MarpaX::Java::ClassFile::Struct::OpCode::Aconst_null->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aconst_null', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Aconst_null->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aconst_null', parameters => [ @_[2..$#_] ])
 }
 sub aload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Aload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aload', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Aload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aload', parameters => [ @_[2..$#_] ])
 }
 sub aload_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Aload_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aload_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Aload_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aload_0', parameters => [ @_[2..$#_] ])
 }
 sub aload_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Aload_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aload_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Aload_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aload_1', parameters => [ @_[2..$#_] ])
 }
 sub aload_2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Aload_2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aload_2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Aload_2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aload_2', parameters => [ @_[2..$#_] ])
 }
 sub aload_3 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Aload_3->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aload_3', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Aload_3->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'aload_3', parameters => [ @_[2..$#_] ])
 }
 sub anewarray {
-  MarpaX::Java::ClassFile::Struct::OpCode::Anewarray->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'anewarray', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Anewarray->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'anewarray', parameters => [ @_[2..$#_] ])
 }
 sub areturn {
-  MarpaX::Java::ClassFile::Struct::OpCode::Areturn->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'areturn', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Areturn->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'areturn', parameters => [ @_[2..$#_] ])
 }
 sub arraylength {
-  MarpaX::Java::ClassFile::Struct::OpCode::Arraylength->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'arraylength', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Arraylength->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'arraylength', parameters => [ @_[2..$#_] ])
 }
 sub astore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Astore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'astore', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Astore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'astore', parameters => [ @_[2..$#_] ])
 }
 sub astore_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Astore_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'astore_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Astore_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'astore_0', parameters => [ @_[2..$#_] ])
 }
 sub astore_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Astore_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'astore_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Astore_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'astore_1', parameters => [ @_[2..$#_] ])
 }
 sub astore_2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Astore_2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'astore_2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Astore_2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'astore_2', parameters => [ @_[2..$#_] ])
 }
 sub astore_3 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Astore_3->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'astore_3', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Astore_3->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'astore_3', parameters => [ @_[2..$#_] ])
 }
 sub athrow {
-  MarpaX::Java::ClassFile::Struct::OpCode::Athrow->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'athrow', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Athrow->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'athrow', parameters => [ @_[2..$#_] ])
 }
 sub baload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Baload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'baload', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Baload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'baload', parameters => [ @_[2..$#_] ])
 }
 sub bastore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Bastore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'bastore', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Bastore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'bastore', parameters => [ @_[2..$#_] ])
 }
 sub bipush {
-  MarpaX::Java::ClassFile::Struct::OpCode::Bipush->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'bipush', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Bipush->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'bipush', parameters => [ @_[2..$#_] ])
 }
 sub caload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Caload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'caload', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Caload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'caload', parameters => [ @_[2..$#_] ])
 }
 sub castore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Castore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'castore', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Castore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'castore', parameters => [ @_[2..$#_] ])
 }
 sub checkcast {
-  MarpaX::Java::ClassFile::Struct::OpCode::Checkcast->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'checkcast', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Checkcast->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'checkcast', parameters => [ @_[2..$#_] ])
 }
 sub d2f {
-  MarpaX::Java::ClassFile::Struct::OpCode::D2f->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'd2f', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::D2f->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'd2f', parameters => [ @_[2..$#_] ])
 }
 sub d2i {
-  MarpaX::Java::ClassFile::Struct::OpCode::D2i->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'd2i', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::D2i->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'd2i', parameters => [ @_[2..$#_] ])
 }
 sub d2l {
-  MarpaX::Java::ClassFile::Struct::OpCode::D2l->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'd2l', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::D2l->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'd2l', parameters => [ @_[2..$#_] ])
 }
 sub dadd {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dadd->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dadd', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dadd->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dadd', parameters => [ @_[2..$#_] ])
 }
 sub daload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Daload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'daload', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Daload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'daload', parameters => [ @_[2..$#_] ])
 }
 sub dastore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dastore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dastore', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dastore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dastore', parameters => [ @_[2..$#_] ])
 }
 sub dcmpg {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dcmpg->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dcmpg', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dcmpg->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dcmpg', parameters => [ @_[2..$#_] ])
 }
 sub dcmpl {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dcmpl->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dcmpl', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dcmpl->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dcmpl', parameters => [ @_[2..$#_] ])
 }
 sub dconst_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dconst_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dconst_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dconst_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dconst_0', parameters => [ @_[2..$#_] ])
 }
 sub dconst_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dconst_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dconst_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dconst_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dconst_1', parameters => [ @_[2..$#_] ])
 }
 sub ddiv {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ddiv->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ddiv', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ddiv->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ddiv', parameters => [ @_[2..$#_] ])
 }
 sub dload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dload', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dload', parameters => [ @_[2..$#_] ])
 }
 sub dload_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dload_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dload_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dload_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dload_0', parameters => [ @_[2..$#_] ])
 }
 sub dload_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dload_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dload_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dload_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dload_1', parameters => [ @_[2..$#_] ])
 }
 sub dload_2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dload_2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dload_2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dload_2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dload_2', parameters => [ @_[2..$#_] ])
 }
 sub dload_3 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dload_3->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dload_3', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dload_3->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dload_3', parameters => [ @_[2..$#_] ])
 }
 sub dmul {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dmul->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dmul', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dmul->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dmul', parameters => [ @_[2..$#_] ])
 }
 sub dneg {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dneg->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dneg', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dneg->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dneg', parameters => [ @_[2..$#_] ])
 }
 sub drem {
-  MarpaX::Java::ClassFile::Struct::OpCode::Drem->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'drem', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Drem->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'drem', parameters => [ @_[2..$#_] ])
 }
 sub dreturn {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dreturn->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dreturn', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dreturn->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dreturn', parameters => [ @_[2..$#_] ])
 }
 sub dstore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dstore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dstore', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dstore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dstore', parameters => [ @_[2..$#_] ])
 }
 sub dstore_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dstore_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dstore_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dstore_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dstore_0', parameters => [ @_[2..$#_] ])
 }
 sub dstore_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dstore_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dstore_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dstore_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dstore_1', parameters => [ @_[2..$#_] ])
 }
 sub dstore_2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dstore_2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dstore_2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dstore_2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dstore_2', parameters => [ @_[2..$#_] ])
 }
 sub dstore_3 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dstore_3->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dstore_3', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dstore_3->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dstore_3', parameters => [ @_[2..$#_] ])
 }
 sub dsub {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dsub->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dsub', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dsub->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dsub', parameters => [ @_[2..$#_] ])
 }
 sub dup {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dup->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dup', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dup->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dup', parameters => [ @_[2..$#_] ])
 }
 sub dup_x1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dup_x1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dup_x1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dup_x1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dup_x1', parameters => [ @_[2..$#_] ])
 }
 sub dup_x2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dup_x2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dup_x2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dup_x2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dup_x2', parameters => [ @_[2..$#_] ])
 }
 sub dup2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dup2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dup2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dup2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dup2', parameters => [ @_[2..$#_] ])
 }
 sub dup2_x1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dup2_x1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dup2_x1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dup2_x1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dup2_x1', parameters => [ @_[2..$#_] ])
 }
 sub dup2_x2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Dup2_x2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dup2_x2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Dup2_x2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'dup2_x2', parameters => [ @_[2..$#_] ])
 }
 sub f2d {
-  MarpaX::Java::ClassFile::Struct::OpCode::F2d->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'f2d', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::F2d->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'f2d', parameters => [ @_[2..$#_] ])
 }
 sub f2i {
-  MarpaX::Java::ClassFile::Struct::OpCode::F2i->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'f2i', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::F2i->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'f2i', parameters => [ @_[2..$#_] ])
 }
 sub f2l {
-  MarpaX::Java::ClassFile::Struct::OpCode::F2l->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'f2l', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::F2l->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'f2l', parameters => [ @_[2..$#_] ])
 }
 sub fadd {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fadd->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fadd', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fadd->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fadd', parameters => [ @_[2..$#_] ])
 }
 sub faload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Faload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'faload', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Faload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'faload', parameters => [ @_[2..$#_] ])
 }
 sub fastore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fastore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fastore', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fastore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fastore', parameters => [ @_[2..$#_] ])
 }
 sub fcmpg {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fcmpg->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fcmpg', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fcmpg->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fcmpg', parameters => [ @_[2..$#_] ])
 }
 sub fcmpl {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fcmpl->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fcmpl', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fcmpl->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fcmpl', parameters => [ @_[2..$#_] ])
 }
 sub fconst_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fconst_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fconst_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fconst_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fconst_0', parameters => [ @_[2..$#_] ])
 }
 sub fconst_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fconst_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fconst_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fconst_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fconst_1', parameters => [ @_[2..$#_] ])
 }
 sub fconst_2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fconst_2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fconst_2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fconst_2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fconst_2', parameters => [ @_[2..$#_] ])
 }
 sub fdiv {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fdiv->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fdiv', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fdiv->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fdiv', parameters => [ @_[2..$#_] ])
 }
 sub fload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fload', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fload', parameters => [ @_[2..$#_] ])
 }
 sub fload_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fload_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fload_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fload_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fload_0', parameters => [ @_[2..$#_] ])
 }
 sub fload_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fload_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fload_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fload_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fload_1', parameters => [ @_[2..$#_] ])
 }
 sub fload_2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fload_2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fload_2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fload_2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fload_2', parameters => [ @_[2..$#_] ])
 }
 sub fload_3 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fload_3->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fload_3', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fload_3->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fload_3', parameters => [ @_[2..$#_] ])
 }
 sub fmul {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fmul->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fmul', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fmul->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fmul', parameters => [ @_[2..$#_] ])
 }
 sub fneg {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fneg->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fneg', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fneg->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fneg', parameters => [ @_[2..$#_] ])
 }
 sub frem {
-  MarpaX::Java::ClassFile::Struct::OpCode::Frem->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'frem', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Frem->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'frem', parameters => [ @_[2..$#_] ])
 }
 sub freturn {
-  MarpaX::Java::ClassFile::Struct::OpCode::Freturn->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'freturn', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Freturn->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'freturn', parameters => [ @_[2..$#_] ])
 }
 sub fstore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fstore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fstore', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fstore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fstore', parameters => [ @_[2..$#_] ])
 }
 sub fstore_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fstore_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fstore_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fstore_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fstore_0', parameters => [ @_[2..$#_] ])
 }
 sub fstore_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fstore_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fstore_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fstore_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fstore_1', parameters => [ @_[2..$#_] ])
 }
 sub fstore_2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fstore_2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fstore_2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fstore_2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fstore_2', parameters => [ @_[2..$#_] ])
 }
 sub fstore_3 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fstore_3->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fstore_3', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fstore_3->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fstore_3', parameters => [ @_[2..$#_] ])
 }
 sub fsub {
-  MarpaX::Java::ClassFile::Struct::OpCode::Fsub->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fsub', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Fsub->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'fsub', parameters => [ @_[2..$#_] ])
 }
 sub getfield {
-  MarpaX::Java::ClassFile::Struct::OpCode::Getfield->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'getfield', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Getfield->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'getfield', parameters => [ @_[2..$#_] ])
 }
 sub getstatic {
-  MarpaX::Java::ClassFile::Struct::OpCode::Getstatic->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'getstatic', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Getstatic->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'getstatic', parameters => [ @_[2..$#_] ])
 }
 sub _goto {
-  MarpaX::Java::ClassFile::Struct::OpCode::Goto->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'goto', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Goto->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'goto', parameters => [ @_[2..$#_] ])
 }
 sub goto_w {
-  MarpaX::Java::ClassFile::Struct::OpCode::Goto_w->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'goto_w', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Goto_w->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'goto_w', parameters => [ @_[2..$#_] ])
 }
 sub i2b {
-  MarpaX::Java::ClassFile::Struct::OpCode::I2b->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'i2b', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::I2b->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'i2b', parameters => [ @_[2..$#_] ])
 }
 sub i2c {
-  MarpaX::Java::ClassFile::Struct::OpCode::I2c->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'i2c', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::I2c->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'i2c', parameters => [ @_[2..$#_] ])
 }
 sub i2d {
-  MarpaX::Java::ClassFile::Struct::OpCode::I2d->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'i2d', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::I2d->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'i2d', parameters => [ @_[2..$#_] ])
 }
 sub i2f {
-  MarpaX::Java::ClassFile::Struct::OpCode::I2f->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'i2f', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::I2f->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'i2f', parameters => [ @_[2..$#_] ])
 }
 sub i2l {
-  MarpaX::Java::ClassFile::Struct::OpCode::I2l->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'i2l', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::I2l->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'i2l', parameters => [ @_[2..$#_] ])
 }
 sub i2s {
-  MarpaX::Java::ClassFile::Struct::OpCode::I2s->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'i2s', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::I2s->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'i2s', parameters => [ @_[2..$#_] ])
 }
 sub iadd {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iadd->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iadd', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iadd->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iadd', parameters => [ @_[2..$#_] ])
 }
 sub iaload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iaload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iaload', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iaload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iaload', parameters => [ @_[2..$#_] ])
 }
 sub iand {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iand->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iand', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iand->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iand', parameters => [ @_[2..$#_] ])
 }
 sub iastore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iastore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iastore', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iastore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iastore', parameters => [ @_[2..$#_] ])
 }
 sub iconst_m1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_m1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_m1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_m1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_m1', parameters => [ @_[2..$#_] ])
 }
 sub iconst_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_0', parameters => [ @_[2..$#_] ])
 }
 sub iconst_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_1', parameters => [ @_[2..$#_] ])
 }
 sub iconst_2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_2', parameters => [ @_[2..$#_] ])
 }
 sub iconst_3 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_3->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_3', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_3->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_3', parameters => [ @_[2..$#_] ])
 }
 sub iconst_4 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_4->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_4', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_4->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_4', parameters => [ @_[2..$#_] ])
 }
 sub iconst_5 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_5->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_5', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iconst_5->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iconst_5', parameters => [ @_[2..$#_] ])
 }
 sub idiv {
-  MarpaX::Java::ClassFile::Struct::OpCode::Idiv->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'idiv', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Idiv->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'idiv', parameters => [ @_[2..$#_] ])
 }
 sub if_acmpeq {
-  MarpaX::Java::ClassFile::Struct::OpCode::If_acmpeq->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_acmpeq', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::If_acmpeq->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_acmpeq', parameters => [ @_[2..$#_] ])
 }
 sub if_acmpne {
-  MarpaX::Java::ClassFile::Struct::OpCode::If_acmpne->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_acmpne', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::If_acmpne->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_acmpne', parameters => [ @_[2..$#_] ])
 }
 sub if_icmpeq {
-  MarpaX::Java::ClassFile::Struct::OpCode::If_icmpeq->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_icmpeq', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::If_icmpeq->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_icmpeq', parameters => [ @_[2..$#_] ])
 }
 sub if_icmpne {
-  MarpaX::Java::ClassFile::Struct::OpCode::If_icmpne->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_icmpne', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::If_icmpne->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_icmpne', parameters => [ @_[2..$#_] ])
 }
 sub if_icmplt {
-  MarpaX::Java::ClassFile::Struct::OpCode::If_icmplt->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_icmplt', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::If_icmplt->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_icmplt', parameters => [ @_[2..$#_] ])
 }
 sub if_icmpge {
-  MarpaX::Java::ClassFile::Struct::OpCode::If_icmpge->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_icmpge', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::If_icmpge->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_icmpge', parameters => [ @_[2..$#_] ])
 }
 sub if_icmpgt {
-  MarpaX::Java::ClassFile::Struct::OpCode::If_icmpgt->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_icmpgt', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::If_icmpgt->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_icmpgt', parameters => [ @_[2..$#_] ])
 }
 sub if_icmple {
-  MarpaX::Java::ClassFile::Struct::OpCode::If_icmple->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_icmple', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::If_icmple->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'if_icmple', parameters => [ @_[2..$#_] ])
 }
 sub ifeq {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ifeq->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifeq', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ifeq->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifeq', parameters => [ @_[2..$#_] ])
 }
 sub ifne {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ifne->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifne', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ifne->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifne', parameters => [ @_[2..$#_] ])
 }
 sub iflt {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iflt->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iflt', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iflt->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iflt', parameters => [ @_[2..$#_] ])
 }
 sub ifge {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ifge->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifge', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ifge->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifge', parameters => [ @_[2..$#_] ])
 }
 sub ifgt {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ifgt->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifgt', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ifgt->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifgt', parameters => [ @_[2..$#_] ])
 }
 sub ifle {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ifle->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifle', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ifle->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifle', parameters => [ @_[2..$#_] ])
 }
 sub ifnonnull {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ifnonnull->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifnonnull', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ifnonnull->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifnonnull', parameters => [ @_[2..$#_] ])
 }
 sub ifnull {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ifnull->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifnull', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ifnull->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ifnull', parameters => [ @_[2..$#_] ])
 }
 sub iinc {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iinc->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iinc', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iinc->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iinc', parameters => [ @_[2..$#_] ])
 }
 sub iload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iload', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iload', parameters => [ @_[2..$#_] ])
 }
 sub iload_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iload_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iload_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iload_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iload_0', parameters => [ @_[2..$#_] ])
 }
 sub iload_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iload_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iload_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iload_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iload_1', parameters => [ @_[2..$#_] ])
 }
 sub iload_2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iload_2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iload_2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iload_2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iload_2', parameters => [ @_[2..$#_] ])
 }
 sub iload_3 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iload_3->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iload_3', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iload_3->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iload_3', parameters => [ @_[2..$#_] ])
 }
 sub imul {
-  MarpaX::Java::ClassFile::Struct::OpCode::Imul->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'imul', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Imul->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'imul', parameters => [ @_[2..$#_] ])
 }
 sub ineg {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ineg->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ineg', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ineg->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ineg', parameters => [ @_[2..$#_] ])
 }
 sub instanceof {
-  MarpaX::Java::ClassFile::Struct::OpCode::Instanceof->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'instanceof', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Instanceof->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'instanceof', parameters => [ @_[2..$#_] ])
 }
 sub invokedynamic {
-  MarpaX::Java::ClassFile::Struct::OpCode::Invokedynamic->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'invokedynamic', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Invokedynamic->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'invokedynamic', parameters => [ @_[2..$#_] ])
 }
 sub invokeinterface {
-  MarpaX::Java::ClassFile::Struct::OpCode::Invokeinterface->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'invokeinterface', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Invokeinterface->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'invokeinterface', parameters => [ @_[2..$#_] ])
 }
 sub invokespecial {
-  MarpaX::Java::ClassFile::Struct::OpCode::Invokespecial->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'invokespecial', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Invokespecial->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'invokespecial', parameters => [ @_[2..$#_] ])
 }
 sub invokestatic {
-  MarpaX::Java::ClassFile::Struct::OpCode::Invokestatic->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'invokestatic', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Invokestatic->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'invokestatic', parameters => [ @_[2..$#_] ])
 }
 sub invokevirtual {
-  MarpaX::Java::ClassFile::Struct::OpCode::Invokevirtual->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'invokevirtual', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Invokevirtual->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'invokevirtual', parameters => [ @_[2..$#_] ])
 }
 sub ior {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ior->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ior', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ior->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ior', parameters => [ @_[2..$#_] ])
 }
 sub irem {
-  MarpaX::Java::ClassFile::Struct::OpCode::Irem->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'irem', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Irem->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'irem', parameters => [ @_[2..$#_] ])
 }
 sub ireturn {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ireturn->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ireturn', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ireturn->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ireturn', parameters => [ @_[2..$#_] ])
 }
 sub ishl {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ishl->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ishl', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ishl->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ishl', parameters => [ @_[2..$#_] ])
 }
 sub ishr {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ishr->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ishr', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ishr->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ishr', parameters => [ @_[2..$#_] ])
 }
 sub istore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Istore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'istore', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Istore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'istore', parameters => [ @_[2..$#_] ])
 }
 sub istore_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Istore_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'istore_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Istore_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'istore_0', parameters => [ @_[2..$#_] ])
 }
 sub istore_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Istore_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'istore_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Istore_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'istore_1', parameters => [ @_[2..$#_] ])
 }
 sub istore_2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Istore_2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'istore_2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Istore_2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'istore_2', parameters => [ @_[2..$#_] ])
 }
 sub istore_3 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Istore_3->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'istore_3', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Istore_3->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'istore_3', parameters => [ @_[2..$#_] ])
 }
 sub isub {
-  MarpaX::Java::ClassFile::Struct::OpCode::Isub->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'isub', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Isub->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'isub', parameters => [ @_[2..$#_] ])
 }
 sub iushr {
-  MarpaX::Java::ClassFile::Struct::OpCode::Iushr->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iushr', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Iushr->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'iushr', parameters => [ @_[2..$#_] ])
 }
 sub ixor {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ixor->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ixor', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ixor->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ixor', parameters => [ @_[2..$#_] ])
 }
 sub jsr {
-  MarpaX::Java::ClassFile::Struct::OpCode::Jsr->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'jsr', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Jsr->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'jsr', parameters => [ @_[2..$#_] ])
 }
 sub jsr_w {
-  MarpaX::Java::ClassFile::Struct::OpCode::Jsr_w->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'jsr_w', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Jsr_w->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'jsr_w', parameters => [ @_[2..$#_] ])
 }
 sub l2d {
-  MarpaX::Java::ClassFile::Struct::OpCode::L2d->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'l2d', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::L2d->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'l2d', parameters => [ @_[2..$#_] ])
 }
 sub l2f {
-  MarpaX::Java::ClassFile::Struct::OpCode::L2f->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'l2f', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::L2f->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'l2f', parameters => [ @_[2..$#_] ])
 }
 sub l2i {
-  MarpaX::Java::ClassFile::Struct::OpCode::L2i->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'l2i', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::L2i->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'l2i', parameters => [ @_[2..$#_] ])
 }
 sub ladd {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ladd->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ladd', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ladd->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ladd', parameters => [ @_[2..$#_] ])
 }
 sub laload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Laload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'laload', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Laload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'laload', parameters => [ @_[2..$#_] ])
 }
 sub land {
-  MarpaX::Java::ClassFile::Struct::OpCode::Land->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'land', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Land->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'land', parameters => [ @_[2..$#_] ])
 }
 sub lastore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lastore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lastore', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lastore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lastore', parameters => [ @_[2..$#_] ])
 }
 sub lcmp {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lcmp->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lcmp', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lcmp->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lcmp', parameters => [ @_[2..$#_] ])
 }
 sub lconst_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lconst_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lconst_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lconst_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lconst_0', parameters => [ @_[2..$#_] ])
 }
 sub lconst_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lconst_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lconst_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lconst_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lconst_1', parameters => [ @_[2..$#_] ])
 }
 sub ldc {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ldc->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ldc', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ldc->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ldc', parameters => [ @_[2..$#_] ])
 }
 sub ldc_w {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ldc_w->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ldc_w', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ldc_w->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ldc_w', parameters => [ @_[2..$#_] ])
 }
 sub ldc2_w {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ldc2_w->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ldc2_w', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ldc2_w->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ldc2_w', parameters => [ @_[2..$#_] ])
 }
 sub ldiv {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ldiv->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ldiv', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ldiv->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ldiv', parameters => [ @_[2..$#_] ])
 }
 sub lload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lload', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lload', parameters => [ @_[2..$#_] ])
 }
 sub lload_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lload_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lload_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lload_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lload_0', parameters => [ @_[2..$#_] ])
 }
 sub lload_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lload_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lload_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lload_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lload_1', parameters => [ @_[2..$#_] ])
 }
 sub lload_2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lload_2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lload_2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lload_2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lload_2', parameters => [ @_[2..$#_] ])
 }
 sub lload_3 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lload_3->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lload_3', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lload_3->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lload_3', parameters => [ @_[2..$#_] ])
 }
 sub lmul {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lmul->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lmul', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lmul->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lmul', parameters => [ @_[2..$#_] ])
 }
 sub lneg {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lneg->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lneg', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lneg->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lneg', parameters => [ @_[2..$#_] ])
 }
 sub lookupswitch {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lookupswitch->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lookupswitch', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lookupswitch->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lookupswitch', parameters => [ @_[2..$#_] ])
 }
 sub lor {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lor->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lor', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lor->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lor', parameters => [ @_[2..$#_] ])
 }
 sub lrem {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lrem->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lrem', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lrem->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lrem', parameters => [ @_[2..$#_] ])
 }
 sub lreturn {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lreturn->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lreturn', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lreturn->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lreturn', parameters => [ @_[2..$#_] ])
 }
 sub lshl {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lshl->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lshl', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lshl->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lshl', parameters => [ @_[2..$#_] ])
 }
 sub lshr {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lshr->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lshr', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lshr->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lshr', parameters => [ @_[2..$#_] ])
 }
 sub lstore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lstore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lstore', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lstore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lstore', parameters => [ @_[2..$#_] ])
 }
 sub lstore_0 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lstore_0->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lstore_0', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lstore_0->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lstore_0', parameters => [ @_[2..$#_] ])
 }
 sub lstore_1 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lstore_1->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lstore_1', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lstore_1->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lstore_1', parameters => [ @_[2..$#_] ])
 }
 sub lstore_2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lstore_2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lstore_2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lstore_2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lstore_2', parameters => [ @_[2..$#_] ])
 }
 sub lstore_3 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lstore_3->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lstore_3', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lstore_3->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lstore_3', parameters => [ @_[2..$#_] ])
 }
 sub lsub {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lsub->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lsub', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lsub->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lsub', parameters => [ @_[2..$#_] ])
 }
 sub lushr {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lushr->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lushr', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lushr->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lushr', parameters => [ @_[2..$#_] ])
 }
 sub lxor {
-  MarpaX::Java::ClassFile::Struct::OpCode::Lxor->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lxor', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Lxor->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'lxor', parameters => [ @_[2..$#_] ])
 }
 sub monitorenter {
-  MarpaX::Java::ClassFile::Struct::OpCode::Monitorenter->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'monitorenter', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Monitorenter->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'monitorenter', parameters => [ @_[2..$#_] ])
 }
 sub monitorexit {
-  MarpaX::Java::ClassFile::Struct::OpCode::Monitorexit->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'monitorexit', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Monitorexit->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'monitorexit', parameters => [ @_[2..$#_] ])
 }
 sub multianewarray {
-  MarpaX::Java::ClassFile::Struct::OpCode::Multianewarray->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'multianewarray', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Multianewarray->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'multianewarray', parameters => [ @_[2..$#_] ])
 }
 sub _new {
-  MarpaX::Java::ClassFile::Struct::OpCode::New->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'new', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::New->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'new', parameters => [ @_[2..$#_] ])
 }
 sub newarray {
-  MarpaX::Java::ClassFile::Struct::OpCode::Newarray->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'newarray', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Newarray->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'newarray', parameters => [ @_[2..$#_] ])
 }
 sub nop {
-  MarpaX::Java::ClassFile::Struct::OpCode::Nop->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'nop', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Nop->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'nop', parameters => [ @_[2..$#_] ])
 }
 sub _pop {
-  MarpaX::Java::ClassFile::Struct::OpCode::Pop->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'pop', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Pop->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'pop', parameters => [ @_[2..$#_] ])
 }
 sub pop2 {
-  MarpaX::Java::ClassFile::Struct::OpCode::Pop2->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'pop2', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Pop2->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'pop2', parameters => [ @_[2..$#_] ])
 }
 sub putfield {
-  MarpaX::Java::ClassFile::Struct::OpCode::Putfield->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'putfield', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Putfield->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'putfield', parameters => [ @_[2..$#_] ])
 }
 sub putstatic {
-  MarpaX::Java::ClassFile::Struct::OpCode::Putstatic->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'putstatic', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Putstatic->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'putstatic', parameters => [ @_[2..$#_] ])
 }
 sub ret {
-  MarpaX::Java::ClassFile::Struct::OpCode::Ret->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ret', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Ret->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'ret', parameters => [ @_[2..$#_] ])
 }
 sub _return {
-  MarpaX::Java::ClassFile::Struct::OpCode::Return->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'return', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Return->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'return', parameters => [ @_[2..$#_] ])
 }
 sub saload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Saload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'saload', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Saload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'saload', parameters => [ @_[2..$#_] ])
 }
 sub sastore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Sastore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'sastore', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Sastore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'sastore', parameters => [ @_[2..$#_] ])
 }
 sub sipush {
-  MarpaX::Java::ClassFile::Struct::OpCode::Sipush->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'sipush', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Sipush->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'sipush', parameters => [ @_[2..$#_] ])
 }
 sub swap {
-  MarpaX::Java::ClassFile::Struct::OpCode::Swap->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'swap', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Swap->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'swap', parameters => [ @_[2..$#_] ])
 }
 sub tableswitch {
-  MarpaX::Java::ClassFile::Struct::OpCode::Tableswitch->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'tableswitch', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Tableswitch->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'tableswitch', parameters => [ @_[2..$#_] ])
 }
 sub wide_iload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Wide_iload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Wide_iload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
 }
 sub wide_fload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Wide_fload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Wide_fload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
 }
 sub wide_aload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Wide_aload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Wide_aload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
 }
 sub wide_lload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Wide_lload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Wide_lload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
 }
 sub wide_dload {
-  MarpaX::Java::ClassFile::Struct::OpCode::Wide_dload->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Wide_dload->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
 }
 sub wide_istore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Wide_istore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Wide_istore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
 }
 sub wide_fstore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Wide_fstore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Wide_fstore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
 }
 sub wide_astore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Wide_astore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Wide_astore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
 }
 sub wide_lstore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Wide_lstore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Wide_lstore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
 }
 sub wide_dstore {
-  MarpaX::Java::ClassFile::Struct::OpCode::Wide_dstore->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Wide_dstore->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
 }
 sub wide_ret {
-  MarpaX::Java::ClassFile::Struct::OpCode::Wide_ret->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Wide_ret->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
 }
 sub wide_iinc {
-  MarpaX::Java::ClassFile::Struct::OpCode::Wide_iinc->new(offset => $_[1]->[0], relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
+  MarpaX::Java::ClassFile::Struct::OpCode::Wide_iinc->new(offset => $_[1]->[0], _constant_pool => $_[0]->constant_pool, relativeOffset => $_[1]->[0] - $_[0]->originPos, code => $_[0]->u1($_[1]->[1]), mnemonic => 'wide', parameters => [ @_[2..$#_] ])
 }
 
 with qw/MarpaX::Java::ClassFile::Role::Parser::InnerGrammar/;
