@@ -2,7 +2,7 @@
 use strict;
 use warnings FATAL => 'all';
 
-# PODNAME: classdump
+# PODNAME: javapp
 
 # ABSTRACT: javap writen in perl
 

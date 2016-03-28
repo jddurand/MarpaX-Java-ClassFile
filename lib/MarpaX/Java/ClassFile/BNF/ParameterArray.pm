@@ -1,7 +1,7 @@
 use strict;
 use warnings FATAL => 'all';
 
-package MarpaX::Java::ClassFile::BNF::ParmaeterArray;
+package MarpaX::Java::ClassFile::BNF::ParameterArray;
 use Moo;
 
 # ABSTRACT: Parsing of an array of parameter
