@@ -137,7 +137,7 @@ This help.
 
 =head1 EXAMPLE
 
-$ javapp -l DEBUG myJavaFile.class
+$ javapp -l DEBUG myJavaFile.class > /tmp/myJavaFile.txt
 
 =head1 NOTES
 
