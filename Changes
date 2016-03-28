@@ -1,6 +1,11 @@
 Changelog for MarpaX-Java-ClassFile
 
-0.002 2016-03-28T10:16:10
+0.003 2016-03-28T16:27:51
+ [Jean-Damien Durand <jeandamiendurand@free.fr>]
+ - Struct/MethodInfo.pm: Added stringification of access flags
+ - Util/AccessFlagsStringification.pm: Added "Class"
+
+0.002 2016-03-28T10:16:10Z
  [Jean-Damien Durand <jeandamiendurand@free.fr>]
  - dzil xtest
  - bin/javapp: recommend implicitely a redirection in the help
