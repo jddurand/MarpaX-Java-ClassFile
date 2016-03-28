@@ -21,6 +21,7 @@ use Getopt::Long qw/GetOptions/;
 use Log::Log4perl qw/:easy/;
 use Log::Any::Adapter;
 use Log::Any qw/$log/;
+use open ( ':encoding(UTF-8)', ':std' );        # STDERR may contain UTF-8 characters
 use POSIX qw/EXIT_SUCCESS EXIT_FAILURE/;
 use Pod::Usage qw/pod2usage/;
 
