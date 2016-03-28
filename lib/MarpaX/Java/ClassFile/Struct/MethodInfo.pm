@@ -9,6 +9,7 @@ use MarpaX::Java::ClassFile::Struct::_Base
   '""' => [
            [ sub { 'Name#' . $_[0]->name_index             } => sub { $_[0]->_constant_pool->[$_[0]->name_index] } ],
            [ sub { 'Descriptor#' . $_[0]->descriptor_index } => sub { $_[0]->_constant_pool->[$_[0]->descriptor_index] } ],
+           [ sub { 'Method access flags'                   } => sub { $_[0]->accessFlagsStringificator($_[0]->access_flags) } ],
            [ sub { 'Attributes count'                      } => sub { $_[0]->attributes_count } ],
            [ sub { 'Attributes'                            } => sub { $_[0]->arrayStringificator($_[0]->attributes) } ]
           ];
