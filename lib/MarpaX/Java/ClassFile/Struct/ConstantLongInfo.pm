@@ -5,7 +5,7 @@ package MarpaX::Java::ClassFile::Struct::ConstantLongInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   -tiny => [qw/_perlvalue tag high_bytes low_bytes/],
   '""' => [
-           [ sub { 'value' } => sub { $_[0]->_perlvalue } ]
+           [ sub { $_[0]->_perlvalue } ]
           ];
 
 # ABSTRACT: CONSTANT_Long_info

@@ -5,7 +5,7 @@ package MarpaX::Java::ClassFile::Struct::ConstantFloatInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   -tiny => [qw/_perlvalue tag bytes/],
   '""' => [
-           [ sub { 'value' } => sub { $_[0]->_perlvalue->bstr } ]
+           [ sub { $_[0]->_perlvalue->bstr } ]
           ];
 
 # ABSTRACT: CONSTANT_Float_info

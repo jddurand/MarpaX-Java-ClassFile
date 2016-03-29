@@ -5,7 +5,7 @@ package MarpaX::Java::ClassFile::Struct::ConstantIntegerInfo;
 use MarpaX::Java::ClassFile::Struct::_Base
   -tiny => [qw/_perlvalue tag bytes/],
   '""' => [
-           [ sub { 'value' } => sub { $_[0]->_perlvalue } ]
+           [ sub { $_[0]->_perlvalue } ]
           ];
 
 # ABSTRACT: CONSTANT_Integer_info
