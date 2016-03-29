@@ -35,7 +35,7 @@ MarpaX::Java::ClassFile::ClassFile::Common::Actions is an internal class used by
 # Note: we use Bit::Vector for portability, some steps could have been replaced with unpack
 #
 sub _bytesToVector {
-  my @u1 = map { unpack('C', $_) } split('', $_[1]);
+  my @u1 = unpack('C*', $_[1]);
   my $bits = 8 * scalar(@u1);
   #
   # Increase bit numbers by 1 ensure to_Dec() returns the unsigned version
@@ -259,7 +259,7 @@ sub utf8 {
   #
   no warnings;
 
-  return unless length($_[1]);
+  return unless (length($_[1]));
 
   my @bytes = unpack('C*', $_[1]);
   my $s  = '';
