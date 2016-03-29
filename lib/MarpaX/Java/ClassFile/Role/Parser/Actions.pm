@@ -35,19 +35,12 @@ MarpaX::Java::ClassFile::ClassFile::Common::Actions is an internal class used by
 # Note: we use Bit::Vector for portability, some steps could have been replaced with unpack
 #
 sub _bytesToVector {
-  my @u1 = unpack('C*', $_[1]);
-  my $bits = 8 * scalar(@u1);
   #
   # Increase bit numbers by 1 ensure to_Dec() returns the unsigned version
-  # Default is to no increase of bit number
+  # Default is to not increase the number of bits, i.e. to_Dec() returns a signed value
   #
-  ++$bits if ($_[2]);   # Default is undef
-  my $vector = Bit::Vector->new_Dec($bits, shift(@u1));
-  while (@u1) {
-    $vector->Move_Left(8),
-    $vector->Or($vector, Bit::Vector->new_Dec($bits, shift(@u1)))
-  }
-  $vector
+  my $vector = Bit::Vector->new($_[2] ? (8 * length($_[1]) + 1) : (8 * length($_[1])));
+  $vector->Chunk_List_Store(8, reverse unpack('C*', $_[1])), $vector
 }
 
 # sub u1       { $_[0]->_bytesToVector($_[1], 1)->to_Dec }  # Ask for an unsigned value explicitely
@@ -262,51 +255,46 @@ sub utf8 {
   return unless (length($_[1]));
 
   my @bytes = unpack('C*', $_[1]);
-  my $s  = '';
-  my ($c, $val0, $val1, $val2, $val3, $val4, $val5);
+  my ($s, $val0, $val1, $val2, $val3, $val4, $val5) = '';
 
   while (@bytes) {
     #
-    # No need to reset the array
+    # This is to avoid a internal op with ';' : @bytes is guaranteed to be shifted
     #
-    $val0 = shift(@bytes);
-    if (($val0 & 0x80) == 0) { # 0x80 = 10000000
+    if ((($val0 = shift(@bytes)) & 0x80) == 0) {              # 0x80 == 10000000                   => 0xxxxxxx
       #
       # 1 byte
       #
       $s .= chr($val0)
     }
-    elsif ((($val0 & 0xE0) == 0xC0) &&                      # 0xE0 == 11100000, 0xC0 == 11000000
+    elsif ((($val0 & 0xE0) == 0xC0) &&                        # 0xE0 == 11100000, 0xC0 == 11000000 => 110xxxxx
            ($#bytes >= 0) &&
-           ((($val1 = $bytes[0]) & 0xC0) == 0x80)) {        # 0xC0 == 11000000, 0x80 == 10000000
+           ((($val1 = $bytes[0]) & 0xC0) == 0x80)) {          # 0xC0 == 11000000, 0x80 == 10000000 => 10xxxxxx
       #
       # 2 bytes
       #
-      shift(@bytes);
-      $s .= chr((($val0 & 0x1F) << 6) + ($val1 & 0x3F))
+      shift(@bytes), $s .= chr((($val0 & 0x1F) << 6) + ($val1 & 0x3F))
     }
-    elsif ((($val0 & 0xF0) == 0xE0) &&                      # 0xF0 == 11110000, 0xE0 == 11100000
+    elsif (($val0 == 0xED) &&                                 # 0xED == 11101101                   => 11101101
+           ($#bytes >= 4) &&
+           ((($val1 = $bytes[0]) & 0xF0) == 0xA0) &&          # 0xF0 == 11110000, 0xA0 == 10100000 => 1010xxxx
+           ((($val2 = $bytes[1]) & 0xC0) == 0x80) &&          # 0xC0 == 11000000, 0x80 == 10000000 => 10xxxxxx
+           ( ($val3 = $bytes[2])         == 0xED) &&          # 0xED == 11101101                   => 11101101
+           ((($val4 = $bytes[3]) & 0xF0) == 0xB0) &&          # 0xF0 == 11110000, 0xB0 == 10110000 => 1011xxxx
+           ((($val5 = $bytes[4]) & 0xC0) == 0x80)) {          # 0xC0 == 11000000, 0x80 == 10000000 => 10xxxxxx
+      #
+      # 6 bytes, for supplementary characters are tested BEFORE 3 bytes, because it is a doubled 3-bytes encoding
+      #
+      splice(@bytes, 0, 5), $s .= chr(0x10000 + (($val1 & 0x0F) << 16) + (($val2 & 0x3F) << 10) + (($val4 & 0x0F) <<  6) + ($val5 & 0x3F))
+    }
+    elsif ((($val0 & 0xF0) == 0xE0) &&                      # 0xF0 == 11110000, 0xE0 == 11100000   => 1110xxxx
            ($#bytes >= 1) &&
-           ((($val1 = $bytes[0]) & 0xC0) == 0x80) &&        # 0xC0 == 11000000, 0x80 == 10000000
-           ((($val2 = $bytes[1]) & 0xC0) == 0x80)) {        # 0xC0 == 11000000, 0x80 == 10000000
+           ((($val1 = $bytes[0]) & 0xC0) == 0x80) &&        # 0xC0 == 11000000, 0x80 == 10000000   => 10xxxxxx
+           ((($val2 = $bytes[1]) & 0xC0) == 0x80)) {        # 0xC0 == 11000000, 0x80 == 10000000   => 10xxxxxx
       #
       # 3 bytes
       #
-      splice(@bytes, 0, 2);
-      $s .= chr((($val0 & 0xF ) << 12) + (($val1 & 0x3F) << 6) + ($val2 & 0x3F))
-    }
-    elsif (($val0 == 0xED) &&                                 # 0xED == 11101101
-           ($#bytes >= 4) &&
-           ((($val1 = $bytes[0]) & 0xF0) == 0xA0) &&          # 0xC0 == 11000000, 0x80 == 10100000
-           ((($val2 = $bytes[1]) & 0xC0) == 0x80) &&          # 0xC0 == 11000000, 0x80 == 10000000
-           ( ($val3 = $bytes[2])         == 0xED) &&          # 0xED == 11101101
-           ((($val4 = $bytes[3]) & 0xF0) == 0x80) &&          # 0xF0 == 11110000, 0xB0 == 10110000
-           ((($val5 = $bytes[4]) & 0xC0) == 0x80)) {          # 0xC0 == 11000000, 0x80 == 10000000
-      #
-      # 6 bytes
-      #
-      splice(@bytes, 0, 5);
-      $s .= chr(0x10000 + (($val1 & 0x0F) << 16) + (($val2 & 0x3F) << 10) + (($val4 & 0x0F) <<  6) + ($val5 & 0x3F))
+      splice(@bytes, 0, 2), $s .= chr((($val0 & 0xF ) << 12) + (($val1 & 0x3F) << 6) + ($val2 & 0x3F))
     }
     else {
       $_[0]->fatalf('Unable to map byte with value 0x%x', $val0)
