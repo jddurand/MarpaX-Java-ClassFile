@@ -1,6 +1,10 @@
 Changelog for MarpaX-Java-ClassFile
 
-0.005 2016-03-29T18:10:21
+0.006 2016-03-29T18:24:25
+ [Jean-Damien Durand <jeandamiendurand@free.fr>]
+ - dist.ini: MetaProvides::Package and not MetaProvides::Class...
+
+0.005 2016-03-29T18:10:21Z
  [Jean-Damien Durand <jeandamiendurand@free.fr>]
  - Shortcut immediately to interpreted value, when it is the case, in
    strinfigication
