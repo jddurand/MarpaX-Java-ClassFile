@@ -1,6 +1,14 @@
 Changelog for MarpaX-Java-ClassFile
 
-0.004 2016-03-28T21:54:19
+0.005 2016-03-29T18:10:21
+ [Jean-Damien Durand <jeandamiendurand@free.fr>]
+ - Shortcut immediately to interpreted value, when it is the case, in
+   strinfigication
+ - _bytesToVector optmization and utf8() fix again
+ - Parser/Actions.pm: less ops
+ - dist.ini: hopefully fix package indexing
+
+0.004 2016-03-28T21:54:19Z
  [Jean-Damien Durand <jeandamiendurand@free.fr>]
  - Parser/Actions.pm: Revised and fixed utf8 action
 

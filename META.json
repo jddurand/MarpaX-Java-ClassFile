@@ -17,7 +17,6 @@
       "directory" : [
          "blog",
          "examples",
-         "lib/MarpaX/Java/ClassFile",
          "t",
          "xt"
       ]
@@ -121,7 +120,7 @@
          "web" : "https://github.com/jddurand/marpax-java-classfile"
       }
    },
-   "version" : "0.004",
+   "version" : "0.005",
    "x_authority" : "cpan:JDDPAUSE"
 }
 
