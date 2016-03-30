@@ -1,6 +1,15 @@
 Changelog for MarpaX-Java-ClassFile
 
-0.006 2016-03-29T18:24:25
+0.007 2016-03-30T17:20:17
+ [Jean-Damien Durand <jeandamiendurand@free.fr>]
+ - BNF/OpCodeArray.pm: jsr bnf fix
+ - bin/javapp: log error eventually, and protect against failure with
+   illegal interchange characters when printing out
+ - Parser/Actions.pm: make sure utf8 returns undef on the stack instead of
+   nothing
+ - dist.ini: 2016
+
+0.006 2016-03-29T18:24:25Z
  [Jean-Damien Durand <jeandamiendurand@free.fr>]
  - dist.ini: MetaProvides::Package and not MetaProvides::Class...
 
