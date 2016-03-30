@@ -252,10 +252,11 @@ sub utf8 {
   #
   no warnings;
 
-  return unless (length($_[1]));
+  my $s = undef;
+  return $s unless (length($_[1]));
 
   my @bytes = unpack('C*', $_[1]);
-  my ($s, $val0, $val1, $val2, $val3, $val4, $val5) = '';
+  my ($val0, $val1, $val2, $val3, $val4, $val5) = '';
 
   while (@bytes) {
     #
