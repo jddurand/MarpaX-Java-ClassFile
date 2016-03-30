@@ -21,7 +21,7 @@ use Getopt::Long qw/GetOptions/;
 use Log::Log4perl qw/:easy/;
 use Log::Any::Adapter;
 use Log::Any qw/$log/;
-use open ( ':encoding(UTF-8)', ':std' );        # STDERR may contain UTF-8 characters
+use open (':encoding(UTF-8)', ':std');        # Output might contain UTF-8 characters
 use POSIX qw/EXIT_SUCCESS EXIT_FAILURE/;
 use Pod::Usage qw/pod2usage/;
 
@@ -72,9 +72,10 @@ sub _wanted {
     # ".class"
     #
     eval {
+        no warnings 'utf8';    # Unicode non-character blablabla is illegal for interchange
         printf "%s\n",
         MarpaX::Java::ClassFile->new(filename => $canonpath)->ast
-    }
+    } || $log->errorf('%s', $@)
   } elsif ($suffix eq '.jar') {
     #
     # ".jar"
@@ -100,9 +101,10 @@ sub _wanted {
           $log->debugf('Extracting %s', $_);
           if ($zip->extractMemberWithoutPaths($_) == AZ_OK) {
             eval {
+                no warnings 'utf8';    # Unicode non-character blablabla is illegal for interchange
                 printf "%s\n",
                 MarpaX::Java::ClassFile->new(filename => basename($_))->ast
-            }
+            } || $log->errorf('%s', $@)
           } else {
             $log->warnf('Failed to extract %s from %s, %s', $_, $canonpath, $!)
           }
