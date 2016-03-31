@@ -24,6 +24,10 @@ use Log::Any qw/$log/;
 use open (':encoding(UTF-8)', ':std');        # Output might contain UTF-8 characters
 use POSIX qw/EXIT_SUCCESS EXIT_FAILURE/;
 use Pod::Usage qw/pod2usage/;
+#
+# This is implicit: make sure it is if the dependencies
+#
+require Log::Any::Adapter::Log4perl;
 
 #
 # Options
