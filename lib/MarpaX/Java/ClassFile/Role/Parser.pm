@@ -115,19 +115,28 @@ sub _build_ast {
   #
   no warnings 'once';
   local $MarpaX::Java::ClassFile::Role::Parser::SELF = $_[0];
-  local $MarpaX::Java::ClassFile::Role::Parser::G = $_[0]->grammar;
+  local $MarpaX::Java::ClassFile::Role::Parser::G    = $_[0]->grammar;
   #
   # It is far quicker to maintain ourself booleans for trace and debug mode
   # rather than letting logger's tracef() and debugf() handle the request.
   # Further more we do //= because these really should be constant once
   # parse is starting.
+  # The following can look strange but is my way to makes sure that $[0]->log is called once per parse -;
+  # even when setting localized variables.
   #
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_TRACE //= $_[0]->log->is_trace;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_DEBUG //= $_[0]->log->is_debug;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_INFO  //= $_[0]->log->is_info;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_WARN  //= $_[0]->log->is_warn;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_ERROR //= $_[0]->log->is_error;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_FATAL //= $_[0]->log->is_fatal;
+  my $IS_TRACE = $MarpaX::Java::ClassFile::Role::Parser::IS_TRACE;
+  my $IS_DEBUG = $MarpaX::Java::ClassFile::Role::Parser::IS_DEBUG;
+  my $IS_INFO  = $MarpaX::Java::ClassFile::Role::Parser::IS_INFO;
+  my $IS_WARN  = $MarpaX::Java::ClassFile::Role::Parser::IS_WARN;
+  my $IS_ERROR = $MarpaX::Java::ClassFile::Role::Parser::IS_ERROR;
+  my $IS_FATAL = $MarpaX::Java::ClassFile::Role::Parser::IS_FATAL;
+
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_TRACE = $IS_TRACE // $_[0]->log->is_trace;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_DEBUG = $IS_DEBUG // $_[0]->log->is_debug;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_INFO  = $IS_INFO  // $_[0]->log->is_info;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_WARN  = $IS_WARN  // $_[0]->log->is_warn;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_ERROR = $IS_ERROR // $_[0]->log->is_error;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_FATAL = $IS_FATAL // $_[0]->log->is_fatal;
   #
   # Localize recognizer
   #
