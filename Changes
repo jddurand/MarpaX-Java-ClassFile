@@ -1,6 +1,13 @@
 Changelog for MarpaX-Java-ClassFile
 
-0.007 2016-03-30T17:20:17
+0.008 2016-03-31T05:15:12
+ [Jean-Damien Durand <jeandamiendurand@free.fr>]
+ - Role/Parser.pm: Fix number of calls to logger is_trace, is _debug etc...
+   when setting localized variables
+ - Move from MooX::Role::Logger to MooX::Log::Any because the logger can be
+   propagated with the later
+
+0.007 2016-03-30T17:20:17Z
  [Jean-Damien Durand <jeandamiendurand@free.fr>]
  - BNF/OpCodeArray.pm: jsr bnf fix
  - bin/javapp: log error eventually, and protect against failure with
