@@ -2,7 +2,6 @@ use strict;
 use warnings FATAL => 'all';
 
 package MarpaX::Java::ClassFile::Util::MarpaTrace;
-use MooX::Role::Logger;
 
 use Class::Load qw/is_class_loaded/;
 

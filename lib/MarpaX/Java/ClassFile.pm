@@ -61,31 +61,31 @@ require MarpaX::Java::ClassFile::Struct::ClassFile;
 sub _build_ast {
   my ($self) = @_;
 
-  $self->_logger->tracef('Opening %s', $self->filename);
+  $self->log->tracef('Opening %s', $self->filename);
   open(my $fh, '<', $self->filename) || do {
-    $self->_logger->fatalf('Cannot open %s, %s', $self->filename, $!);
+    $self->log->fatalf('Cannot open %s, %s', $self->filename, $!);
     croak "Cannot open " . $self->filename . ", $!"
   };
 
-  $self->_logger->tracef('Setting %s in binary mode', $self->filename);
+  $self->log->tracef('Setting %s in binary mode', $self->filename);
   binmode($fh) || do {
-    $self->_logger->fatalf('Failed to set binary mode on %s, %s', $self->filename, $!);
+    $self->log->fatalf('Failed to set binary mode on %s, %s', $self->filename, $!);
     croak "Failed to set binary mode on " . $self->filename . ", $!"
   };
 
-  $self->_logger->tracef('Reading %s', $self->filename);
+  $self->log->tracef('Reading %s', $self->filename);
   my $input = do { local $/; <$fh>};
 
-  $self->_logger->tracef('Closing %s', $self->filename);
+  $self->log->tracef('Closing %s', $self->filename);
   close($fh) || do {
-    $self->_logger->warnf('Failed to close %s, %s', $self->filename, $!);
+    $self->log->warnf('Failed to close %s, %s', $self->filename, $!);
     croak "Failed to close " . $self->filename . ", $!"
   };
 
-  $self->_logger->debugf('Parsing %s', $self->filename);
-  MarpaX::Java::ClassFile::BNF::ClassFile->new(inputRef => \$input)->ast
+  $self->log->debugf('Parsing %s', $self->filename);
+  MarpaX::Java::ClassFile::BNF::ClassFile->new(inputRef => \$input, log => $self->log)->ast
 }
 
-with 'MooX::Role::Logger';
+with 'MooX::Log::Any';
 
 1;

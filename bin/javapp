@@ -74,7 +74,7 @@ sub _wanted {
     eval {
         no warnings 'utf8';    # Unicode non-character blablabla is illegal for interchange
         printf "%s\n",
-        MarpaX::Java::ClassFile->new(filename => $canonpath)->ast
+        MarpaX::Java::ClassFile->new(filename => $canonpath, log => $log)->ast
     } || $log->errorf('%s', $@)
   } elsif ($suffix eq '.jar') {
     #
@@ -103,7 +103,7 @@ sub _wanted {
             eval {
                 no warnings 'utf8';    # Unicode non-character blablabla is illegal for interchange
                 printf "%s\n",
-                MarpaX::Java::ClassFile->new(filename => basename($_))->ast
+                MarpaX::Java::ClassFile->new(filename => basename($_), log => $log)->ast
             } || $log->errorf('%s', $@)
           } else {
             $log->warnf('Failed to extract %s from %s, %s', $_, $canonpath, $!)

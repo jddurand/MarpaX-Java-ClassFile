@@ -120,14 +120,14 @@ sub _build_ast {
   # It is far quicker to maintain ourself booleans for trace and debug mode
   # rather than letting logger's tracef() and debugf() handle the request.
   # Further more we do //= because these really should be constant once
-  # a parsing is starting.
+  # parse is starting.
   #
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_TRACE //= $_[0]->_logger->is_trace;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_DEBUG //= $_[0]->_logger->is_debug;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_INFO  //= $_[0]->_logger->is_info;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_WARN  //= $_[0]->_logger->is_warn;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_ERROR //= $_[0]->_logger->is_error;
-  local $MarpaX::Java::ClassFile::Role::Parser::IS_FATAL //= $_[0]->_logger->is_fatal;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_TRACE //= $_[0]->log->is_trace;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_DEBUG //= $_[0]->log->is_debug;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_INFO  //= $_[0]->log->is_info;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_WARN  //= $_[0]->log->is_warn;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_ERROR //= $_[0]->log->is_error;
+  local $MarpaX::Java::ClassFile::Role::Parser::IS_FATAL //= $_[0]->log->is_fatal;
   #
   # Localize recognizer
   #
@@ -432,6 +432,7 @@ sub _inner {
                                constant_pool       => $_[0]->constant_pool,
                                inputRef            => $_[0]->inputRef,
                                pos                 => $_[0]->pos,
+                               log                 => $_[0]->log,
                                %args);
   my $innerGrammarValue = $inner->ast;
   $_[0]->lexeme_read('MANAGED', $inner->pos - $_[0]->pos, $innerGrammarValue, $_[2]);
@@ -457,9 +458,9 @@ sub _dolog {
     my $nbcharacters = length("$inputLength");
     my ($offset, $max) = ($self->pos, $self->max);
 
-    $self->_logger->$method("[pos %*s->%*s] %s: $format", $nbcharacters, $offset, $nbcharacters, $self->max, $self->whoami, @arguments)
+    $self->log->$method("[pos %*s->%*s] %s: $format", $nbcharacters, $offset, $nbcharacters, $self->max, $self->whoami, @arguments)
   } else {
-    $self->_logger->$method("%s: $format", $self->whoami, @arguments)
+    $self->log->$method("%s: $format", $self->whoami, @arguments)
   }
 }
 
@@ -516,7 +517,7 @@ sub _croak {
   croak($msg)
 }
 
-with qw/MooX::Role::Logger MarpaX::Java::ClassFile::Role::Parser::Actions/;
+with qw/MooX::Log::Any MarpaX::Java::ClassFile::Role::Parser::Actions/;
 
 requires 'callbacks';
 requires 'grammar';
