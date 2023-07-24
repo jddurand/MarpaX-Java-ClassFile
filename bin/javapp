@@ -15,7 +15,7 @@ use Class::Load qw/load_class/;
 use File::Basename qw/fileparse basename/;
 use File::chdir;
 use File::Find qw/find/;
-use File::Spec qw/case_tolerant canonpath/;
+use File::Spec;
 use File::Temp qw/tempdir/;
 use Getopt::Long qw/GetOptions/;
 use Log::Log4perl qw/:easy/;
